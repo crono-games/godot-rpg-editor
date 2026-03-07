@@ -84,54 +84,21 @@
 						"from_port": 0,
 						"to": "show_dialogue_1",
 						"to_port": 0
-					},
-					{
-						"from": "show_dialogue_1",
-						"from_port": 0,
-						"to": "move_1",
-						"to_port": 0
 					}
 				],
 				"nodes": {
-					"move_1": {
-						"params": {
-							"route": [
-								{
-									"action_type": "Move",
-									"direction": {
-										"x": 0.0,
-										"y": 0.0,
-										"z": 1.0
-									},
-									"target_id": "evt_5582423511244394517",
-									"target_name": "Event"
-								},
-								{
-									"action_type": "Move",
-									"direction": {
-										"x": 0.0,
-										"y": 0.0,
-										"z": 1.0
-									},
-									"target_id": "evt_5582423511244394517",
-									"target_name": "Event"
-								}
-							],
-							"wait_for_completion": true
-						},
-						"position": [
-							400.0,
-							0.0
-						],
-						"type": "move"
-					},
 					"show_dialogue_1": {
 						"params": {
 							"dialogues": [
 								{
 									"id": "dlg_2",
 									"portrait": "",
-									"text": "Hello world!!"
+									"text": "Godot  RPG Editor is a framework for building event-based gameplay logic using a graph nodes / visual scripting interface. The idea is to make it easier to design event workflows (dialogue, triggers, scripted sequences, gameplay logic, etc.) without writing everything directly in code.\nInstead of scripting events manually, you build them through nodes that represent different actions and logic blocks.\n"
+								},
+								{
+									"id": "dlg_3",
+									"portrait": "",
+									"text": "Hello world!"
 								}
 							]
 						},

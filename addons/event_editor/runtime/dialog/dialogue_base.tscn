@@ -23,14 +23,15 @@ texture_margin_bottom = 16.0
 font = ExtResource("3_n2257")
 font_color = Color(0.17044133, 0.17044118, 0.17044118, 1)
 
-[node name="DialogueBox" type="CanvasLayer" unique_id=1447092717 node_paths=PackedStringArray("label", "sound", "timer", "choices_container", "runner")]
+[node name="DialogueBox" type="CanvasLayer" unique_id=1447092717 node_paths=PackedStringArray("label", "sound", "timer", "choices_container", "runner", "scroll")]
 script = ExtResource("1_qhpya")
 speed_text = 0.05
-label = NodePath("Control/VBoxContainer/PanelContainer/Label")
+label = NodePath("Control/VBoxContainer/PanelContainer/MarginContainer/Label")
 sound = NodePath("AudioStreamPlayer")
 timer = NodePath("Timer")
 choices_container = NodePath("Control/VBoxContainer/ChoicesPanelContainer/ChoicesContainer")
 runner = NodePath("DialogueRunner")
+scroll = NodePath("")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1054521924]
 
@@ -83,7 +84,7 @@ script = ExtResource("3_yj7c0")
 
 [node name="PanelContainer" type="PanelContainer" parent="Control/VBoxContainer" unique_id=946898640]
 layout_mode = 0
-offset_top = 64.0
+offset_top = 56.0
 offset_right = 256.0
 offset_bottom = 128.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_y2q7j")
@@ -96,13 +97,20 @@ patch_margin_left = 12
 patch_margin_top = 12
 patch_margin_right = 12
 patch_margin_bottom = 12
-axis_stretch_horizontal = 1
 
-[node name="Label" type="Label" parent="Control/VBoxContainer/PanelContainer" unique_id=854557705]
+[node name="MarginContainer" type="MarginContainer" parent="Control/VBoxContainer/PanelContainer" unique_id=1510350615]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 0
+
+[node name="Label" type="Label" parent="Control/VBoxContainer/PanelContainer/MarginContainer" unique_id=854557705]
 custom_minimum_size = Vector2(224, 64)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_ngjwe")
 label_settings = SubResource("LabelSettings_y0ctl")
+autowrap_mode = 2
 
 [node name="DialogueInputController" type="Node" parent="." unique_id=1655132542 node_paths=PackedStringArray("runner", "dialog_box")]
 script = ExtResource("4_52vui")

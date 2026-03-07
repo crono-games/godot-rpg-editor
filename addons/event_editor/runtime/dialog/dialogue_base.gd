@@ -2,6 +2,9 @@
 extends CanvasLayer
 class_name DialogueBox
 
+const MAX_CHARS := 220
+
+
 @export var speed_text := 0.025
 
 @export var label: Label
@@ -9,6 +12,7 @@ class_name DialogueBox
 @export var timer: Timer
 @export var choices_container: ChoicesPanel
 @export var runner: DialogueRunner
+@export var scroll: ScrollContainer
 
 var full_text := ""
 
@@ -22,12 +26,51 @@ func _ready() -> void:
 	l_settings.font = load("res://assets/fonts/m5x7.ttf")
 
 func show_dialog(pages):
-	if pages.size() == 0:
+	if pages.is_empty():
 		return
-	runner.run(pages)
-	await runner.finished
 
+	var normalized := []
+
+	for p in pages:
+		normalized.append_array(split_page(p))
+
+	runner.run(normalized)
+	await runner.finished
+	
 # ---------- Text ----------
+
+func normalize_pages(pages:Array) -> Array:
+	var result := []
+
+	for page in pages:
+		result.append_array(split_page(page))
+
+	return result
+
+func split_page(text:String) -> Array:
+	var pages := []
+	var current := ""
+
+	for c in text:
+		current += c
+		label.text = current		
+		if label.get_line_count() > label.get_visible_line_count():
+			
+			var cut := current.rfind(" ")
+			
+			if cut == -1:
+				cut = current.length() - 1
+			
+			var page := current.substr(0, cut)
+			pages.append(page.strip_edges())
+			
+			current = current.substr(cut + 1)
+
+	if current != "":
+		pages.append(current.strip_edges())
+
+	return pages
+
 
 func show_page(text: String):
 	show()
@@ -45,6 +88,7 @@ func skip_typing():
 
 func _on_timer_timeout():
 	label.visible_characters += 1
+	
 	if not sound.playing:
 		sound.play()
 
