@@ -28,3 +28,21 @@ More built-in nodes and utilities
 Better debugging tools for events
 
 So I wouldn't call it a finished tool yet, but the base is there and I'm trying improving it actively.
+
+**How to add new Events:**
+
+Right click in 2D viewport and this popup will appear. You can add an EventInstance or PlayerInstance.
+
+<img width="195" height="129" alt="image" src="https://github.com/user-attachments/assets/b12aff9c-3156-4e12-b92f-ab95cdf08404" />
+
+EventInstances can be edited by selecting them and press Edit Event Button or directly pressing Event Editor button.
+
+<img width="241" height="38" alt="image" src="https://github.com/user-attachments/assets/dfeadbf8-5b6a-4c2f-9a26-06e0b66f02e9" />
+
+<img width="104" height="51" alt="image" src="https://github.com/user-attachments/assets/d1232f33-fb6c-4288-a000-4fb128d692ea" />
+
+You'll see a Node that defines the flow, you can select trigger and properties of the current state of the event.
+To add a new Node you drag from the default slot and a Popup will appear, allowing to select a new Node.
+
+<img width="648" height="296" alt="image" src="https://github.com/user-attachments/assets/8f85105f-6b45-4fe1-968a-82b22cc1d4ae" />
+
