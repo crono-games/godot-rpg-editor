@@ -1,3 +1,7 @@
-res://addons/event_editor/editor/nodes/move/move_node.tscn
-res://assets/data/tilesets/field.tres
 res://maps/map1.tscn
+res://assets/data/tilesets/field.tres
+res://addons/event_editor/runtime/triggers/event_trigger_service.gd
+res://addons/event_editor/core/graph/graph_edit_service.gd
+res://addons/event_editor/runtime/runner/node_executors/move_executor.gd
+res://assets/templates/events/2d/player_actor_2d_base.gd
+res://assets/templates/events/2d/player_instance_grid.tscn

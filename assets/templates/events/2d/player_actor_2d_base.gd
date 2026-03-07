@@ -25,7 +25,7 @@ signal event_bumped(event_id: String, event_node: Node)
 const BUMP_EMIT_COOLDOWN_MS := 150
 
 var _anim_step_time := 0.11
-var _max_anim_cycles_per_step := 1.0
+var max_anim_cycles_per_step := 1.0
 
 var _last_bump_event_id := ""
 var _last_bump_ms := 0

@@ -236,8 +236,6 @@ func _stabilize_before_touch(actor: Node, event_id: String) -> void:
 	_snap_actor_to_grid(actor)
 	_pending_by_event[event_id] = false
 
-
-
 func _is_actor_moving(actor: Node) -> bool:
 	if actor == null:
 		return false
@@ -284,23 +282,19 @@ func _resolve_touch_area(event_instance: Node) -> Node:
 	if event_instance == null:
 		return null
 
-	# 1 direct area
 	if event_instance is Area2D or event_instance is Area3D:
 		var resolved := _call_trigger_method(event_instance)
 		return resolved if resolved != null else event_instance
 
-	# 2 trigger method
 	var method_area := _call_trigger_method(event_instance)
 	if method_area != null:
 		return method_area
 
-	# 3 known properties
 	for prop in ["trigger_area", "area"]:
 		var ref := event_instance.get(prop)
 		if ref is Area2D or ref is Area3D:
 			return ref
 
-	# 4 children fallback
 	for child in event_instance.get_children():
 		if child is Area2D or child is Area3D:
 			return child

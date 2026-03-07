@@ -8,6 +8,12 @@
 						"from_port": 0.0,
 						"to": "teleport_player_1",
 						"to_port": 0.0
+					},
+					{
+						"from": "state_1",
+						"from_port": 0.0,
+						"to": "teleport_player_1",
+						"to_port": 0.0
 					}
 				],
 				"nodes": {
@@ -21,7 +27,7 @@
 
 							},
 							"state_id": "default",
-							"trigger_mode": "touch_overlap"
+							"trigger_mode": "action"
 						},
 						"position": [
 							0.0,
@@ -46,6 +52,26 @@
 							-40.0
 						],
 						"type": "teleport_player"
+					}
+				}
+			}
+		},
+		"985521961201925453": {
+			"flow": {
+				"edges": [],
+				"nodes": {
+					"state_1": {
+						"params": {
+							"is_default": true,
+							"name": "Default",
+							"state_id": "default",
+							"trigger_mode": "action"
+						},
+						"position": [
+							0.0,
+							0.0
+						],
+						"type": "state"
 					}
 				}
 			}
@@ -131,6 +157,30 @@
 						"position": [
 							-40.0,
 							20.0
+						],
+						"type": "state"
+					},
+					"state_2": {
+						"params": {
+							"conditions": {
+								"flags": [
+									{
+										"name": "A",
+										"scope": "local",
+										"value": true
+									}
+								]
+							},
+							"name": "New State 2",
+							"properties": {
+
+							},
+							"state_id": "state_2",
+							"trigger_mode": "action"
+						},
+						"position": [
+							3.27506113052368,
+							229.497207641602
 						],
 						"type": "state"
 					}
