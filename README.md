@@ -1,5 +1,7 @@
 # Godot RPG Editor
 
+> ⚠️ This project is still under active development and parts of the internal architecture may change.
+
 **Godot RPG Editor** is a framework designed to build **event-driven gameplay systems** using a **node-based visual scripting interface**.
 
 Instead of writing gameplay events entirely in code, the editor allows you to construct them through a **graph of nodes**, where each node represents a specific action or logic block. This makes it easier to design complex event workflows such as:
@@ -34,9 +36,10 @@ The project is still evolving. While the **core systems are already functional**
 
 ## Work in Progress
 
-Some areas still require improvement and may change in the future:
+Several areas are still evolving and will likely change:
 
-- General **code refactoring and architectural cleanup**
+- **General code refactoring and architectural cleanup**
+- **Improving internal system structure**
 - **Editor UX improvements**
 - Additional **built-in nodes and utilities**
 - Improvements to the **3D workflow**
@@ -57,7 +60,8 @@ To create a new event:
 - `EventInstance`
 - `PlayerInstance`
 
-*image*
+<img width="300" height="160" alt="image" src="https://github.com/user-attachments/assets/2a282ce8-3adc-4811-899e-44824efbb224" />
+
 
 ---
 
@@ -69,7 +73,7 @@ Once an **EventInstance** has been placed in the scene:
 2. Press **Edit Event**
 3. Or open the **Event Editor** directly
 
-*image*
+<img width="212" height="34" alt="image" src="https://github.com/user-attachments/assets/4c795324-36fb-4047-8c92-678bfe1ec612" />
 
 ---
 
@@ -91,7 +95,7 @@ To add a new node:
 2. A popup menu will appear
 3. Select the desired node type
 
-*image*
+<img width="368" height="190" alt="image" src="https://github.com/user-attachments/assets/6045ee06-8cc0-4366-86d1-314ae1e87cc6" />
 
 ---
 
