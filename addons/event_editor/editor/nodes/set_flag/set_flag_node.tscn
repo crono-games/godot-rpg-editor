@@ -1,0 +1,34 @@
+[gd_scene load_steps=2 format=3 uid="uid://x00j7nmbv306"]
+
+[ext_resource type="Script" uid="uid://etompkwoe4tt" path="res://addons/event_editor/editor/nodes/set_flag/set_flag_node.gd" id="1_xrtbg"]
+
+[node name="SetFlagNode" type="GraphNode" unique_id=1135125552 node_paths=PackedStringArray("flag_selector", "state_check_box")]
+anchors_preset = -1
+anchor_right = 0.120659724
+anchor_bottom = 0.13271604
+offset_right = 15.0
+title = "Set Flag"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+script = ExtResource("1_xrtbg")
+flag_selector = NodePath("HBoxContainer/FlagSelector")
+state_check_box = NodePath("HBoxContainer/CheckBox")
+metadata/_edit_use_anchors_ = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=386877083]
+layout_mode = 2
+
+[node name="FlagSelector" type="OptionButton" parent="HBoxContainer" unique_id=471669769]
+layout_mode = 2
+flat = true
+
+[node name="CheckBox" type="CheckBox" parent="HBoxContainer" unique_id=1311625076]
+layout_mode = 2
+text = "On"

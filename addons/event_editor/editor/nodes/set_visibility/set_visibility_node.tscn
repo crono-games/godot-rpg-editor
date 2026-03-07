@@ -1,0 +1,60 @@
+[gd_scene load_steps=2 format=3 uid="uid://bmf1stt1nuf6w"]
+
+[ext_resource type="Script" uid="uid://crwdltqacu8ud" path="res://addons/event_editor/editor/nodes/set_visibility/set_visibility_node.gd" id="1_setvisui"]
+
+[node name="SetVisibilityNode" type="GraphNode" unique_id=234924242 node_paths=PackedStringArray("event_selector", "visible_check_box", "disable_collision_check_box")]
+title = "Set Visibility"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+script = ExtResource("1_setvisui")
+event_selector = NodePath("GridContainer/EventSelector")
+visible_check_box = NodePath("GridContainer/VisibleCheckBox")
+disable_collision_check_box = NodePath("GridContainer/DisableCollisionCheckBox")
+
+[node name="GridContainer" type="GridContainer" parent="." unique_id=1877723676]
+layout_mode = 2
+columns = 2
+
+[node name="LabelEvent" type="Label" parent="GridContainer" unique_id=264361439]
+layout_mode = 2
+tooltip_text = "Target"
+mouse_filter = 1
+text = "Target"
+clip_text = true
+
+[node name="EventSelector" type="OptionButton" parent="GridContainer" unique_id=644291718]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+clip_text = true
+fit_to_longest_item = false
+
+[node name="LabelVisible" type="Label" parent="GridContainer" unique_id=1313548470]
+layout_mode = 2
+tooltip_text = "Visible"
+mouse_filter = 1
+text = "Visible"
+clip_text = true
+
+[node name="VisibleCheckBox" type="CheckBox" parent="GridContainer" unique_id=926644057]
+layout_mode = 2
+button_pressed = true
+text = "On"
+
+[node name="LabelCollision" type="Label" parent="GridContainer" unique_id=1422049288]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+tooltip_text = "Disable collision"
+mouse_filter = 1
+text = "Disable collision"
+clip_text = true
+
+[node name="DisableCollisionCheckBox" type="CheckBox" parent="GridContainer" unique_id=124805846]
+layout_mode = 2
+text = "On"

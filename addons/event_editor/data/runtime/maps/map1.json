@@ -1,0 +1,142 @@
+{
+	"events": {
+		"5013343148812356269": {
+			"flow": {
+				"edges": [
+					{
+						"from": "state_1",
+						"from_port": 0.0,
+						"to": "teleport_player_1",
+						"to_port": 0.0
+					}
+				],
+				"nodes": {
+					"state_1": {
+						"params": {
+							"conditions": {
+
+							},
+							"name": "Default",
+							"properties": {
+
+							},
+							"state_id": "default",
+							"trigger_mode": "touch_overlap"
+						},
+						"position": [
+							0.0,
+							0.0
+						],
+						"type": "state"
+					},
+					"teleport_player_1": {
+						"params": {
+							"auto_fade": true,
+							"facing_dir": "up",
+							"fade_frames": 30.0,
+							"map_id": "map2",
+							"target_position": {
+								"x": 152.0,
+								"y": 136.0,
+								"z": 136.0
+							}
+						},
+						"position": [
+							180.0,
+							-40.0
+						],
+						"type": "teleport_player"
+					}
+				}
+			}
+		},
+		"evt_5582423511244394517": {
+			"flow": {
+				"edges": [
+					{
+						"from": "state_1",
+						"from_port": 0,
+						"to": "show_dialogue_1",
+						"to_port": 0
+					},
+					{
+						"from": "show_dialogue_1",
+						"from_port": 0,
+						"to": "move_1",
+						"to_port": 0
+					}
+				],
+				"nodes": {
+					"move_1": {
+						"params": {
+							"route": [
+								{
+									"action_type": "Move",
+									"direction": {
+										"x": 0.0,
+										"y": 0.0,
+										"z": 1.0
+									},
+									"target_id": "evt_5582423511244394517",
+									"target_name": "Event"
+								},
+								{
+									"action_type": "Move",
+									"direction": {
+										"x": 0.0,
+										"y": 0.0,
+										"z": 1.0
+									},
+									"target_id": "evt_5582423511244394517",
+									"target_name": "Event"
+								}
+							],
+							"wait_for_completion": true
+						},
+						"position": [
+							400.0,
+							0.0
+						],
+						"type": "move"
+					},
+					"show_dialogue_1": {
+						"params": {
+							"dialogues": [
+								{
+									"id": "dlg_2",
+									"portrait": "",
+									"text": "Hello world!!"
+								}
+							]
+						},
+						"position": [
+							180.0,
+							0.0
+						],
+						"type": "show_dialogue"
+					},
+					"state_1": {
+						"params": {
+							"conditions": {
+
+							},
+							"is_default": true,
+							"name": "Default",
+							"properties": {
+
+							},
+							"state_id": "default",
+							"trigger_mode": "action"
+						},
+						"position": [
+							-40.0,
+							20.0
+						],
+						"type": "state"
+					}
+				}
+			}
+		}
+	},
+	"version": 1.0
+}

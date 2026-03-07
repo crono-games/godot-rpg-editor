@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 16 16">
+  <!-- Dock -->
+  <rect x="1" y="2" width="4" height="12" fill="#e0e0e0"/>
+
+  <!-- Flecha hacia la izquierda -->
+  <path fill="#e0e0e0"
+        d="M11 8 L8 5 V7 H6 V9 H8 V11 Z"/>
+</svg>

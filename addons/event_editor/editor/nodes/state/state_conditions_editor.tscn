@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=3 uid="uid://c8o1q1h6ccfe3"]
+
+[ext_resource type="Script" uid="uid://dfp6bjkkoywic" path="res://event_editor/editor/nodes/state/state_conditions_editor.gd" id="1_0qf7p"]
+[ext_resource type="Texture2D" uid="uid://dumih8h12tiqq" path="res://event_editor/icons/Add.svg" id="2_s8wbc"]
+
+[node name="StateConditionsEditor" type="VBoxContainer" unique_id=969032856 node_paths=PackedStringArray("flags_container", "add_flag_button", "variables_container", "add_variable_button")]
+theme_override_constants/separation = 6
+script = ExtResource("1_0qf7p")
+flags_container = NodePath("FlagsList")
+add_flag_button = NodePath("AddFlag")
+variables_container = NodePath("VarsList")
+add_variable_button = NodePath("AddVar")
+
+[node name="FlagsList" type="VBoxContainer" parent="." unique_id=1828624519]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="AddFlag" type="Button" parent="." unique_id=1303026617]
+layout_mode = 2
+text = "Add Flag Condition"
+icon = ExtResource("2_s8wbc")
+
+[node name="VarsList" type="VBoxContainer" parent="." unique_id=1972086832]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="AddVar" type="Button" parent="." unique_id=1129070277]
+layout_mode = 2
+text = "Add Variable Condition"
+icon = ExtResource("2_s8wbc")

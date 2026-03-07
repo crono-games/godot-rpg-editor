@@ -1,0 +1,68 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" uid="uid://bln03xhlirim" path="res://addons/event_editor/editor/nodes/condition/condition_node.gd" id="1_cond"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lbl"]
+bg_color = Color(0, 0, 0, 0.0392157)
+
+[node name="ConditionNode" type="GraphNode" node_paths=PackedStringArray("subject_selector", "property_selector", "operator_selector", "value_input", "target_selector")]
+title = "Condition"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/right_enabled = false
+slot/1/right_enabled = true
+slot/1/right_type = 0
+slot/1/right_color = Color(0, 1, 0, 1)
+slot/2/right_enabled = true
+slot/2/right_type = 0
+slot/2/right_color = Color(1, 0, 0, 1)
+script = ExtResource("1_cond")
+subject_selector = NodePath("VBox/Row1/Subject")
+property_selector = NodePath("VBox/Row1/Property")
+operator_selector = NodePath("VBox/Row2/Operator")
+value_input = NodePath("VBox/Row2/Value")
+target_selector = NodePath("VBox/Row3/Target")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Row1" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="Subject" type="OptionButton" parent="VBox/Row1"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Property" type="OptionButton" parent="VBox/Row1"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Row2" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="Operator" type="OptionButton" parent="VBox/Row2"]
+layout_mode = 2
+custom_minimum_size = Vector2(70, 0)
+
+[node name="Value" type="LineEdit" parent="VBox/Row2"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Row3" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="Target" type="OptionButton" parent="VBox/Row3"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TrueLabel" type="Label" parent="."]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_lbl")
+text = "True"
+horizontal_alignment = 2
+
+[node name="FalseLabel" type="Label" parent="."]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_lbl")
+text = "False"
+horizontal_alignment = 2

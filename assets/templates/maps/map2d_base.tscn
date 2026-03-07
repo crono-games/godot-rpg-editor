@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://dv15sbuoqe1bk"]
+
+[ext_resource type="Script" uid="uid://bosefgj03qvaw" path="res://event_editor/runtime/map_2d.gd" id="1_map2d"]
+
+[node name="Map2D" type="Node2D" unique_id=1124705541]
+script = ExtResource("1_map2d")
+
+[node name="EventContainer" type="Node2D" parent="." unique_id=2096262127]
+
+[node name="AnimationContainer" type="Node2D" parent="." unique_id=1391087114]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="AnimationContainer" unique_id=1162890714]
+
+[node name="Audio" type="Node" parent="." unique_id=124125369]

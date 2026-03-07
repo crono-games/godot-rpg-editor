@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://bx37fxt4rf5y0"]
+
+[ext_resource type="Script" uid="uid://cuyvhxkdptunp" path="res://event_editor/utilities/game_state_dock/game_state_dock.gd" id="1_0pw7y"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nfgw7"]
+bg_color = Color(0.10747976, 0.10747973, 0.10747973, 1)
+
+[node name="GameStateDock" type="PanelContainer" unique_id=1493558994 node_paths=PackedStringArray("content", "button", "header", "flags_list", "variables_list")]
+z_index = 50
+offset_right = 24.0
+offset_bottom = 24.0
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_nfgw7")
+script = ExtResource("1_0pw7y")
+content = NodePath("")
+button = NodePath("")
+header = NodePath("")
+flags_list = NodePath("")
+variables_list = NodePath("")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1576248671]
+layout_mode = 2
+mouse_filter = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1778850663]
+layout_mode = 2

@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3 uid="uid://dqgw8xm70bk05"]
+
+[ext_resource type="Script" uid="uid://cvrfh1e8y4f25" path="res://addons/event_editor/editor/nodes/set_variable/set_variable_node.gd" id="1_1rol6"]
+
+[node name="SetVariableNode" type="GraphNode" unique_id=1135125552 node_paths=PackedStringArray("variable_selector", "spinbox")]
+offset_right = 151.0
+offset_bottom = 86.0
+title = "Set Variable"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+script = ExtResource("1_1rol6")
+variable_selector = NodePath("HBoxContainer/OptionButton")
+spinbox = NodePath("HBoxContainer/SpinBox")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1304668170]
+layout_mode = 2
+
+[node name="OptionButton" type="OptionButton" parent="HBoxContainer" unique_id=1507662102]
+layout_mode = 2
+
+[node name="SpinBox" type="SpinBox" parent="HBoxContainer" unique_id=1445171504]
+layout_mode = 2

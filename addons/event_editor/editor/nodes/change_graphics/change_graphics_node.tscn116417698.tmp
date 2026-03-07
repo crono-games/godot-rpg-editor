@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=3 uid="uid://cbit4fragrss4"]
+
+[ext_resource type="Script" uid="uid://chwop37o1g5vw" path="res://event_editor/editor/nodes/change_graphics/change_graphics_node.gd" id="1_kdwih"]
+[ext_resource type="Texture2D" uid="uid://dajkc6b264i4c" path="res://event_editor/icons/FileDialog.svg" id="2_wecf6"]
+
+[node name="ChangeGraphicsNode" type="GraphNode" unique_id=1135125552]
+anchors_preset = -1
+anchor_right = 0.120659724
+anchor_bottom = 0.13271604
+title = "Change Graphics"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+script = ExtResource("1_kdwih")
+metadata/_edit_use_anchors_ = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=790166206]
+layout_mode = 2
+
+[node name="EventSelector" type="OptionButton" parent="HBoxContainer" unique_id=1507662102]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="HBoxContainer" unique_id=580361948]
+layout_mode = 2
+icon = ExtResource("2_wecf6")
+
+[node name="FileDialog" type="FileDialog" parent="." unique_id=1967903582]
+title = "Open a File"
+file_mode = 0
+root_subfolder = "res://graphics/"
+filters = PackedStringArray("*.png")
+
+[connection signal="item_selected" from="HBoxContainer/EventSelector" to="." method="_on_event_selector_item_selected"]
+[connection signal="pressed" from="HBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_selected"]

@@ -1,0 +1,87 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" uid="uid://cu36mi7vcc2bm" path="res://addons/event_editor/editor/nodes/move_picture/move_picture_node.gd" id="1_movepicui"]
+
+[node name="MovePictureNode" type="GraphNode" node_paths=PackedStringArray("picture_id_spin", "x_spin", "y_spin", "duration_spin", "wait_check", "center_button")]
+title = "Move Picture"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/draw_stylebox = true
+script = ExtResource("1_movepicui")
+picture_id_spin = NodePath("Grid/PictureIdSpin")
+x_spin = NodePath("Grid/XSpin")
+y_spin = NodePath("Grid/YSpin")
+duration_spin = NodePath("Grid/DurationSpin")
+wait_check = NodePath("Grid/WaitCheck")
+center_button = NodePath("Grid/CenterButton")
+
+[node name="Grid" type="GridContainer" parent="."]
+layout_mode = 2
+columns = 2
+
+[node name="LabelPictureId" type="Label" parent="Grid"]
+layout_mode = 2
+text = "Picture ID"
+
+[node name="PictureIdSpin" type="SpinBox" parent="Grid"]
+layout_mode = 2
+min_value = 1.0
+max_value = 999.0
+step = 1.0
+rounded = true
+value = 1.0
+
+[node name="LabelX" type="Label" parent="Grid"]
+layout_mode = 2
+text = "X"
+
+[node name="XSpin" type="SpinBox" parent="Grid"]
+layout_mode = 2
+min_value = -4096.0
+max_value = 4096.0
+step = 1.0
+rounded = true
+
+[node name="LabelY" type="Label" parent="Grid"]
+layout_mode = 2
+text = "Y"
+
+[node name="YSpin" type="SpinBox" parent="Grid"]
+layout_mode = 2
+min_value = -4096.0
+max_value = 4096.0
+step = 1.0
+rounded = true
+
+[node name="LabelDuration" type="Label" parent="Grid"]
+layout_mode = 2
+text = "Duration (frames)"
+
+[node name="DurationSpin" type="SpinBox" parent="Grid"]
+layout_mode = 2
+min_value = 0.0
+max_value = 9999.0
+step = 1.0
+rounded = true
+value = 30.0
+
+[node name="LabelWait" type="Label" parent="Grid"]
+layout_mode = 2
+text = "Wait"
+
+[node name="WaitCheck" type="CheckBox" parent="Grid"]
+layout_mode = 2
+text = "On"
+button_pressed = true
+
+[node name="LabelQuick" type="Label" parent="Grid"]
+layout_mode = 2
+text = "Quick Pos"
+
+[node name="CenterButton" type="Button" parent="Grid"]
+layout_mode = 2
+text = "Center Screen"

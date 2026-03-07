@@ -1,0 +1,76 @@
+[gd_scene load_steps=2 format=3 uid="uid://bquge0yspxg6d"]
+
+[ext_resource type="Script" uid="uid://bo1gxov5bkih3" path="res://event_editor/utilities/debug/runtime_debug_panel.gd" id="1_gfl1g"]
+
+[node name="RuntimeDebugPanel" type="CanvasLayer" unique_id=626075089 node_paths=PackedStringArray("map_label", "run_event_id_edit", "run_event_button", "refresh_states_button", "flags_list", "variables_list", "event_select", "local_flags_list")]
+visible = false
+script = ExtResource("1_gfl1g")
+map_label = NodePath("PanelContainer/VBoxContainer/MapLabel")
+run_event_id_edit = NodePath("PanelContainer/VBoxContainer/RunEventRow/LineEdit")
+run_event_button = NodePath("PanelContainer/VBoxContainer/RunEventRow/Button")
+refresh_states_button = NodePath("PanelContainer/VBoxContainer/RefreshStateButton")
+flags_list = NodePath("PanelContainer/VBoxContainer/GlobalFlagsList")
+variables_list = NodePath("PanelContainer/VBoxContainer/GlobalVariablesList")
+event_select = NodePath("PanelContainer/VBoxContainer/HBoxContainer2/EventSelect")
+local_flags_list = NodePath("PanelContainer/VBoxContainer/LocalFlagsList")
+fallback_toggle_key = 4194325
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=906016091]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=195591457]
+layout_mode = 2
+
+[node name="MapLabel" type="Label" parent="PanelContainer/VBoxContainer" unique_id=1759635590]
+layout_mode = 2
+
+[node name="RunEventRow" type="HBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=989325112]
+layout_mode = 2
+
+[node name="RunEvent" type="Label" parent="PanelContainer/VBoxContainer/RunEventRow" unique_id=843431388]
+layout_mode = 2
+text = "Run Event"
+
+[node name="LineEdit" type="LineEdit" parent="PanelContainer/VBoxContainer/RunEventRow" unique_id=1327059326]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="PanelContainer/VBoxContainer/RunEventRow" unique_id=978046336]
+layout_mode = 2
+
+[node name="RefreshStateButton" type="Button" parent="PanelContainer/VBoxContainer" unique_id=1015432972]
+layout_mode = 2
+
+[node name="GlobalFlags" type="Label" parent="PanelContainer/VBoxContainer" unique_id=47229003]
+layout_mode = 2
+text = "Global Flags"
+
+[node name="GlobalFlagsList" type="ItemList" parent="PanelContainer/VBoxContainer" unique_id=1534666231]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+
+[node name="GlobalVariables" type="Label" parent="PanelContainer/VBoxContainer" unique_id=1554752582]
+layout_mode = 2
+text = "Global Variables"
+
+[node name="GlobalVariablesList" type="ItemList" parent="PanelContainer/VBoxContainer" unique_id=1860759426]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=1460107212]
+layout_mode = 2
+
+[node name="LabelEvent" type="Label" parent="PanelContainer/VBoxContainer/HBoxContainer2" unique_id=1952000030]
+layout_mode = 2
+text = "Event"
+
+[node name="EventSelect" type="OptionButton" parent="PanelContainer/VBoxContainer/HBoxContainer2" unique_id=1306399393]
+layout_mode = 2
+
+[node name="LocalFlags" type="Label" parent="PanelContainer/VBoxContainer" unique_id=1585417203]
+layout_mode = 2
+text = "Local Flags"
+
+[node name="LocalFlagsList" type="ItemList" parent="PanelContainer/VBoxContainer" unique_id=1759617863]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2

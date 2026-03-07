@@ -1,0 +1,71 @@
+[gd_scene load_steps=3 format=3 uid="uid://4etg8ofl82f7"]
+
+[ext_resource type="Script" uid="uid://d3x2uw674e2d5" path="res://event_editor/utilities/position_picker/position_picker_2d.gd" id="1_g3ysi"]
+[ext_resource type="PackedScene" path="res://event_editor/utilities/position_picker/picker_preview_panel.tscn" id="2_panel"]
+
+[node name="PositionPicker" type="ConfirmationDialog" unique_id=2018002663 node_paths=PackedStringArray("camera_2d", "grid_selector", "item_list", "sub_viewport")]
+transparent_bg = true
+snap_2d_vertices_to_pixel = true
+oversampling_override = 1.0
+title = "Pick Position"
+initial_position = 1
+size = Vector2i(636, 348)
+visible = true
+transparent = true
+content_scale_stretch = 1
+script = ExtResource("1_g3ysi")
+camera_2d = NodePath("MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/PreviewPanel/SubViewportContainer/SubViewport/Camera2D")
+grid_selector = NodePath("MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/PreviewPanel/SubViewportContainer/GridSelector")
+item_list = NodePath("MarginContainer/VBoxContainer/HBoxContainer/MapList")
+sub_viewport = NodePath("MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/PreviewPanel/SubViewportContainer/SubViewport")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=301920200]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -49.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1352472601]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -49.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=509619187]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=969504328]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Pick Position"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1851159050]
+layout_mode = 2
+
+[node name="MapList" type="ItemList" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=664356146]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 240)
+layout_mode = 2
+item_count = 2
+item_0/text = "map1"
+item_1/text = "map2"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1910596477]
+custom_minimum_size = Vector2(180, 240)
+layout_mode = 2
+
+[node name="PreviewPanel" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer" instance=ExtResource("2_panel")]

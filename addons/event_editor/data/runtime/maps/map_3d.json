@@ -1,0 +1,76 @@
+{
+	"events": {
+		"evt_5582423511244394517": {
+			"flow": {
+				"edges": [
+					{
+						"from": "state_1",
+						"from_port": 0,
+						"to": "move_1",
+						"to_port": 0
+					}
+				],
+				"nodes": {
+					"move_1": {
+						"params": {
+							"route": [
+								{
+									"action_type": "Move",
+									"direction": {
+										"x": 0.0,
+										"y": 0.0,
+										"z": 1.0
+									},
+									"target_id": "evt_5582423511244394517",
+									"target_name": "EventInstance3D"
+								},
+								{
+									"action_type": "Move",
+									"direction": {
+										"x": 1.0,
+										"y": 0.0,
+										"z": 0.0
+									},
+									"target_id": "evt_5582423511244394517",
+									"target_name": "EventInstance3D"
+								}
+							],
+							"wait_for_completion": true
+						},
+						"position": [
+							200.0,
+							-40.0
+						],
+						"type": "move"
+					},
+					"state_1": {
+						"params": {
+							"conditions": {
+
+							},
+							"is_default": true,
+							"name": "Default",
+							"properties": {
+								"graphics": {
+									"autoslice": false,
+									"frame": 0.0,
+									"hframes": 8.0,
+									"texture": "res://assets/graphics/actors/Player Base.png",
+									"vframes": 4.0
+								}
+							},
+							"state_id": "default",
+							"trigger_mode": "parallel"
+						},
+						"position": [
+							0.0,
+							0.0
+						],
+						"type": "state"
+					}
+				}
+			}
+		}
+	},
+	"version": 1.0
+}

@@ -1,0 +1,66 @@
+[gd_scene load_steps=3 format=3 uid="uid://d0ux7d3n5p2cl"]
+
+[ext_resource type="Script" uid="uid://d3x2uw674e2d5" path="res://event_editor/utilities/position_picker/position_picker_2d.gd" id="1_f7wgq"]
+[ext_resource type="Script" uid="uid://dorkpond4t1rs" path="res://event_editor/utilities/set_position/grid_selector.gd" id="2"]
+
+[node name="PositionPicker" type="ConfirmationDialog" unique_id=1248724196 node_paths=PackedStringArray("camera_2d", "grid_selector", "item_list", "sub_viewport")]
+snap_2d_vertices_to_pixel = true
+oversampling_override = 1.0
+title = "Pick Position"
+initial_position = 1
+size = Vector2i(480, 360)
+visible = true
+content_scale_stretch = 1
+script = ExtResource("1_f7wgq")
+camera_2d = NodePath("HBoxContainer/ScrollContainer/HBoxContainer/SubViewportContainer/SubViewport/Camera2D")
+grid_selector = NodePath("HBoxContainer/ScrollContainer/HBoxContainer/SubViewportContainer/GridSelector")
+item_list = NodePath("HBoxContainer/ItemList")
+sub_viewport = NodePath("HBoxContainer/ScrollContainer/HBoxContainer/SubViewportContainer/SubViewport")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1964877464]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 472.0
+offset_bottom = 311.0
+
+[node name="ItemList" type="ItemList" parent="HBoxContainer" unique_id=2117994656]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(160, 240)
+layout_mode = 2
+item_count = 2
+item_0/text = "map1"
+item_1/text = "map2"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer" unique_id=4529593]
+custom_minimum_size = Vector2(180, 240)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/ScrollContainer" unique_id=165646534]
+custom_minimum_size = Vector2(320, 240)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="HBoxContainer/ScrollContainer/HBoxContainer" unique_id=619339937]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SubViewport" type="SubViewport" parent="HBoxContainer/ScrollContainer/HBoxContainer/SubViewportContainer" unique_id=329028381]
+unique_name_in_owner = true
+own_world_3d = true
+handle_input_locally = false
+size = Vector2i(320, 192)
+render_target_update_mode = 4
+
+[node name="Camera2D" type="Camera2D" parent="HBoxContainer/ScrollContainer/HBoxContainer/SubViewportContainer/SubViewport" unique_id=1466586512]
+
+[node name="GridSelector" type="Control" parent="HBoxContainer/ScrollContainer/HBoxContainer/SubViewportContainer" unique_id=993246224]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 192)
+layout_mode = 2
+script = ExtResource("2")
+metadata/_custom_type_script = "uid://dorkpond4t1rs"

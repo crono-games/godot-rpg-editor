@@ -1,0 +1,54 @@
+[gd_scene load_steps=2 format=3 uid="uid://ddivugk0nou7n"]
+
+[ext_resource type="Script" uid="uid://fejiiit7jg4t" path="res://addons/event_editor/editor/nodes/set_followers/set_followers_node.gd" id="1_p1rt4"]
+
+[node name="SetFollowersNode" type="GraphNode" unique_id=1135125552 node_paths=PackedStringArray("action_selector", "actor_selector", "check_box")]
+offset_right = 176.0
+offset_bottom = 140.0
+title = "Set Followers"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+script = ExtResource("1_p1rt4")
+action_selector = NodePath("VBoxContainer/ActionSelector")
+actor_selector = NodePath("VBoxContainer/ActorSelector")
+check_box = NodePath("VBoxContainer/CheckBox")
+
+[node name="VBoxContainer" type="GridContainer" parent="." unique_id=521291034]
+layout_mode = 2
+columns = 2
+
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=1720894681]
+layout_mode = 2
+text = "Action"
+
+[node name="ActionSelector" type="OptionButton" parent="VBoxContainer" unique_id=1507662102]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+clip_text = true
+fit_to_longest_item = false
+
+[node name="Label2" type="Label" parent="VBoxContainer" unique_id=335727071]
+layout_mode = 2
+text = "Actor"
+
+[node name="ActorSelector" type="OptionButton" parent="VBoxContainer" unique_id=1162233958]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+clip_text = true
+fit_to_longest_item = false
+
+[node name="Label4" type="Label" parent="VBoxContainer" unique_id=373218322]
+layout_mode = 2
+text = "Persistent"
+clip_text = true
+
+[node name="CheckBox" type="CheckBox" parent="VBoxContainer" unique_id=1732505900]
+layout_mode = 2
+text = "On"

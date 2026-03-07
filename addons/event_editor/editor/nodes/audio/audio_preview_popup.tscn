@@ -1,0 +1,101 @@
+[gd_scene load_steps=5 format=3 uid="uid://5lhvpexyv81f"]
+
+[ext_resource type="Script" uid="uid://dcgfejstiwgmn" path="res://event_editor/editor/nodes/audio/audio_preview_popup.gd" id="1_audio_popup"]
+[ext_resource type="Texture2D" uid="uid://dajkc6b264i4c" path="res://event_editor/icons/FileDialog.svg" id="2_fm53v"]
+[ext_resource type="Texture2D" uid="uid://bqfq2guyfue87" path="res://event_editor/icons/Play.svg" id="2_krm4g"]
+[ext_resource type="Texture2D" uid="uid://kfp8pcnk4ohw" path="res://event_editor/icons/Stop.svg" id="3_o6q4w"]
+
+[node name="AudioPreviewPopup" type="PopupPanel" unique_id=516543200 node_paths=PackedStringArray("title_label", "path_label", "volume_spin", "pitch_spin", "play_button", "stop_button", "pick_button", "file_dialog", "preview_player")]
+oversampling_override = 1.0
+size = Vector2i(201, 173)
+visible = true
+script = ExtResource("1_audio_popup")
+title_label = NodePath("Margin/VBox/Header")
+path_label = NodePath("Margin/VBox/AudioPickerRow/Path")
+volume_spin = NodePath("Margin/VBox/Grid/VolumeSpin")
+pitch_spin = NodePath("Margin/VBox/Grid/PitchSpin")
+play_button = NodePath("Margin/VBox/Actions/PlayButton")
+stop_button = NodePath("Margin/VBox/Actions/StopButton")
+pick_button = NodePath("Margin/VBox/AudioPickerRow/PickButton")
+file_dialog = NodePath("FileDialog")
+preview_player = NodePath("AudioStreamPlayer")
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=1519649882]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 197.0
+offset_bottom = 169.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="Margin" unique_id=375330452]
+layout_mode = 2
+
+[node name="Header" type="Label" parent="Margin/VBox" unique_id=332593532]
+layout_mode = 2
+text = "Audio Settings"
+
+[node name="AudioPickerRow" type="HBoxContainer" parent="Margin/VBox" unique_id=1345124228]
+layout_mode = 2
+
+[node name="Path" type="Label" parent="Margin/VBox/AudioPickerRow" unique_id=1102255980]
+layout_mode = 2
+text = "(No audio selected)"
+
+[node name="PickButton" type="Button" parent="Margin/VBox/AudioPickerRow" unique_id=1024767699]
+layout_mode = 2
+icon = ExtResource("2_fm53v")
+
+[node name="Grid" type="GridContainer" parent="Margin/VBox" unique_id=1355412349]
+layout_mode = 2
+columns = 2
+
+[node name="VolumeLabel" type="Label" parent="Margin/VBox/Grid" unique_id=660987013]
+layout_mode = 2
+text = "Volume dB"
+
+[node name="VolumeSpin" type="SpinBox" parent="Margin/VBox/Grid" unique_id=213758295]
+layout_mode = 2
+min_value = -80.0
+max_value = 24.0
+step = 0.5
+
+[node name="PitchLabel" type="Label" parent="Margin/VBox/Grid" unique_id=1142706733]
+layout_mode = 2
+text = "Pitch"
+
+[node name="PitchSpin" type="SpinBox" parent="Margin/VBox/Grid" unique_id=407030008]
+layout_mode = 2
+min_value = 0.1
+max_value = 3.0
+step = 0.01
+value = 1.0
+
+[node name="Actions" type="HBoxContainer" parent="Margin/VBox" unique_id=380703963]
+layout_mode = 2
+
+[node name="PlayButton" type="Button" parent="Margin/VBox/Actions" unique_id=120968822]
+layout_mode = 2
+icon = ExtResource("2_krm4g")
+
+[node name="StopButton" type="Button" parent="Margin/VBox/Actions" unique_id=386546762]
+layout_mode = 2
+icon = ExtResource("3_o6q4w")
+
+[node name="FileDialog" type="FileDialog" parent="." unique_id=2147339245]
+title = "Open a File"
+file_mode = 0
+display_mode = 1
+root_subfolder = "res://audio/bgm/"
+filters = PackedStringArray("*.ogg", "*.mp3", "*.wav")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=293323213]
+
+[connection signal="pressed" from="Margin/VBox/AudioPickerRow/PickButton" to="." method="_on_pick_pressed"]
+[connection signal="value_changed" from="Margin/VBox/Grid/VolumeSpin" to="." method="_on_volume_changed"]
+[connection signal="value_changed" from="Margin/VBox/Grid/PitchSpin" to="." method="_on_pitch_changed"]
+[connection signal="pressed" from="Margin/VBox/Actions/PlayButton" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="Margin/VBox/Actions/StopButton" to="." method="_on_stop_pressed"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_selected"]

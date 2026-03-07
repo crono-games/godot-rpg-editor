@@ -1,0 +1,49 @@
+[gd_scene load_steps=4 format=3 uid="uid://dtrbtpselcbti"]
+
+[ext_resource type="Script" uid="uid://brym302crcc5h" path="res://addons/event_editor/editor/nodes/state/state_node_node.gd" id="1_qf10a"]
+[ext_resource type="Texture2D" uid="uid://4l8s3ltydv02" path="res://addons/event_editor/icons/GDScript.svg" id="2_aswdq"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ekxde"]
+bg_color = Color(0.5376825, 5.655363e-07, 1.92523e-07, 1)
+
+[node name="StateNode" type="GraphNode" unique_id=1135125552 node_paths=PackedStringArray("trigger_select", "properties_button")]
+offset_right = 76.0
+offset_bottom = 79.0
+theme_override_styles/titlebar = SubResource("StyleBoxFlat_ekxde")
+title = "Default"
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+script = ExtResource("1_qf10a")
+trigger_select = NodePath("HBoxContainer/OptionButton")
+properties_button = NodePath("HBoxContainer/Button")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=386877083]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="HBoxContainer" unique_id=113779191]
+layout_mode = 2
+icon = ExtResource("2_aswdq")
+
+[node name="OptionButton" type="OptionButton" parent="HBoxContainer" unique_id=471669769]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+selected = 0
+fit_to_longest_item = false
+item_count = 5
+popup/item_0/text = "Action"
+popup/item_0/id = 0
+popup/item_1/text = "Auto"
+popup/item_1/id = 1
+popup/item_2/text = "Touch"
+popup/item_2/id = 2
+popup/item_3/text = "Bump"
+popup/item_3/id = 3
+popup/item_4/text = "Parallel"
+popup/item_4/id = 4

@@ -1,0 +1,76 @@
+[gd_scene load_steps=6 format=3 uid="uid://cxjlygtpo2i1g"]
+
+[ext_resource type="Script" uid="uid://o3rojkadk7je" path="res://event_editor/editor/event_editor.gd" id="1_rqdtu"]
+[ext_resource type="Script" uid="uid://dk41yppoqaby6" path="res://event_editor/core/graph/event_graph_controller.gd" id="2_c8xum"]
+[ext_resource type="Script" uid="uid://d1byity4hb52p" path="res://event_editor/editor/map/map_selector.gd" id="3_0xy6l"]
+[ext_resource type="Script" uid="uid://dwhlv4rwybwyy" path="res://event_editor/core/graph/event_graph_view.gd" id="4_ex2w4"]
+[ext_resource type="PackedScene" uid="uid://22ddxdryvjgb" path="res://event_editor/utilities/popup_panel/context_menu_panel.tscn" id="5_1a4x0"]
+
+[node name="Main" type="HSplitContainer" unique_id=1723871705 node_paths=PackedStringArray("map_selector", "graph_presenter")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_rqdtu")
+map_selector = NodePath("MapSelector")
+graph_presenter = NodePath("GraphPresenter")
+
+[node name="MapSelector" type="PanelContainer" parent="." unique_id=583997289 node_paths=PackedStringArray("maps_list", "events_list")]
+custom_minimum_size = Vector2(190, 0)
+layout_mode = 2
+script = ExtResource("3_0xy6l")
+maps_list = NodePath("VBoxContainer/MapsList")
+events_list = NodePath("VBoxContainer/EventsList")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MapSelector" unique_id=706947736]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MapSelector/VBoxContainer" unique_id=230172503]
+layout_mode = 2
+text = "Maps"
+horizontal_alignment = 1
+
+[node name="MapsList" type="ItemList" parent="MapSelector/VBoxContainer" unique_id=936857416]
+custom_minimum_size = Vector2(0, 256)
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="MapSelector/VBoxContainer" unique_id=1213381106]
+layout_mode = 2
+text = "Events"
+horizontal_alignment = 1
+
+[node name="EventsList" type="ItemList" parent="MapSelector/VBoxContainer" unique_id=884236828]
+custom_minimum_size = Vector2(0, 256)
+layout_mode = 2
+
+[node name="GraphPresenter" type="Node" parent="." unique_id=283366614 node_paths=PackedStringArray("view", "context_menu_panel")]
+script = ExtResource("2_c8xum")
+view = NodePath("../EventGraphView")
+context_menu_panel = NodePath("../ContextMenuPanel")
+
+[node name="Panel" type="Panel" parent="." unique_id=1556971160]
+visible = false
+layout_mode = 2
+
+[node name="EventGraphView" type="GraphEdit" parent="." unique_id=1113955513]
+layout_mode = 2
+minimap_enabled = false
+show_menu = false
+show_zoom_buttons = false
+show_grid_buttons = false
+show_minimap_button = false
+show_arrange_button = false
+script = ExtResource("4_ex2w4")
+
+[node name="ContextMenuPanel" parent="." unique_id=474963166 instance=ExtResource("5_1a4x0")]
+
+[connection signal="connection_delete_requested" from="EventGraphView" to="GraphPresenter" method="_on_connection_delete_requested"]
+[connection signal="connection_from_empty" from="EventGraphView" to="EventGraphView" method="_on_connection_from_empty"]
+[connection signal="connection_request" from="EventGraphView" to="GraphPresenter" method="_on_request_connect"]
+[connection signal="connection_to_empty" from="EventGraphView" to="EventGraphView" method="_on_connection_to_empty"]
+[connection signal="delete_nodes_request" from="EventGraphView" to="GraphPresenter" method="_on_request_delete_nodes"]
+[connection signal="duplicate_nodes_request" from="EventGraphView" to="GraphPresenter" method="_on_request_duplicate_nodes"]
+[connection signal="node_move_ended" from="EventGraphView" to="GraphPresenter" method="_on_node_moved"]
+[connection signal="popup_request" from="EventGraphView" to="GraphPresenter" method="popup_request"]
+[connection signal="request_create_node" from="ContextMenuPanel" to="GraphPresenter" method="_on_request_create_node"]

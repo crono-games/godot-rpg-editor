@@ -1,0 +1,69 @@
+[gd_scene load_steps=2 format=3 uid="uid://bmteegrf7fncj"]
+
+[ext_resource type="Script" uid="uid://bkpqoho377ft2" path="res://addons/event_editor/editor/nodes/screen_shake/screen_shake_node.gd" id="1"]
+
+[node name="ScreenShakeNode" type="GraphNode" unique_id=562217180 node_paths=PackedStringArray("duration_spin", "strength_x_spin", "strength_y_spin")]
+title = "Screen Shake"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+script = ExtResource("1")
+duration_spin = NodePath("Grid/DurationSpin")
+strength_x_spin = NodePath("Grid/StrengthXSpin")
+strength_y_spin = NodePath("Grid/StrengthYSpin")
+
+[node name="Grid" type="GridContainer" parent="." unique_id=1375258885]
+layout_mode = 2
+columns = 2
+
+[node name="DurationLabel" type="Label" parent="Grid" unique_id=1059396223]
+layout_mode = 2
+text = "Frames"
+
+[node name="DurationSpin" type="SpinBox" parent="Grid" unique_id=967275137]
+layout_mode = 2
+max_value = 600.0
+value = 20.0
+
+[node name="StrengthXLabel" type="Label" parent="Grid" unique_id=461409310]
+layout_mode = 2
+text = "X"
+
+[node name="StrengthXSpin" type="SpinBox" parent="Grid" unique_id=1402199875]
+layout_mode = 2
+max_value = 200.0
+step = 0.25
+value = 6.0
+
+[node name="StrengthYLabel" type="Label" parent="Grid" unique_id=1308339600]
+layout_mode = 2
+text = "Y"
+
+[node name="StrengthYSpin" type="SpinBox" parent="Grid" unique_id=412483129]
+layout_mode = 2
+max_value = 200.0
+step = 0.25
+value = 4.0
+
+[node name="Label" type="Label" parent="Grid" unique_id=2069305218]
+layout_mode = 2
+tooltip_text = "Wait for completion."
+mouse_filter = 1
+text = "Wait for completion"
+clip_text = true
+
+[node name="WaitCompletionSpinBox" type="CheckBox" parent="Grid" unique_id=1820224269]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "On"
+
+[connection signal="value_changed" from="Grid/DurationSpin" to="." method="_on_duration_changed"]
+[connection signal="value_changed" from="Grid/StrengthXSpin" to="." method="_on_strength_x_changed"]
+[connection signal="value_changed" from="Grid/StrengthYSpin" to="." method="_on_strength_y_changed"]
+[connection signal="toggled" from="Grid/WaitCompletionSpinBox" to="." method="_on_wait_completion_toggled"]

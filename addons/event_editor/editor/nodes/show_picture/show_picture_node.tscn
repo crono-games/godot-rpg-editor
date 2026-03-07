@@ -1,0 +1,112 @@
+[gd_scene load_steps=3 format=3 uid="uid://br45e4hixjbob"]
+
+[ext_resource type="Script" uid="uid://idpo465hap64" path="res://addons/event_editor/editor/nodes/show_picture/show_picture_node.gd" id="1_showpicui"]
+[ext_resource type="Texture2D" uid="uid://dajkc6b264i4c" path="res://addons/event_editor/icons/FileDialog.svg" id="2_fileicon"]
+
+[node name="ShowPictureNode" type="GraphNode" unique_id=626469275 node_paths=PackedStringArray("texture_name", "button_load", "button_pick_position", "file_dialog", "picture_id_spin", "x_spin", "y_spin", "centered_check", "z_index_spin")]
+title = "Show Picture"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+script = ExtResource("1_showpicui")
+texture_name = NodePath("Grid/TextureRow/TextureName")
+button_load = NodePath("Grid/TextureRow/ButtonLoad")
+button_pick_position = NodePath("Grid/ButtonPickPosition")
+file_dialog = NodePath("FileDialog")
+picture_id_spin = NodePath("Grid/PictureIdSpin")
+x_spin = NodePath("Grid/XSpin")
+y_spin = NodePath("Grid/YSpin")
+centered_check = NodePath("Grid/CenteredCheck")
+z_index_spin = NodePath("Grid/ZSpin")
+
+[node name="Grid" type="GridContainer" parent="." unique_id=810936048]
+layout_mode = 2
+columns = 2
+
+[node name="LabelPictureId" type="Label" parent="Grid" unique_id=745063708]
+layout_mode = 2
+text = "Picture ID"
+
+[node name="PictureIdSpin" type="SpinBox" parent="Grid" unique_id=2005780757]
+layout_mode = 2
+min_value = 1.0
+max_value = 999.0
+value = 1.0
+rounded = true
+
+[node name="LabelTexture" type="Label" parent="Grid" unique_id=1972633392]
+layout_mode = 2
+text = "Texture"
+
+[node name="TextureRow" type="HBoxContainer" parent="Grid" unique_id=928928402]
+layout_mode = 2
+
+[node name="TextureName" type="LineEdit" parent="Grid/TextureRow" unique_id=1170138333]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+
+[node name="ButtonLoad" type="Button" parent="Grid/TextureRow" unique_id=299136932]
+layout_mode = 2
+icon = ExtResource("2_fileicon")
+
+[node name="LabelX" type="Label" parent="Grid" unique_id=2058858856]
+layout_mode = 2
+text = "X"
+
+[node name="XSpin" type="SpinBox" parent="Grid" unique_id=1846218545]
+layout_mode = 2
+min_value = -4096.0
+max_value = 4096.0
+rounded = true
+
+[node name="LabelY" type="Label" parent="Grid" unique_id=408687332]
+layout_mode = 2
+text = "Y"
+
+[node name="YSpin" type="SpinBox" parent="Grid" unique_id=1630610751]
+layout_mode = 2
+min_value = -4096.0
+max_value = 4096.0
+rounded = true
+
+[node name="LabelCentered" type="Label" parent="Grid" unique_id=1096511603]
+visible = false
+layout_mode = 2
+text = "Centered"
+
+[node name="CenteredCheck" type="CheckBox" parent="Grid" unique_id=947012038]
+visible = false
+layout_mode = 2
+text = "On"
+
+[node name="LabelZ" type="Label" parent="Grid" unique_id=643035264]
+layout_mode = 2
+text = "Z Index"
+
+[node name="ZSpin" type="SpinBox" parent="Grid" unique_id=1563062263]
+layout_mode = 2
+min_value = -1024.0
+max_value = 1024.0
+rounded = true
+
+[node name="LabelPick" type="Label" parent="Grid" unique_id=1179259797]
+visible = false
+layout_mode = 2
+text = "Quick Pos"
+
+[node name="ButtonPickPosition" type="Button" parent="Grid" unique_id=1202168020]
+visible = false
+layout_mode = 2
+text = "Center Screen"
+
+[node name="FileDialog" type="FileDialog" parent="." unique_id=2079088983]
+title = "Open a File"
+file_mode = 0
+root_subfolder = "res://graphics/pictures/"
+filters = PackedStringArray("*.png", "*.webp", "*.jpg", "*.jpeg")

@@ -1,0 +1,81 @@
+[gd_scene load_steps=5 format=3 uid="uid://cmn51yo3grekt"]
+
+[ext_resource type="Script" uid="uid://wv1g1bha0876" path="res://addons/event_editor/editor/nodes/dialogue/dialogue_node.gd" id="1_8mcgs"]
+[ext_resource type="Texture2D" uid="uid://dumih8h12tiqq" path="res://addons/event_editor/icons/Add.svg" id="2_hmr0p"]
+
+[sub_resource type="Gradient" id="Gradient_kjfl2"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(0, 0, 0, 0.29411766)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_p6ex0"]
+gradient = SubResource("Gradient_kjfl2")
+metadata/_snap_enabled = true
+metadata/_snap_count = 2
+
+[node name="DialogueNode" type="GraphNode" unique_id=1000000000 node_paths=PackedStringArray("dialogue_container", "add_button", "edit_text_dialog", "edit_text_edit", "edit_graphics_button", "graphics_file_dialog")]
+custom_minimum_size = Vector2(127, 35)
+offset_right = 196.0
+offset_bottom = 123.0
+title = "Show Dialogue"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+script = ExtResource("1_8mcgs")
+dialogue_container = NodePath("VBoxContainer/DialogueContainer")
+add_button = NodePath("VBoxContainer/AddButton")
+edit_text_dialog = NodePath("EditTextDialog")
+edit_text_edit = NodePath("EditTextDialog/PanelContainer/HBoxContainer/TextEdit")
+edit_graphics_button = NodePath("EditTextDialog/PanelContainer/HBoxContainer/GraphicsButton")
+graphics_file_dialog = NodePath("GraphicsFileDialog")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1486735004]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="DialogueContainer" type="VBoxContainer" parent="VBoxContainer" unique_id=1000000001]
+layout_mode = 2
+
+[node name="AddButton" type="Button" parent="VBoxContainer" unique_id=1000000002]
+layout_mode = 2
+text = "Add Element"
+icon = ExtResource("2_hmr0p")
+
+[node name="GraphicsFileDialog" type="FileDialog" parent="." unique_id=1232926426]
+title = "Open a File"
+file_mode = 0
+filters = PackedStringArray("*.png,*.jpg,*.jpeg,*.webp,*.bmp;Images")
+
+[node name="EditTextDialog" type="PopupPanel" parent="." unique_id=2145916999]
+size = Vector2i(360, 101)
+borderless = false
+
+[node name="PanelContainer" type="PanelContainer" parent="EditTextDialog" unique_id=1023149610]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 356.0
+offset_bottom = 97.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="EditTextDialog/PanelContainer" unique_id=383965751]
+layout_mode = 2
+
+[node name="GraphicsButton" type="TextureButton" parent="EditTextDialog/PanelContainer/HBoxContainer" unique_id=408729048]
+visible = false
+custom_minimum_size = Vector2(68, 68)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+texture_normal = SubResource("GradientTexture2D_p6ex0")
+stretch_mode = 3
+
+[node name="TextEdit" type="TextEdit" parent="EditTextDialog/PanelContainer/HBoxContainer" unique_id=2062380322]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[connection signal="pressed" from="VBoxContainer/AddButton" to="." method="_on_add_pressed"]

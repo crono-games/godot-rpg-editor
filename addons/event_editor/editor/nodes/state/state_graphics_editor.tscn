@@ -1,0 +1,91 @@
+[gd_scene load_steps=4 format=3 uid="uid://dnnh6a874rtdw"]
+
+[ext_resource type="Script" uid="uid://codlgkpyd2fsa" path="res://addons/event_editor/editor/nodes/state/state_graphics_editor.gd" id="1_9xq3c"]
+
+[sub_resource type="Gradient" id="Gradient_e342p"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(0.09746797, 0.09746795, 0.09746795, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_voqwg"]
+gradient = SubResource("Gradient_e342p")
+width = 32
+
+[node name="StateGraphicsEditor" type="VBoxContainer" unique_id=1177569257 node_paths=PackedStringArray("graphics_button", "graphics_dialog", "h_frames_spin", "v_frames_spin", "autoslice_check_box", "frame_spin_box", "offset_x_spin", "offset_y_spin")]
+offset_right = 160.0
+offset_bottom = 134.0
+script = ExtResource("1_9xq3c")
+graphics_button = NodePath("GraphicsButton")
+graphics_dialog = NodePath("GraphicsDialog")
+h_frames_spin = NodePath("GridContainer/HFramesSpin")
+v_frames_spin = NodePath("GridContainer/VFramesSpin")
+autoslice_check_box = NodePath("GridContainer/AutosliceCheckBox")
+frame_spin_box = NodePath("GridContainer/FrameSpin")
+offset_x_spin = NodePath("GridContainer/OffsetXSpin")
+offset_y_spin = NodePath("GridContainer/OffsetYSpin")
+
+[node name="GraphicsButton" type="TextureButton" parent="." unique_id=247123736]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture_normal = SubResource("GradientTexture1D_voqwg")
+
+[node name="GridContainer" type="GridContainer" parent="." unique_id=1705671767]
+layout_mode = 2
+columns = 2
+
+[node name="Label" type="Label" parent="GridContainer" unique_id=126210367]
+layout_mode = 2
+text = "HFrames"
+
+[node name="HFramesSpin" type="SpinBox" parent="GridContainer" unique_id=1024138861]
+layout_mode = 2
+min_value = 1.0
+value = 1.0
+rounded = true
+
+[node name="Label2" type="Label" parent="GridContainer" unique_id=1362119765]
+layout_mode = 2
+text = "VFrames"
+
+[node name="VFramesSpin" type="SpinBox" parent="GridContainer" unique_id=933786254]
+layout_mode = 2
+min_value = 1.0
+value = 1.0
+rounded = true
+
+[node name="Label3" type="Label" parent="GridContainer" unique_id=699181327]
+layout_mode = 2
+text = "Autoslice"
+
+[node name="AutosliceCheckBox" type="CheckBox" parent="GridContainer" unique_id=1788765084]
+layout_mode = 2
+text = "On"
+
+[node name="Label4" type="Label" parent="GridContainer" unique_id=149739415]
+layout_mode = 2
+text = "Frame"
+
+[node name="FrameSpin" type="SpinBox" parent="GridContainer" unique_id=149739416]
+layout_mode = 2
+rounded = true
+
+[node name="Label5" type="Label" parent="GridContainer" unique_id=1420867772]
+layout_mode = 2
+text = "Offset X"
+
+[node name="OffsetXSpin" type="SpinBox" parent="GridContainer" unique_id=1344735483]
+layout_mode = 2
+rounded = true
+
+[node name="Label6" type="Label" parent="GridContainer" unique_id=999365670]
+layout_mode = 2
+text = "Offset Y"
+
+[node name="OffsetYSpin" type="SpinBox" parent="GridContainer" unique_id=1146082649]
+layout_mode = 2
+rounded = true
+
+[node name="GraphicsDialog" type="FileDialog" parent="." unique_id=1518242792]
+title = "Open a File"
+file_mode = 0
+root_subfolder = "res://assets/graphics/actors"
+filters = PackedStringArray("*.png")

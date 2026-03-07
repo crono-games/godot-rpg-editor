@@ -1,0 +1,108 @@
+[gd_scene load_steps=5 format=3 uid="uid://dhc46itmr53dq"]
+
+[ext_resource type="Script" uid="uid://cocv4hrohubgg" path="res://event_editor/utilities/visual_fx_picker/visual_fx_picker.gd" id="1_bcck8"]
+[ext_resource type="Script" uid="uid://dorkpond4t1rs" path="res://event_editor/utilities/set_position/grid_selector.gd" id="2_mwptn"]
+[ext_resource type="Texture2D" uid="uid://bqfq2guyfue87" path="res://event_editor/icons/Play.svg" id="2_r3qef"]
+[ext_resource type="Texture2D" uid="uid://kfp8pcnk4ohw" path="res://event_editor/icons/Stop.svg" id="3_mwptn"]
+
+[node name="VisualFXPicker" type="Popup" unique_id=191788038 node_paths=PackedStringArray("animation_list", "button_play", "button_stop", "animation_bar")]
+snap_2d_vertices_to_pixel = true
+oversampling_override = 1.0
+title = "Pick Position"
+initial_position = 1
+size = Vector2i(480, 480)
+visible = true
+content_scale_stretch = 1
+script = ExtResource("1_bcck8")
+animation_list = NodePath("MarginContainer/VBoxContainer/HBoxContainer/ItemList")
+button_play = NodePath("MarginContainer/VBoxContainer/HBoxContainer2/ButtonPlay")
+button_stop = NodePath("MarginContainer/VBoxContainer/HBoxContainer2/ButtonStop")
+animation_bar = NodePath("MarginContainer/VBoxContainer/HBoxContainer2/AnimationBar")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=716203269]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1483576683]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=568172563]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1561372194]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Pick Position"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1964877464]
+layout_mode = 2
+
+[node name="ItemList" type="ItemList" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=2117994656]
+custom_minimum_size = Vector2(160, 240)
+layout_mode = 2
+item_count = 2
+item_0/text = "map1"
+item_1/text = "map2"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=4529593]
+custom_minimum_size = Vector2(180, 240)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer" unique_id=165646534]
+custom_minimum_size = Vector2(320, 240)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/HBoxContainer" unique_id=619339937]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SubViewport" type="SubViewport" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/HBoxContainer/SubViewportContainer" unique_id=329028381]
+unique_name_in_owner = true
+own_world_3d = true
+handle_input_locally = false
+size = Vector2i(320, 192)
+render_target_update_mode = 4
+
+[node name="Camera2D" type="Camera2D" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/HBoxContainer/SubViewportContainer/SubViewport" unique_id=1466586512]
+anchor_mode = 0
+
+[node name="GridSelector" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/HBoxContainer/SubViewportContainer" unique_id=993246224]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(320, 192)
+layout_mode = 2
+script = ExtResource("2_mwptn")
+metadata/_custom_type_script = "uid://dorkpond4t1rs"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=2005710570]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="ButtonPlay" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer2" unique_id=265968170]
+layout_mode = 2
+icon = ExtResource("2_r3qef")
+
+[node name="ButtonStop" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer2" unique_id=1552925262]
+layout_mode = 2
+icon = ExtResource("3_mwptn")
+
+[node name="AnimationBar" type="HScrollBar" parent="MarginContainer/VBoxContainer/HBoxContainer2" unique_id=231420546]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+size_flags_vertical = 4

@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" uid="uid://dhketit20tyv4" path="res://addons/event_editor/editor/nodes/erase_picture/erase_picture_node.gd" id="1_erasepicui"]
+
+[node name="ErasePictureNode" type="GraphNode" node_paths=PackedStringArray("picture_id_spin")]
+title = "Erase Picture"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/draw_stylebox = true
+script = ExtResource("1_erasepicui")
+picture_id_spin = NodePath("HBox/PictureIdSpin")
+
+[node name="HBox" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBox"]
+layout_mode = 2
+text = "Picture ID"
+
+[node name="PictureIdSpin" type="SpinBox" parent="HBox"]
+layout_mode = 2
+min_value = 1.0
+max_value = 999.0
+step = 1.0
+rounded = true
+value = 1.0

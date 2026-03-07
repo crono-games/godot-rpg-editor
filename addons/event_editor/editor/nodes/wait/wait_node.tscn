@@ -1,0 +1,45 @@
+[gd_scene load_steps=2 format=3 uid="uid://ien1ywqtbje4"]
+
+[ext_resource type="Script" uid="uid://m1adcexixh2s" path="res://addons/event_editor/editor/nodes/wait/wait_node.gd" id="1_waitui"]
+
+[node name="WaitNode" type="GraphNode" unique_id=780346716 node_paths=PackedStringArray("duration_spin", "lock_movement_check_box")]
+offset_right = 174.0
+offset_bottom = 121.0
+title = "Wait"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+script = ExtResource("1_waitui")
+duration_spin = NodePath("GridContainer/DurationSpinBox")
+lock_movement_check_box = NodePath("GridContainer/LockMovementCheckBox")
+
+[node name="GridContainer" type="GridContainer" parent="." unique_id=1687311341]
+layout_mode = 2
+columns = 2
+
+[node name="Label" type="Label" parent="GridContainer" unique_id=923786098]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+text = "Frames"
+clip_text = true
+
+[node name="DurationSpinBox" type="SpinBox" parent="GridContainer" unique_id=1191394119]
+layout_mode = 2
+rounded = true
+
+[node name="Label2" type="Label" parent="GridContainer" unique_id=1483132350]
+layout_mode = 2
+tooltip_text = "Lock Movement"
+mouse_filter = 1
+text = "Lock Movement"
+clip_text = true
+
+[node name="LockMovementCheckBox" type="CheckBox" parent="GridContainer" unique_id=1835189470]
+layout_mode = 2
+text = "On"

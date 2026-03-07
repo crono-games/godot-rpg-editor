@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" uid="uid://bti17jdir1de8" path="res://addons/event_editor/runtime/followers/follower_controller_pixel.gd" id="1_script"]
+
+[node name="FollowerControllerPixel" type="Node"]
+script = ExtResource("1_script")

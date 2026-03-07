@@ -1,0 +1,84 @@
+[gd_scene load_steps=3 format=3 uid="uid://d1b7t8m4x2w1n"]
+
+[ext_resource type="Script" uid="uid://qdym4kgepj22" path="res://addons/event_editor/editor/nodes/variable_condition/variable_condition_node.gd" id="1_k2q1m"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bi8x1"]
+bg_color = Color(0, 0, 0, 0.039215688)
+
+[node name="VariableConditionNode" type="GraphNode" unique_id=1135125552 node_paths=PackedStringArray("variable_selector", "operator_selector", "spinbox")]
+offset_right = 250.0
+offset_bottom = 125.0
+title = "Variable Condition"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = true
+slot/1/right_type = 0
+slot/1/right_color = Color(0, 1, 0, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+slot/2/left_enabled = false
+slot/2/left_type = 0
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = true
+slot/2/right_type = 0
+slot/2/right_color = Color(1, 0, 0, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+script = ExtResource("1_k2q1m")
+variable_selector = NodePath("HBoxContainer/VariableSelector")
+operator_selector = NodePath("HBoxContainer/OperatorSelector")
+spinbox = NodePath("HBoxContainer/SpinBox")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1127221314]
+layout_mode = 2
+
+[node name="VariableSelector" type="OptionButton" parent="HBoxContainer" unique_id=1809989370]
+layout_mode = 2
+selected = 0
+fit_to_longest_item = false
+item_count = 1
+popup/item_0/id = 0
+
+[node name="OperatorSelector" type="OptionButton" parent="HBoxContainer" unique_id=1781290861]
+layout_mode = 2
+selected = 0
+item_count = 6
+popup/item_0/text = "=="
+popup/item_0/id = 0
+popup/item_1/text = "!="
+popup/item_1/id = 1
+popup/item_2/text = ">"
+popup/item_2/id = 2
+popup/item_3/text = ">="
+popup/item_3/id = 3
+popup/item_4/text = "<"
+popup/item_4/id = 4
+popup/item_5/text = "<="
+popup/item_5/id = 5
+
+[node name="SpinBox" type="SpinBox" parent="HBoxContainer" unique_id=1445171504]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="." unique_id=1788114684]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_bi8x1")
+text = "Yes"
+horizontal_alignment = 2
+
+[node name="Label2" type="Label" parent="." unique_id=766771052]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_bi8x1")
+text = "No"
+horizontal_alignment = 2

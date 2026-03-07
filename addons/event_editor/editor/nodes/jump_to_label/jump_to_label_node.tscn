@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://b50x7axqf74vi"]
+
+[ext_resource type="Script" uid="uid://dex7sfl5ch062" path="res://addons/event_editor/editor/nodes/jump_to_label/jump_to_label_node_node.gd" id="1"]
+
+[node name="JumpToLabelNode" type="GraphNode" unique_id=61824454 node_paths=PackedStringArray("target_edit")]
+title = "Jump To Label"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+script = ExtResource("1")
+target_edit = NodePath("HBox/TargetEdit")
+
+[node name="HBox" type="HBoxContainer" parent="." unique_id=36897070]
+layout_mode = 2
+
+[node name="TargetLabel" type="Label" parent="HBox" unique_id=1032187754]
+layout_mode = 2
+text = "Target"
+
+[node name="TargetEdit" type="LineEdit" parent="HBox" unique_id=1485050167]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "start"
+
+[connection signal="text_changed" from="HBox/TargetEdit" to="." method="_on_text_changed"]

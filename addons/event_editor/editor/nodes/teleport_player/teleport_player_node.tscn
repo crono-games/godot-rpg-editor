@@ -1,0 +1,85 @@
+[gd_scene load_steps=4 format=3 uid="uid://c7m3xaq0c1k5u"]
+
+[ext_resource type="Script" uid="uid://bah3i7d6nntx4" path="res://addons/event_editor/editor/nodes/teleport_player/teleport_player_node.gd" id="1_tf8t7"]
+[ext_resource type="Texture2D" uid="uid://b64p6mjvyqdh2" path="res://addons/event_editor/icons/ColorPick.svg" id="2_mejbh"]
+[ext_resource type="PackedScene" uid="uid://d0ux7d3n5p2cl" path="res://addons/event_editor/utilities/position_picker/position_picker.tscn" id="2_picker"]
+
+[node name="TeleportPlayerNode" type="GraphNode" unique_id=1135125552 node_paths=PackedStringArray("position_picker", "auto_fade_check", "fade_frames_spin", "facing_dir_selector")]
+offset_right = 232.0
+offset_bottom = 149.0
+size_flags_horizontal = 0
+title = "Teleport Player"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+script = ExtResource("1_tf8t7")
+position_picker = NodePath("PositionPicker")
+auto_fade_check = NodePath("GridContainer/AutoFade")
+fade_frames_spin = NodePath("GridContainer/FadeFramesSpin")
+facing_dir_selector = NodePath("GridContainer/FacingDirSelector")
+
+[node name="GridContainer" type="GridContainer" parent="." unique_id=351404758]
+layout_mode = 2
+columns = 2
+
+[node name="Label" type="Label" parent="GridContainer" unique_id=889498400]
+layout_mode = 2
+text = "Position"
+
+[node name="PickPosition" type="Button" parent="GridContainer" unique_id=1077101033]
+layout_mode = 2
+size_flags_horizontal = 10
+icon = ExtResource("2_mejbh")
+
+[node name="Label2" type="Label" parent="GridContainer" unique_id=1668018525]
+layout_mode = 2
+text = "Direction"
+
+[node name="FacingDirSelector" type="OptionButton" parent="GridContainer" unique_id=1141889014]
+layout_mode = 2
+size_flags_horizontal = 8
+selected = 0
+fit_to_longest_item = false
+item_count = 5
+popup/item_0/text = "Keep"
+popup/item_0/id = 0
+popup/item_1/text = "Down"
+popup/item_1/id = 1
+popup/item_2/text = "Left"
+popup/item_2/id = 2
+popup/item_3/text = "Right"
+popup/item_3/id = 3
+popup/item_4/text = "Up"
+popup/item_4/id = 4
+
+[node name="AutoFadeLabel" type="Label" parent="GridContainer" unique_id=1723910799]
+layout_mode = 2
+text = "Auto Fade"
+
+[node name="AutoFade" type="CheckBox" parent="GridContainer" unique_id=1038280548]
+layout_mode = 2
+size_flags_horizontal = 10
+button_pressed = true
+text = "On"
+
+[node name="FadeFramesLabel" type="Label" parent="GridContainer" unique_id=1980824617]
+layout_mode = 2
+text = "Fade (frames)"
+
+[node name="FadeFramesSpin" type="SpinBox" parent="GridContainer" unique_id=844876775]
+layout_mode = 2
+size_flags_horizontal = 8
+max_value = 600.0
+value = 30.0
+
+[node name="PositionPicker" parent="." unique_id=1807999306 instance=ExtResource("2_picker")]
+visible = false
+show_map_list = true
+
+[connection signal="pressed" from="GridContainer/PickPosition" to="." method="_on_button_pressed"]

@@ -1,0 +1,214 @@
+[gd_scene load_steps=14 format=3 uid="uid://jomvg7hso1at"]
+
+[ext_resource type="Script" uid="uid://cq0cga5nxnkl4" path="res://assets/templates/events/3d/player_instance_3d_grid.gd" id="1_4semh"]
+[ext_resource type="Texture2D" uid="uid://kb7s3vc8u67c" path="res://assets/graphics/actors/Player Base.png" id="2_1ref0"]
+
+[sub_resource type="Animation" id="Animation_81tj3"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite3D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_dvmjd"]
+resource_name = "idle_down"
+length = 0.1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite3D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [4]
+}
+
+[sub_resource type="Animation" id="Animation_wbsvf"]
+resource_name = "idle_left"
+length = 0.1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite3D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [8]
+}
+
+[sub_resource type="Animation" id="Animation_wbyjf"]
+resource_name = "idle_right"
+length = 0.1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite3D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [20]
+}
+
+[sub_resource type="Animation" id="Animation_4w6cl"]
+resource_name = "idle_up"
+length = 0.1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite3D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [24]
+}
+
+[sub_resource type="Animation" id="Animation_68ls3"]
+resource_name = "move_down"
+length = 0.8
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite3D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [1, 2, 3, 4, 5, 6, 7, 0]
+}
+
+[sub_resource type="Animation" id="Animation_k2gvu"]
+resource_name = "move_left"
+length = 0.8
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite3D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [9, 10, 11, 12, 13, 14, 15, 12]
+}
+
+[sub_resource type="Animation" id="Animation_7hq4c"]
+resource_name = "move_right"
+length = 0.8
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite3D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [17, 18, 19, 20, 21, 22, 23, 16]
+}
+
+[sub_resource type="Animation" id="Animation_t10w2"]
+resource_name = "move_up"
+length = 0.8
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite3D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [25, 26, 27, 28, 29, 30, 31, 24]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_r8dbh"]
+_data = {
+&"RESET": SubResource("Animation_81tj3"),
+&"idle_down": SubResource("Animation_dvmjd"),
+&"idle_left": SubResource("Animation_wbsvf"),
+&"idle_right": SubResource("Animation_wbyjf"),
+&"idle_up": SubResource("Animation_4w6cl"),
+&"move_down": SubResource("Animation_68ls3"),
+&"move_left": SubResource("Animation_k2gvu"),
+&"move_right": SubResource("Animation_7hq4c"),
+&"move_up": SubResource("Animation_t10w2")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4semh"]
+
+[node name="PlayerInstanceGrid" type="Node3D" unique_id=836374944 node_paths=PackedStringArray("trigger_area", "hitbox_area", "camera", "animation_player", "sprite", "area") groups=["Event", "PlayerInstance"]]
+script = ExtResource("1_4semh")
+trigger_area = NodePath("TriggerArea")
+hitbox_area = NodePath("HitboxArea")
+id = "4075212596557353189"
+move_speed = 2.0
+camera = NodePath("Camera3D")
+animation_player = NodePath("AnimationPlayer")
+sprite = NodePath("Sprite3D")
+area = NodePath("TriggerArea")
+
+[node name="Sprite3D" type="Sprite3D" parent="." unique_id=2138372148]
+offset = Vector2(0, -4)
+pixel_size = 0.0313
+billboard = 1
+texture_filter = 0
+texture = ExtResource("2_1ref0")
+hframes = 8
+vframes = 4
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=545673423]
+transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.7071068, 0, 8, 8)
+current = true
+fov = 28.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1938596047]
+libraries = {
+&"": SubResource("AnimationLibrary_r8dbh")
+}
+
+[node name="TriggerArea" type="Area3D" parent="." unique_id=876161847]
+
+[node name="CollisionShape2D" type="CollisionShape3D" parent="TriggerArea" unique_id=200991616]
+shape = SubResource("BoxShape3D_4semh")
+
+[node name="HitboxArea" type="Area3D" parent="." unique_id=88131765]
+
+[node name="CollisionShape2D" type="CollisionShape3D" parent="HitboxArea" unique_id=645305488]
+shape = SubResource("BoxShape3D_4semh")

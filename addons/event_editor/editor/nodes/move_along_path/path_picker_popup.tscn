@@ -1,0 +1,147 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1ltw8ssj2v8r"]
+
+[ext_resource type="Script" uid="uid://dcbpq68lbhb86" path="res://event_editor/editor/nodes/move_along_path/path_picker_popup.gd" id="1"]
+[ext_resource type="Script" uid="uid://brhlj7aaisbjs" path="res://event_editor/editor/nodes/move_along_path/path_overlay_2d.gd" id="2"]
+
+[node name="PathPickerPopup" type="ConfirmationDialog" unique_id=527542978 node_paths=PackedStringArray("sub_viewport", "camera_2d", "preview_container", "scroll", "overlay", "points_list", "show_grid_check", "mode_selector", "zoom_label", "curve_check", "curve_subdivisions_spin")]
+oversampling_override = 1.0
+title = "Edit Path"
+initial_position = 1
+size = Vector2i(760, 460)
+visible = true
+script = ExtResource("1")
+sub_viewport = NodePath("Root/HBox/PreviewColumn/Scroll/SubViewportContainer/SubViewport")
+camera_2d = NodePath("Root/HBox/PreviewColumn/Scroll/SubViewportContainer/SubViewport/Camera2D")
+preview_container = NodePath("Root/HBox/PreviewColumn/Scroll/SubViewportContainer")
+scroll = NodePath("Root/HBox/PreviewColumn/Scroll")
+overlay = NodePath("Root/HBox/PreviewColumn/Scroll/SubViewportContainer/PathOverlay")
+points_list = NodePath("Root/HBox/SideColumn/PointsList")
+show_grid_check = NodePath("Root/HBox/PreviewColumn/Toolbar/ShowGridCheck")
+mode_selector = NodePath("Root/HBox/PreviewColumn/Toolbar/ModeSelector")
+zoom_label = NodePath("Root/HBox/PreviewColumn/Toolbar/ZoomLabel")
+curve_check = NodePath("Root/HBox/SideColumn/CurveRow/CurveCheck")
+curve_subdivisions_spin = NodePath("Root/HBox/SideColumn/CurveRow/CurveSubdivisionsSpin")
+
+[node name="Root" type="MarginContainer" parent="." unique_id=1323558029]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 752.0
+offset_bottom = 442.0
+
+[node name="HBox" type="HBoxContainer" parent="Root" unique_id=1075355672]
+layout_mode = 2
+
+[node name="SideColumn" type="VBoxContainer" parent="Root/HBox" unique_id=378282854]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+
+[node name="PointsLabel" type="Label" parent="Root/HBox/SideColumn" unique_id=1530594055]
+layout_mode = 2
+text = "Path Points"
+
+[node name="PointsList" type="ItemList" parent="Root/HBox/SideColumn" unique_id=1508390136]
+custom_minimum_size = Vector2(220, 300)
+layout_mode = 2
+
+[node name="ButtonsRow" type="HBoxContainer" parent="Root/HBox/SideColumn" unique_id=1446488673]
+layout_mode = 2
+
+[node name="RemoveButton" type="Button" parent="Root/HBox/SideColumn/ButtonsRow" unique_id=2130316144]
+layout_mode = 2
+text = "Remove"
+
+[node name="ClearButton" type="Button" parent="Root/HBox/SideColumn/ButtonsRow" unique_id=1038770524]
+layout_mode = 2
+text = "Clear"
+
+[node name="CurveRow" type="HBoxContainer" parent="Root/HBox/SideColumn" unique_id=1524661823]
+visible = false
+layout_mode = 2
+
+[node name="CurveCheck" type="CheckBox" parent="Root/HBox/SideColumn/CurveRow" unique_id=1410574608]
+layout_mode = 2
+text = "Curve"
+
+[node name="CurveSubdivisionsSpin" type="SpinBox" parent="Root/HBox/SideColumn/CurveRow" unique_id=692792980]
+custom_minimum_size = Vector2(74, 0)
+layout_mode = 2
+min_value = 1.0
+max_value = 16.0
+value = 6.0
+
+[node name="ApplyRow" type="HBoxContainer" parent="Root/HBox/SideColumn" unique_id=2065693441]
+layout_mode = 2
+
+[node name="CancelButton" type="Button" parent="Root/HBox/SideColumn/ApplyRow" unique_id=798475680]
+layout_mode = 2
+text = "Cancel"
+
+[node name="ApplyButton" type="Button" parent="Root/HBox/SideColumn/ApplyRow" unique_id=660918774]
+layout_mode = 2
+text = "Apply"
+
+[node name="PreviewColumn" type="VBoxContainer" parent="Root/HBox" unique_id=630136044]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Toolbar" type="HBoxContainer" parent="Root/HBox/PreviewColumn" unique_id=610911722]
+layout_mode = 2
+
+[node name="HintLabel" type="Label" parent="Root/HBox/PreviewColumn/Toolbar" unique_id=1532357534]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Left click: add point"
+
+[node name="ModeSelector" type="OptionButton" parent="Root/HBox/PreviewColumn/Toolbar" unique_id=1586015183]
+visible = false
+custom_minimum_size = Vector2(92, 0)
+layout_mode = 2
+selected = 0
+item_count = 3
+popup/item_0/text = "Add"
+popup/item_0/id = 0
+popup/item_1/text = "Move"
+popup/item_1/id = 1
+popup/item_2/text = "Delete"
+popup/item_2/id = 2
+
+[node name="ShowGridCheck" type="CheckBox" parent="Root/HBox/PreviewColumn/Toolbar" unique_id=241934374]
+layout_mode = 2
+button_pressed = true
+text = "Grid"
+
+[node name="ZoomLabel" type="Label" parent="Root/HBox/PreviewColumn/Toolbar" unique_id=2043837870]
+visible = false
+layout_mode = 2
+text = "100%"
+
+[node name="Scroll" type="ScrollContainer" parent="Root/HBox/PreviewColumn" unique_id=938177048]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Root/HBox/PreviewColumn/Scroll" unique_id=403687625]
+custom_minimum_size = Vector2(480, 320)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SubViewport" type="SubViewport" parent="Root/HBox/PreviewColumn/Scroll/SubViewportContainer" unique_id=1165255473]
+handle_input_locally = false
+size = Vector2i(480, 320)
+render_target_update_mode = 4
+
+[node name="Camera2D" type="Camera2D" parent="Root/HBox/PreviewColumn/Scroll/SubViewportContainer/SubViewport" unique_id=1372814366]
+
+[node name="PathOverlay" type="Control" parent="Root/HBox/PreviewColumn/Scroll/SubViewportContainer" unique_id=1979871991]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 1
+script = ExtResource("2")
+
+[connection signal="pressed" from="Root/HBox/SideColumn/ButtonsRow/RemoveButton" to="." method="_on_remove_pressed"]
+[connection signal="pressed" from="Root/HBox/SideColumn/ButtonsRow/ClearButton" to="." method="_on_clear_pressed"]
+[connection signal="pressed" from="Root/HBox/SideColumn/ApplyRow/CancelButton" to="." method="_on_cancel_pressed"]
+[connection signal="pressed" from="Root/HBox/SideColumn/ApplyRow/ApplyButton" to="." method="_on_apply_pressed"]

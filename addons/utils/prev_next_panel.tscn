@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://dncwpq8832vdu"]
+
+[ext_resource type="Texture2D" uid="uid://ce2768u78nmcs" path="res://addons/event_editor/icons/GuiTreeArrowLeft.svg" id="1_8vrbf"]
+[ext_resource type="Texture2D" uid="uid://bj4rk5lcn53re" path="res://addons/event_editor/icons/GuiTreeArrowRight.svg" id="2_lphtu"]
+
+[node name="HBoxContainer" type="HBoxContainer" unique_id=1042153457]
+
+[node name="Button" type="Button" parent="." unique_id=1236755991]
+layout_mode = 2
+theme_override_colors/font_disabled_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_disabled_color = Color(1, 1, 1, 1)
+disabled = true
+text = " Previous"
+icon = ExtResource("1_8vrbf")
+flat = true
+
+[node name="Button2" type="Button" parent="." unique_id=80112350]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_colors/font_disabled_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_disabled_color = Color(1, 1, 1, 1)
+disabled = true
+text = "Next"
+icon = ExtResource("2_lphtu")
+flat = true
+icon_alignment = 2

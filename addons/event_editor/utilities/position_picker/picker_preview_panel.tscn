@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" uid="uid://dorkpond4t1rs" path="res://event_editor/utilities/set_position/grid_selector.gd" id="1_grid"]
+
+[node name="PickerPreviewPanel" type="HBoxContainer"]
+custom_minimum_size = Vector2(320, 240)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+own_world_3d = true
+handle_input_locally = false
+size = Vector2i(320, 192)
+render_target_update_mode = 4
+
+[node name="Camera2D" type="Camera2D" parent="SubViewportContainer/SubViewport"]
+
+[node name="GridSelector" type="Control" parent="SubViewportContainer"]
+custom_minimum_size = Vector2(320, 192)
+layout_mode = 2
+script = ExtResource("1_grid")
+metadata/_custom_type_script = "uid://dorkpond4t1rs"

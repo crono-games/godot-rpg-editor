@@ -1,0 +1,118 @@
+[gd_scene load_steps=11 format=3 uid="uid://dmtikup0wg53i"]
+
+[ext_resource type="Script" uid="uid://cio8sqo1vwgfv" path="res://addons/event_editor/runtime/dialog/dialogue_base.gd" id="1_qhpya"]
+[ext_resource type="Texture2D" uid="uid://ducl8wm0xh0am" path="res://assets/graphics/system/textbox.png" id="3_j4jsf"]
+[ext_resource type="FontFile" uid="uid://bsomcpha5n6jq" path="res://assets/fonts/m5x7.ttf" id="3_n2257"]
+[ext_resource type="Script" uid="uid://nmvm50jipfme" path="res://addons/event_editor/runtime/dialog/choices_panel.gd" id="3_yj7c0"]
+[ext_resource type="Script" uid="uid://5djxatswwcgo" path="res://addons/event_editor/runtime/dialog/dialog_input_controller.gd" id="4_52vui"]
+[ext_resource type="Script" uid="uid://beecj8mnviifk" path="res://addons/event_editor/runtime/dialog/dialog_runner.gd" id="6_s3w80"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_e8siv"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_y2q7j"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ngjwe"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+texture_margin_left = 16.0
+texture_margin_top = 16.0
+texture_margin_right = 16.0
+texture_margin_bottom = 16.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_y0ctl"]
+font = ExtResource("3_n2257")
+font_color = Color(0.17044133, 0.17044118, 0.17044118, 1)
+
+[node name="DialogueBox" type="CanvasLayer" unique_id=1447092717 node_paths=PackedStringArray("label", "sound", "timer", "choices_container", "runner")]
+script = ExtResource("1_qhpya")
+speed_text = 0.05
+label = NodePath("Control/VBoxContainer/PanelContainer/Label")
+sound = NodePath("AudioStreamPlayer")
+timer = NodePath("Timer")
+choices_container = NodePath("Control/VBoxContainer/ChoicesPanelContainer/ChoicesContainer")
+runner = NodePath("DialogueRunner")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1054521924]
+
+[node name="Timer" type="Timer" parent="." unique_id=1231158442]
+wait_time = 0.5
+
+[node name="Control" type="Control" parent="." unique_id=1477717145]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_lock_ = true
+
+[node name="VBoxContainer" type="Control" parent="Control" unique_id=1731592101]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -128.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="ChoicesPanelContainer" type="PanelContainer" parent="Control/VBoxContainer" unique_id=1624577963]
+visible = false
+layout_mode = 0
+offset_right = 64.0
+offset_bottom = 64.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_e8siv")
+
+[node name="NinePatchRect" type="NinePatchRect" parent="Control/VBoxContainer/ChoicesPanelContainer" unique_id=1906023758]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+region_rect = Rect2(0, 0, 256, 80)
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+patch_margin_bottom = 16
+axis_stretch_horizontal = 1
+
+[node name="ChoicesContainer" type="VBoxContainer" parent="Control/VBoxContainer/ChoicesPanelContainer" unique_id=258377226]
+layout_mode = 2
+script = ExtResource("3_yj7c0")
+
+[node name="PanelContainer" type="PanelContainer" parent="Control/VBoxContainer" unique_id=946898640]
+layout_mode = 0
+offset_top = 64.0
+offset_right = 256.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_y2q7j")
+
+[node name="NinePatchRect2" type="NinePatchRect" parent="Control/VBoxContainer/PanelContainer" unique_id=170188542]
+layout_mode = 2
+texture = ExtResource("3_j4jsf")
+region_rect = Rect2(0, 0, 40, 40)
+patch_margin_left = 12
+patch_margin_top = 12
+patch_margin_right = 12
+patch_margin_bottom = 12
+axis_stretch_horizontal = 1
+
+[node name="Label" type="Label" parent="Control/VBoxContainer/PanelContainer" unique_id=854557705]
+custom_minimum_size = Vector2(224, 64)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_ngjwe")
+label_settings = SubResource("LabelSettings_y0ctl")
+
+[node name="DialogueInputController" type="Node" parent="." unique_id=1655132542 node_paths=PackedStringArray("runner", "dialog_box")]
+script = ExtResource("4_52vui")
+runner = NodePath("../DialogueRunner")
+dialog_box = NodePath("..")
+
+[node name="DialogueRunner" type="Node" parent="." unique_id=157419476]
+script = ExtResource("6_s3w80")
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="choices_started" from="DialogueRunner" to="." method="show_choices"]
+[connection signal="finished" from="DialogueRunner" to="." method="close"]
+[connection signal="page_started" from="DialogueRunner" to="." method="show_page"]

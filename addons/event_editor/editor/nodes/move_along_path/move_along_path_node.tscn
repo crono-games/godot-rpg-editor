@@ -1,0 +1,149 @@
+[gd_scene load_steps=5 format=3 uid="uid://d0gga0uaphkbp"]
+
+[ext_resource type="Script" uid="uid://qjdd03yc5yud" path="res://addons/event_editor/editor/nodes/move_along_path/move_along_path_node.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://b1ltw8ssj2v8r" path="res://addons/event_editor/editor/nodes/move_along_path/path_picker_popup.tscn" id="2"]
+[ext_resource type="Texture2D" uid="uid://ru6rt3ywgfb6" path="res://addons/event_editor/icons/Edit.svg" id="3"]
+[ext_resource type="Script" uid="uid://le5pylatl85e" path="res://addons/event_editor/editor/nodes/move_along_path/path_preview_control.gd" id="4"]
+
+[node name="MoveAlongPathNode" type="GraphNode" unique_id=645782382 node_paths=PackedStringArray("target_selector", "points_count_label", "speed_spin", "loop_check", "wait_check", "return_back_check", "snap_to_first_check", "path_picker_popup", "path_preview")]
+offset_right = 157.0
+offset_bottom = 188.0
+title = "Move Along Path"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+script = ExtResource("1")
+target_selector = NodePath("VBox/TargetRow/TargetSelector")
+points_count_label = NodePath("VBox/PathRow/PointsCount")
+speed_spin = NodePath("VBox/SettingsRow/SpeedSpin")
+loop_check = NodePath("VBox/HBoxContainer3/LoopCheck")
+wait_check = NodePath("VBox/HBoxContainer2/WaitCheck")
+return_back_check = NodePath("VBox/HBoxContainer/ReturnBackCheck")
+snap_to_first_check = NodePath("VBox/HBoxContainer4/SnapToFirstCheck")
+path_picker_popup = NodePath("PathPickerPopup")
+path_preview = NodePath("VBox/PathPreview")
+
+[node name="VBox" type="VBoxContainer" parent="." unique_id=356386289]
+layout_mode = 2
+
+[node name="TargetRow" type="HBoxContainer" parent="VBox" unique_id=297920010]
+layout_mode = 2
+
+[node name="TargetLabel" type="Label" parent="VBox/TargetRow" unique_id=1391136316]
+visible = false
+layout_mode = 2
+text = "Target"
+
+[node name="TargetSelector" type="OptionButton" parent="VBox/TargetRow" unique_id=1199575312]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+clip_text = true
+fit_to_longest_item = false
+
+[node name="PickButton" type="Button" parent="VBox/TargetRow" unique_id=1758806775]
+layout_mode = 2
+icon = ExtResource("3")
+
+[node name="PathRow" type="HBoxContainer" parent="VBox" unique_id=1551643891]
+visible = false
+layout_mode = 2
+
+[node name="PointsCount" type="Label" parent="VBox/PathRow" unique_id=1708498826]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0 points"
+
+[node name="ClearPointsButton" type="Button" parent="VBox/PathRow" unique_id=659736575]
+layout_mode = 2
+text = "Clear"
+
+[node name="PathPreview" type="Control" parent="VBox" unique_id=2048475100]
+visible = false
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("4")
+
+[node name="SettingsRow" type="HBoxContainer" parent="VBox" unique_id=34890589]
+visible = false
+layout_mode = 2
+
+[node name="SpeedLabel" type="Label" parent="VBox/SettingsRow" unique_id=1938651923]
+layout_mode = 2
+text = "Speed"
+
+[node name="SpeedSpin" type="SpinBox" parent="VBox/SettingsRow" unique_id=1196327056]
+custom_minimum_size = Vector2(86, 0)
+layout_mode = 2
+min_value = 1.0
+max_value = 1024.0
+value = 64.0
+
+[node name="FlagsRow" type="HBoxContainer" parent="VBox" unique_id=1446813603]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBox" unique_id=345747246]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBox/HBoxContainer" unique_id=282529399]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "Return Back"
+clip_text = true
+
+[node name="ReturnBackCheck" type="CheckBox" parent="VBox/HBoxContainer" unique_id=547392101]
+layout_mode = 2
+text = "On"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBox" unique_id=1500149414]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBox/HBoxContainer3" unique_id=1871990821]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "Loop"
+clip_text = true
+
+[node name="LoopCheck" type="CheckBox" parent="VBox/HBoxContainer3" unique_id=899616564]
+layout_mode = 2
+text = "On"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBox" unique_id=127862796]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBox/HBoxContainer2" unique_id=1756872283]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "Wait completion"
+clip_text = true
+
+[node name="WaitCheck" type="CheckBox" parent="VBox/HBoxContainer2" unique_id=504056136]
+layout_mode = 2
+button_pressed = true
+text = "On"
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="VBox" unique_id=1776947859]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBox/HBoxContainer4" unique_id=362543885]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "Snap First"
+clip_text = true
+
+[node name="SnapToFirstCheck" type="CheckBox" parent="VBox/HBoxContainer4" unique_id=1659434339]
+layout_mode = 2
+text = "On"
+
+[node name="PathPickerPopup" parent="." unique_id=862146046 instance=ExtResource("2")]
+visible = false
+
+[connection signal="pressed" from="VBox/TargetRow/PickButton" to="." method="_on_pick_pressed"]
+[connection signal="pressed" from="VBox/PathRow/ClearPointsButton" to="." method="_on_clear_points_pressed"]
