@@ -1,48 +1,110 @@
-Godot  RPG Editor is a framework for building event-based gameplay logic using a graph nodes / visual scripting interface. The idea is to make it easier to design event workflows (dialogue, triggers, scripted sequences, gameplay logic, etc.) without writing everything directly in code.
-Instead of scripting events manually, you build them through nodes that represent different actions and logic blocks.
+# Godot RPG Editor
 
-The project is still evolving and there are quite a few things I want to improve (architecture cleanup,  some UX improvements, new nodes, etc.), but the core is already working and most of the fundamental pieces are there.
+> ⚠️ This project is still under active development and parts of the internal architecture may change.
 
-**Current Features**
+**Godot RPG Editor** is a framework designed to build **event-driven gameplay systems** using a **node-based visual scripting interface**.
 
-Node-based visual scripting for event workflows
+Instead of writing gameplay events entirely in code, the editor allows you to construct them through a **graph of nodes**, where each node represents a specific action or logic block. This makes it easier to design complex event workflows such as:
 
-Modular node system
+- Dialogue systems
+- Gameplay triggers
+- Scripted sequences
+- Cutscenes
+- Interactive gameplay logic
 
-Data-driven event execution
+The goal is to provide a **more visual and data-driven workflow** for designing gameplay interactions while keeping the system modular and extensible.
 
-Support for both 2D and 3D environments (3D it's in early stage yet)
+---
 
-Things that still need work
+## Project Status
 
-Some parts are still rough and will likely change:
+The project is still evolving. While the **core systems are already functional**, several aspects of the framework are still being improved, including architecture, usability, and tooling.
 
-General code refactoring and cleanup
+> The foundation is stable, but the editor should still be considered **work in progress**.
 
-Improvements to the editor UX
+---
 
-The 3D version of the framework still needs a lot of adjustments
+## Current Features
 
-More built-in nodes and utilities
+- **Node-based visual scripting** for event workflows  
+- **Modular node architecture** for extending functionality  
+- **Data-driven event execution system**  
+- **Support for both 2D and 3D environments**  
+  - ⚠️ 3D support is still in an early stage
 
-Better debugging tools for events
+---
 
-So I wouldn't call it a finished tool yet, but the base is there and I'm trying improving it actively.
+## Work in Progress
 
-**How to add new Events:**
+Several areas are still evolving and will likely change:
 
-Right click in 2D viewport and this popup will appear. You can add an EventInstance or PlayerInstance.
+- **General code refactoring and architectural cleanup**
+- **Improving internal system structure**
+- **Editor UX improvements**
+- Additional **built-in nodes and utilities**
+- Improvements to the **3D workflow**
+- Better **event debugging tools**
 
-<img width="195" height="129" alt="image" src="https://github.com/user-attachments/assets/b12aff9c-3156-4e12-b92f-ab95cdf08404" />
+---
 
-EventInstances can be edited by selecting them and press Edit Event Button or directly pressing Event Editor button.
+# Usage
 
-<img width="241" height="38" alt="image" src="https://github.com/user-attachments/assets/dfeadbf8-5b6a-4c2f-9a26-06e0b66f02e9" />
+## Creating Events
 
-<img width="104" height="51" alt="image" src="https://github.com/user-attachments/assets/d1232f33-fb6c-4288-a000-4fb128d692ea" />
+To create a new event:
 
-You'll see a Node that defines the flow, you can select trigger and properties of the current state of the event.
-To add a new Node you drag from the default slot and a Popup will appear, allowing to select a new Node.
+1. **Right click** in the **2D viewport**
+2. A context popup will appear
+3. Select one of the following:
 
-<img width="648" height="296" alt="image" src="https://github.com/user-attachments/assets/8f85105f-6b45-4fe1-968a-82b22cc1d4ae" />
+- `EventInstance`
+- `PlayerInstance`
 
+<img width="300" height="160" alt="image" src="https://github.com/user-attachments/assets/2a282ce8-3adc-4811-899e-44824efbb224" />
+
+
+---
+
+## Editing Events
+
+Once an **EventInstance** has been placed in the scene:
+
+1. Select the instance
+2. Press **Edit Event**
+3. Or open the **Event Editor** directly
+
+<img width="212" height="34" alt="image" src="https://github.com/user-attachments/assets/4c795324-36fb-4047-8c92-678bfe1ec612" />
+
+---
+
+## Event Graph
+
+Inside the Event Editor you will see a **node graph** that defines the flow of the event.
+
+Each node represents part of the logic controlling the event state.
+
+You can configure:
+
+- Event **triggers**
+- **Properties** for the current event state
+- The **flow of execution**
+
+To add a new node:
+
+1. Drag from the default connection slot
+2. A popup menu will appear
+3. Select the desired node type
+
+<img width="368" height="190" alt="image" src="https://github.com/user-attachments/assets/6045ee06-8cc0-4366-86d1-314ae1e87cc6" />
+
+---
+
+## Philosophy
+
+The editor focuses on three core ideas:
+
+- **Visual event design**
+- **Modular systems**
+- **Data-driven gameplay logic**
+
+The long-term goal is to create a workflow where **designers can build complex event logic without writing large amounts of code**, while developers can still extend the system with custom nodes.
