@@ -8,7 +8,9 @@ class_name Map2D
 @export var event_container: Node2D
 
 func _ready() -> void:
-	_ensure_map_id_from_scene_path()
+	for i in event_container.get_children():
+		print(i.sprite.texture)
+		_ensure_map_id_from_scene_path()
 
 func _ensure_map_id_from_scene_path() -> void:
 	if map_id.strip_edges() != "":

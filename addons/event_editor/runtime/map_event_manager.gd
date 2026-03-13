@@ -7,32 +7,32 @@ extends Node
 # - bind action/touch triggers and per-frame NPC auto/parallel updates
 # Not used by editor graph UI bindings.
 
+# Runtime flow:
+# - _ready: configure services, connect signals, and trigger initial binding.
+# - _on_scene_changed: resolve map id/json, bind triggers, and handle pending teleports.
+# - _on_tick_runtime: process NPCs and auto/parallel events.
+# - _input: action triggers (ui_accept).
+# - _on_runtime_state_changed: refresh event states after variable/flag changes.
 @export var map_json_path: String = ""
 @export var auto_bind_touch := true
 @export var auto_run_event_id: String = ""
-@export var player_group: String = "player"
+@export var player_group: String = "PlayerInstance"
 @export var auto_parallel_interval := 1.0 / 60.0
 @export var auto_parallel_use_delta := false
 @export var auto_map_from_scene := true
 @export var player_scene_path: String = "res://assets/templates/events/2d/player_instance_grid.tscn"
 @export var npc_active_radius_tiles := 12.0
-@export var action_input := "ui_accept"
-@export var action_max_distance := 1.25
-@export var action_max_distance_2d_pixels := 40.0
-@export var action_min_facing_dot := 0.15
-@export var action_forward_width_2d_pixels := 10.0
-@export var use_relaxed_action_fallback := false
 
 const global_state_path = "res://addons/event_editor/data/runtime/global_state.json"
-const DEBUG_ACTION_TRIGGER := false
+
 signal map_bound(map_id: String, map_json_path: String, event_count: int)
 
 var _runner := EventGraphRunner.new()
 var _runtime_context := EventRuntimeContext.new()
 var _map_data: Dictionary = {}
 var _current_map_id: String = ""
+var _pending_map_id: String = ""
 var _refreshing := false
-
 
 var _interval := 1.0 / 60.0
 var _use_delta := false
@@ -66,61 +66,35 @@ func _ready() -> void:
 
 func _deferred_initial_refresh() -> void:
 	# In some boot orders current_scene is still null during _ready.
-	if get_tree().current_scene == null:
+	if _get_scene_root() == null:
 		await get_tree().process_frame
 	_on_scene_changed()
 
+# Runs a specific event id on the current map.
 func run_event(event_id: String) -> void:
 	if _map_data.is_empty():
 		return
-	var scene_root := get_tree().current_scene
+	var scene_root := _get_scene_root()
 	if scene_root == null:
 		return
 	_runner.run_event(_map_data, scene_root, event_id)
 
+# Returns the current map id (resolves binding if needed).
 func get_current_map_id() -> String:
 	_ensure_map_binding()
 	return _current_map_id
 
-func get_current_scene_event_refs() -> Array:
-	var scene_root := get_tree().current_scene
-	if scene_root != null:
-		return _map_loader.get_events_from_root(scene_root)
-	if _current_map_id != "":
-		return _map_loader.get_events_for_map(_current_map_id)
-	return []
-
-func get_current_event_instances() -> Array:
-	var scene_root := get_tree().current_scene
-	if scene_root == null:
-		return []
-	var out: Array = []
-	for node in get_tree().get_nodes_in_group("EventInstance"):
-		if node is Node and _teleport.is_node_in_scene(node, scene_root):
-			out.append(node)
-	return out
-
-func get_event_instance(event_id: String) -> Node:
-	var scene_root := get_tree().current_scene
-	return _trigger_service.find_event_instance_by_id(
-		get_tree(),
-		scene_root,
-		event_id,
-		player_group,
-		Callable(_teleport, "is_node_in_scene")
-	)
-
-func refresh_map_binding() -> void:
-	_on_scene_changed()
-
+# Returns the current active scene root.
 func get_scene_root() -> Node:
-	return get_tree().current_scene
+	return _get_scene_root()
 
+# Returns the runtime context used by the event runner.
 func get_runtime_context() -> EventRuntimeContext:
 	return _runtime_context
 
+# Teleports within a map or changes scenes when the map id differs.
 func request_map_change(map_id: String, pos: Vector3, fade_in: bool = false, fade_frames: int = 0, facing_dir: String = "keep") -> void:
-	var scene_root := get_tree().current_scene
+	var scene_root := _get_scene_root()
 	if scene_root == null:
 		return
 	var current_map := get_current_map_id()
@@ -135,6 +109,8 @@ func request_map_change(map_id: String, pos: Vector3, fade_in: bool = false, fad
 	if not ResourceLoader.exists(scene_path):
 		return
 
+	_pending_map_id = map_id
+
 	var source_player_scene_path := ""
 	var current_player := _teleport.get_player(scene_root)
 	if current_player != null and current_player is Node:
@@ -142,8 +118,10 @@ func request_map_change(map_id: String, pos: Vector3, fade_in: bool = false, fad
 	_teleport.begin_pending(scene_path, pos, fade_in, fade_frames, source_player_scene_path, facing_dir)
 	get_tree().change_scene_to_file(scene_path)
 
+# Scene change pipeline for binding map data.
 func _on_scene_changed() -> void:
-	var scene_root := get_tree().current_scene
+	_apply_pending_map_hint()
+	var scene_root := _get_scene_root()
 	if scene_root == null:
 		return
 	var map_root := _resolve_runtime_map_root(scene_root)
@@ -151,11 +129,9 @@ func _on_scene_changed() -> void:
 	_map_data = {}
 	_current_map_id = ""
 	_npc_movement.clear()
-	#_trigger_service.clear_all_touch_bindings()
 	_refresh_map_binding(map_root)
 	_map_data = _map_loader.load_map_data(map_json_path)
 	if not _map_data.is_empty():
-		# Apply state-selected properties (default/conditional page) on map enter.
 		_runner.initialize_event_states(_map_data, scene_root, true)
 
 		if auto_bind_touch:
@@ -174,6 +150,7 @@ func _on_scene_changed() -> void:
 	if _teleport.has_pending():
 		if _teleport.should_clear_pending_for_scene(scene_root):
 			_teleport.clear_pending()
+			_pending_map_id = ""
 		else:
 			call_deferred("_apply_pending_teleport", scene_root)
 	
@@ -181,20 +158,37 @@ func _on_scene_changed() -> void:
 	var events = _map_data.get("events", {})
 	if typeof(events) == TYPE_DICTIONARY:
 		event_count = events.size()
+	if _pending_map_id != "" and _current_map_id == _pending_map_id:
+		_pending_map_id = ""
 	emit_signal("map_bound", _current_map_id, map_json_path, event_count)
+
+func _apply_pending_map_hint() -> void:
+	if _pending_map_id == "":
+		return
+	var pending_path := _map_loader.map_json_path_from_map_id(_pending_map_id)
+	if pending_path != "":
+		map_json_path = pending_path
 
 func _refresh_map_binding(scene_root: Node) -> void:
 	if scene_root == null:
 		return
+	# If we have a pending teleport target, honor it over scene-derived ids.
+	if _pending_map_id != "":
+		_current_map_id = _pending_map_id
+		map_json_path = _map_loader.map_json_path_from_map_id(_current_map_id)
+		return
+	var fallback_map_id := _derive_map_id_from_json_path(map_json_path)
 	if auto_map_from_scene:
-		_current_map_id = _map_loader.resolve_map_id_from_scene(scene_root, _derive_map_id_from_json_path(map_json_path))
+		_current_map_id = _map_loader.resolve_map_id_from_scene(scene_root, fallback_map_id)
 		if _current_map_id != "":
 			map_json_path = _map_loader.map_json_path_from_map_id(_current_map_id)
 		else:
 			map_json_path = _map_loader.resolve_map_json_path(scene_root, map_json_path)
 			_current_map_id = _derive_map_id_from_json_path(map_json_path)
 	else:
-		_current_map_id = _derive_map_id_from_json_path(map_json_path)
+		_current_map_id = fallback_map_id
+		if _current_map_id != "":
+			map_json_path = _map_loader.map_json_path_from_map_id(_current_map_id)
 
 func _derive_map_id_from_json_path(path: String) -> String:
 	if path == "":
@@ -202,9 +196,10 @@ func _derive_map_id_from_json_path(path: String) -> String:
 	return path.get_file().get_basename()
 
 func _ensure_map_binding() -> void:
+	_apply_pending_map_hint()
 	if _current_map_id != "" or not _map_data.is_empty():
 		return
-	var scene_root := get_tree().current_scene
+	var scene_root := _get_scene_root()
 	if scene_root == null:
 		return
 	_refresh_map_binding(_resolve_runtime_map_root(scene_root))
@@ -259,35 +254,46 @@ func _on_runtime_state_changed() -> void:
 	call_deferred("_deferred_refresh")
 
 func _deferred_refresh() -> void:
-	var scene_root := get_tree().current_scene
+	var scene_root := _get_scene_root()
 	if scene_root != null:
 		_runner.refresh_event_states(_map_data, scene_root)
 	_refreshing = false
 
+# Per-tick runtime processing for NPCs and auto/parallel events.
 func _on_tick_runtime(step: float) -> void:
 	if _map_data.is_empty():
 		return
-	var scene_root := get_tree().current_scene
+	var scene_root := _get_scene_root()
 	if scene_root == null:
 		return
-	_npc_movement.process(_map_data, _runtime_context, step, player_group, npc_active_radius_tiles)
 	_runner.run_auto_parallel(_map_data, scene_root, step)
-
+	_npc_movement.process(_map_data, _runtime_context, step, player_group, npc_active_radius_tiles)
+	
+# Handles action-trigger input (ui_accept).
 func _input(event: InputEvent) -> void:
 	if _map_data.is_empty():
-		return
-	if action_input == "":
 		return
 	if event == null:
 		return
 	if event is InputEventKey and (event as InputEventKey).echo:
 		return
-	if not event.is_action_pressed(action_input):
+	if not event.is_action_pressed("ui_accept"):
 		return
-	_try_run_action_trigger()
+	var scene_root := _get_scene_root()
+	if scene_root == null:
+		return
+	var player := _teleport.get_player(scene_root)
+	_trigger_service.try_run_action_trigger(
+		_map_data,
+		scene_root,
+		player,
+		_runtime_context,
+		Callable(_runner, "run_event")
+	)
+	
 
 func _on_node_added(node: Node) -> void:
-	var scene_root := get_tree().current_scene
+	var scene_root := _get_scene_root()
 	if not _teleport.is_node_in_scene(node, scene_root):
 		return
 	_runner.invalidate_scene_environment()
@@ -308,7 +314,7 @@ func _on_player_event_bumped(event_id: String, _event_node: Node) -> void:
 		return
 	if not _event_allows_touch_trigger(event_id):
 		return
-	var scene_root := get_tree().current_scene
+	var scene_root := _get_scene_root()
 	if scene_root == null:
 		return
 	_runtime_context.set_last_trigger_for_event(event_id, "touch_bump")
@@ -327,74 +333,13 @@ func _connect_player_bump_signal(scene_root: Node) -> void:
 	if not player.is_connected("event_bumped", cb):
 		player.connect("event_bumped", cb)
 
-func _try_run_action_trigger() -> void:
-	var scene_root := get_tree().current_scene
-	if scene_root == null:
-		return
-	var player := get_player(scene_root)
-	if player == null:
-		return
-	var facing_tile = player.get_facing_direction()
-	
-	if player.get_area_in_front(player.get_facing_direction()) == null:
-		return
-	var event = player.get_area_in_front(player.get_facing_direction()).get_parent()
-	if event is EventInstance2D:
-		var event_id = event.id
-		_runtime_context.set_last_trigger_for_event(event_id, "action")
-		_runner.run_event(_map_data, scene_root, event_id)
+## Returns the current player instance from the scene.
+func get_player(scene_root: Node = null) -> Node:
+	var root := scene_root if scene_root != null else _get_scene_root()
+	return _teleport.get_player(root)
 
-## Helpers for Action Trigger
-
-func get_area_in_front(player: Node2D, direction: Vector2, grid_size: int, mask := 0) -> Area2D:
-	
-	var cell := Vector2i(player.global_position / grid_size)
-	var next_cell := cell + Vector2i(direction)
-	
-	return get_area_at_cell(player.get_world_2d(), next_cell, grid_size, mask)
-
-func get_area_under_player(player: Node2D, grid_size: int, mask := 0) -> Area2D:
-	
-	var cell := Vector2i(player.global_position / grid_size)
-	
-	return get_area_at_cell(player.get_world_2d(), cell, grid_size, mask)
-
-func get_area_at_cell(world: World2D, cell: Vector2i, grid_size: int, mask := 0) -> Area2D:
-	
-	var space_state = world.direct_space_state
-	
-	var world_pos = (Vector2(cell) * grid_size) + Vector2(grid_size * 0.5, grid_size * 0.5)
-	
-	var query := PhysicsPointQueryParameters2D.new()
-	query.position = world_pos
-	query.collide_with_areas = true
-	query.collide_with_bodies = false
-	
-	if mask != 0:
-		query.collision_mask = mask
-	
-	var result = space_state.intersect_point(query)
-	
-	if result.size() > 0:
-		return result[0].collider
-	
-	return null
-
-func get_player(scene_root: Node) -> Node:
-	return find_player_in_scene(scene_root)
-
-func find_player_in_scene(scene_root: Node) -> Node:
-	if scene_root == null or not is_instance_valid(scene_root):
-		return null
-	var stack: Array[Node] = [scene_root]
-	while not stack.is_empty():
-		var node = stack.pop_back()
-		if node.is_in_group(player_group) and (node is Node2D or node is Node3D):
-			return node
-		for child in node.get_children():
-			if child is Node:
-				stack.push_back(child)
-	return null
+func _get_scene_root() -> Node:
+	return get_tree().current_scene
 
 ##Timers used in parallel process.
 
@@ -409,7 +354,6 @@ func _process(delta: float) -> void:
 	var step := _accum
 	_accum = 0.0
 	_tick_callback.call(step)
-
 
 func configure(owner: Node, interval: float, use_delta: bool, tick_callback: Callable) -> void:
 	_interval = max(0.0001, interval)

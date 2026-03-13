@@ -19,7 +19,6 @@ var value_text: String = "down"
 var target_id: String = ""
 var target_name: String = ""
 
-var _event_manager: EventEditorManager = EventEditorManager
 var _event_refs: Array = []
 
 func _ready() -> void:
@@ -69,8 +68,6 @@ func load_from_data(data: NodeData) -> void:
 	_data = data
 	if EventEditorManager != null:
 		_event_manager = EventEditorManager
-		if not _event_manager.available_events_changed.is_connected(_on_available_events_changed):
-			_event_manager.available_events_changed.connect(_on_available_events_changed)
 		_event_refs = _event_manager.get_event_refs_for_active_map()
 	else:
 		_event_refs = []

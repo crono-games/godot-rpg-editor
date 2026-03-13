@@ -6,7 +6,6 @@ class_name FlagConditionNode
 
 var available_flags: Array = []
 var selected_flag: String = ""
-var _context: EventEditorManager
 var _global_state: GlobalState
 
 func _ready() -> void:
@@ -42,13 +41,10 @@ func load_from_data(data: NodeData) -> void:
 	_data = data
 	var ctx := EventEditorManager
 	if ctx != null:
-		_context = ctx
-		if not _context.flags_changed.is_connected(_on_flags_changed):
-			_context.flags_changed.connect(_on_flags_changed)
-		_global_state = _context.get_global_state()
+		_global_state = GlobalStateManager.get_global_state()
 		if _global_state != null and not _global_state.flags_changed.is_connected(_on_global_state_flags_changed):
 			_global_state.flags_changed.connect(_on_global_state_flags_changed)
-		_on_flags_changed(_context.get_flags())
+		_on_flags_changed(GlobalStateManager.get_flag_names())
 	
 	else:
 		available_flags = []
@@ -68,9 +64,7 @@ func _on_flags_changed(flags: Array) -> void:
 		emit_changed()
 
 func _on_global_state_flags_changed() -> void:
-	if _context == null:
-		return
-	_on_flags_changed(_context.get_flags())
+	_on_flags_changed(GlobalStateManager.get_flag_names())
 
 func get_flag_options() -> Array:
 	return available_flags.duplicate(true)

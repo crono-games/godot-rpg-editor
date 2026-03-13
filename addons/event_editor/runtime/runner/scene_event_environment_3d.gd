@@ -35,7 +35,7 @@ func reindex() -> void:
 	var stack: Array[Node] = [_root]
 	while not stack.is_empty():
 		var node = stack.pop_back()
-		if node.is_in_group("EventInstance"):
+		if node.is_in_group("event_instance"):
 			var event_id := str(node.get("id"))
 			if event_id != "":
 				_events_by_id[event_id] = node
@@ -96,6 +96,15 @@ func set_event_graphics(event_id: String, graphics: Dictionary) -> void:
 	var vframes := maxi(1, int(graphics.get("vframes", 1)))
 	var total := maxi(1, hframes * vframes)
 	var frame := clampi(int(graphics.get("frame", 0)), 0, total - 1)
+	var offset_x := float(graphics.get("offset_x", 0.0))
+	var offset_y := float(graphics.get("offset_y", 0.0))
+	var offset := Vector2(offset_x, offset_y)
+	var offset_value = graphics.get("offset", null)
+	if offset_value is Vector2:
+		offset = offset_value
+	elif offset_value is Dictionary:
+		var od := offset_value as Dictionary
+		offset = Vector2(float(od.get("x", offset_x)), float(od.get("y", offset_y)))
 
 	var sprite_node: Node = null
 	if event.has_node("Sprite3D"):
@@ -114,12 +123,15 @@ func set_event_graphics(event_id: String, graphics: Dictionary) -> void:
 			(sprite_node as Sprite3D).hframes = hframes
 			(sprite_node as Sprite3D).vframes = vframes
 			(sprite_node as Sprite3D).frame = frame
+			if (sprite_node as Sprite3D).has_method("set_offset"):
+				(sprite_node as Sprite3D).offset = offset
 		elif sprite_node is Sprite2D:
 			(sprite_node as Sprite2D).texture = null
 			(sprite_node as Sprite2D).visible = false
 			(sprite_node as Sprite2D).hframes = hframes
 			(sprite_node as Sprite2D).vframes = vframes
 			(sprite_node as Sprite2D).frame = frame
+			(sprite_node as Sprite2D).offset = offset
 		return
 
 	var tex := load(texture_path)
@@ -130,12 +142,15 @@ func set_event_graphics(event_id: String, graphics: Dictionary) -> void:
 			(sprite_node as Sprite3D).hframes = hframes
 			(sprite_node as Sprite3D).vframes = vframes
 			(sprite_node as Sprite3D).frame = frame
+			if (sprite_node as Sprite3D).has_method("set_offset"):
+				(sprite_node as Sprite3D).offset = offset
 		elif sprite_node is Sprite2D:
 			(sprite_node as Sprite2D).texture = tex
 			(sprite_node as Sprite2D).visible = true
 			(sprite_node as Sprite2D).hframes = hframes
 			(sprite_node as Sprite2D).vframes = vframes
 			(sprite_node as Sprite2D).frame = frame
+			(sprite_node as Sprite2D).offset = offset
 
 func set_event_position(event_id: String, position: Vector3) -> bool:
 	var event := get_event_by_id(event_id)

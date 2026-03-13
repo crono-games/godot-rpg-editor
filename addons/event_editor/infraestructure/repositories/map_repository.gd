@@ -191,7 +191,7 @@ func _collect_events(n: Node, out: Array) -> void:
 		_collect_events(child, out)
 
 func _is_event_node(n: Node) -> bool:
-	if n.is_in_group("EventInstance"):
+	if n.is_in_group("event_instance"):
 		return true
 	# 2D/3D event nodes share exported `id` property.
 	for prop in n.get_property_list():

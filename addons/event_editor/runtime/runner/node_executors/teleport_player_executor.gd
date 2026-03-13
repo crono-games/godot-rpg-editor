@@ -49,7 +49,7 @@ func _resolve_player(scene_root: Node, map_manager, ctx: EventRuntimeContext) ->
 		if env_player != null and is_instance_valid(env_player):
 			return env_player
 	if map_manager != null and map_manager.has_method("get_player"):
-		var p = map_manager.get_player()
+		var p = map_manager.get_player(scene_root)
 		if p is Node2D or p is Node3D:
 			return p
 	return _find_player(scene_root)

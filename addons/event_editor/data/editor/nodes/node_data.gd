@@ -7,8 +7,6 @@ var type: String
 var position: Vector2
 var params := {}
 
-var context: EventEditorManager
-
 
 func _init(
 	p_id: String,

@@ -14,14 +14,12 @@ var _map_repo: MapRepository
 var _global_state: GlobalState
 var _event_runner: EventGraphRunner
 var _autosave_timer: Timer
-var _global_state_save_timer: Timer
-
-const GLOBAL_STATE_SAVE_DELAY := 0.5
-const GLOBAL_STATE_PATH = "res://addons/event_editor/data/runtime/global_state.json"
+var _sync_service: EventEditorSyncService
 
 func _ready():
 	_setup_event_manager()
 	_setup_dependencies()
+	_setup_sync_service()
 	_setup_event_previewer()
 	_setup_context_and_graph()
 	_setup_map_selector()
@@ -29,9 +27,7 @@ func _ready():
 	_setup_global_state_persistence()
 	_setup_graph_autosave()
 	_connect_context_events()
-	_connect_scene_change_signals()
 	_sync_initial_selection_state()
-
 
 func _setup_dependencies() -> void:
 	var graph_id_gen := GraphIdGenerator.new()
@@ -42,6 +38,16 @@ func _setup_event_manager() -> void:
 		EventEditorManager.initialize()
 		_event_editor_manager = EventEditorManager
 		_map_repo = EventEditorManager.get_map_repository()
+
+func _setup_sync_service() -> void:
+	if _sync_service == null:
+		_sync_service = EventEditorSyncService.new()
+		add_child(_sync_service)
+	_sync_service.set_event_manager(_event_editor_manager)
+	_sync_service.set_map_repo(_map_repo)
+	_sync_service.set_event_previewer(event_previewer)
+	_sync_service.set_scene_root_provider(Callable(self, "_get_editor_scene_root"))
+	_sync_service.set_preview_root_provider(Callable(self, "_instantiate_preview_root"))
 
 func _setup_context_and_graph() -> void:
 	if _event_editor_manager == null:
@@ -81,25 +87,17 @@ func _setup_event_previewer() -> void:
 	)
 	if not event_previewer.play_requested.is_connected(_on_preview_play_requested):
 		event_previewer.play_requested.connect(_on_preview_play_requested)
+	if _sync_service != null:
+		_sync_service.set_event_previewer(event_previewer)
 
 func _setup_game_state() -> void:
-	_global_state = EventEditorManager.get_global_state()
+	_global_state = GlobalStateManager.get_global_state()
 	if _global_state == null:
-		_global_state = GlobalState.new()
-		EventEditorManager._set_global_state(_global_state)
+		_global_state = GlobalStateManager.ensure_global_state()
 	game_state_dock.set_global_state(_global_state)
 
 func _setup_global_state_persistence() -> void:
-	if _global_state == null:
-		return
-	_global_state.load_from_file(GLOBAL_STATE_PATH)
-	_global_state_save_timer = Timer.new()
-	_global_state_save_timer.one_shot = true
-	_global_state_save_timer.wait_time = GLOBAL_STATE_SAVE_DELAY
-	add_child(_global_state_save_timer)
-	_global_state_save_timer.timeout.connect(_on_global_state_save_timeout)
-	if not _global_state.changed.is_connected(_on_global_state_changed):
-		_global_state.changed.connect(_on_global_state_changed)
+	GlobalStateManager.load_global_state()
 
 func _setup_graph_autosave() -> void:
 	if graph_controller == null:
@@ -128,28 +126,18 @@ func _sync_initial_selection_state() -> void:
 			graph_controller.reload_graph(_event_editor_manager.active_event_id)
 		_on_active_event_changed(_event_editor_manager.active_event_id)
 
-func _connect_scene_change_signals() -> void:
-	if _event_editor_manager == null:
-		return
-	if not Engine.is_editor_hint():
-		return
-	var tree := get_tree()
-	if tree == null:
-		return
-	if not tree.node_added.is_connected(_on_editor_tree_node_added):
-		tree.node_added.connect(_on_editor_tree_node_added)
-	if not tree.node_removed.is_connected(_on_editor_tree_node_removed):
-		tree.node_removed.connect(_on_editor_tree_node_removed)
-	if tree.has_signal("node_renamed") and not tree.node_renamed.is_connected(_on_editor_tree_node_renamed):
-		tree.node_renamed.connect(_on_editor_tree_node_renamed)
-
 func refresh_events() -> void:
-	if _event_editor_manager != null:
-		_event_editor_manager.refresh_events_for_active_map()
+	if _sync_service != null:
+		_sync_service.refresh_now(_get_editor_scene_root(), false)
 
 func refresh_events_from_root(root: Node) -> void:
-	if _event_editor_manager != null:
-		_event_editor_manager.refresh_events_for_active_map(root)
+	if _sync_service != null:
+		_sync_service.refresh_now(root, false)
+
+func refresh_previewer_from_active_map() -> void:
+	if _sync_service != null:
+		_sync_service.refresh_now(null, true)
+
 
 ##Signals
 
@@ -158,27 +146,28 @@ func _on_map_event_selected(event_id: String) -> void:
 	_on_active_event_changed(event_id)
 
 func _on_active_map_changed(map_id: String) -> void:
-	var root := _get_editor_scene_root()
-	if root != null:
-		_event_editor_manager.refresh_events_for_active_map(root)
-	else:
-		_event_editor_manager.refresh_events_for_active_map()
-	if event_previewer != null:
-		event_previewer.set_map_id(map_id)
+	if _sync_service != null:
+		_sync_service.handle_active_map_changed(map_id)
 
 func _on_active_event_changed(event_id: String) -> void:
-	if event_previewer == null:
-		return
-	var root := _instantiate_preview_root()
-	if root == null:
-		return
-	event_previewer.refresh_from_scene_root(root, event_id)
+	if _sync_service != null:
+		_sync_service.handle_active_event_changed(event_id)
+
+func get_sync_service() -> EventEditorSyncService:
+	return _sync_service
 
 func _on_preview_play_requested(_map_id: String, _event_id: String, _scene_root: Node) -> void:
 	_save_graph_now()
 
 func _on_state_properties_updated(event_id: String, state_id: String, params: Dictionary) -> void:
-	var is_default_state := state_id == "default" or bool(params.get("is_default", false))
+	var param_state_id := str(params.get("state_id", "")).to_lower()
+	var param_name := str(params.get("name", "")).to_lower()
+	var is_default_state := (
+		state_id == "default"
+		or bool(params.get("is_default", false))
+		or param_state_id == "default"
+		or param_name == "default"
+	)
 	if not is_default_state:
 		return
 	_apply_state_properties_to_editor_scene(event_id, params)
@@ -211,27 +200,6 @@ func _on_graph_dirty() -> void:
 
 func _on_graph_autosave_timeout() -> void:
 	_save_graph_now()
-
-func _on_global_state_changed() -> void:
-	if _global_state_save_timer != null:
-		_global_state_save_timer.start()
-
-func _on_global_state_save_timeout() -> void:
-	if _global_state == null:
-		return
-	_global_state.save_to_file(GLOBAL_STATE_PATH)
-
-func _on_editor_tree_node_added(node: Node) -> void:
-	if _is_editor_event_node(node):
-		call_deferred("refresh_events")
-
-func _on_editor_tree_node_removed(node: Node) -> void:
-	if _is_editor_event_node(node):
-		call_deferred("refresh_events")
-
-func _on_editor_tree_node_renamed(node: Node) -> void:
-	if _is_editor_event_node(node):
-		call_deferred("refresh_events")
 
 func _is_editor_event_node(node: Node) -> bool:
 	if node == null:
@@ -269,6 +237,15 @@ func _apply_state_properties_to_editor_scene(event_id: String, params: Dictionar
 	var vframes := maxi(1, int(graphics.get("vframes", 1)))
 	var total := maxi(1, hframes * vframes)
 	var frame := clampi(int(graphics.get("frame", 0)), 0, total - 1)
+	var offset_x := float(graphics.get("offset_x", 0.0))
+	var offset_y := float(graphics.get("offset_y", 0.0))
+	var offset := Vector2(offset_x, offset_y)
+	var offset_value = graphics.get("offset", null)
+	if offset_value is Vector2:
+		offset = offset_value
+	elif offset_value is Dictionary:
+		var od := offset_value as Dictionary
+		offset = Vector2(float(od.get("x", offset_x)), float(od.get("y", offset_y)))
 
 	var tex: Texture2D = null
 	if texture_path != "":
@@ -283,6 +260,7 @@ func _apply_state_properties_to_editor_scene(event_id: String, params: Dictionar
 		s2.hframes = hframes
 		s2.vframes = vframes
 		s2.frame = frame
+		s2.offset = offset
 	elif sprite_node is Sprite3D:
 		var s3 := sprite_node as Sprite3D
 		s3.texture = tex
@@ -290,6 +268,8 @@ func _apply_state_properties_to_editor_scene(event_id: String, params: Dictionar
 		s3.hframes = hframes
 		s3.vframes = vframes
 		s3.frame = frame
+		if s3.has_method("set_offset"):
+			s3.offset = offset
 
 func _find_event_instance_by_id(root: Node, event_id: String) -> Node:
 	var tree := root.get_tree()

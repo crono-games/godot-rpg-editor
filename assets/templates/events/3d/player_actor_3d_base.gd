@@ -108,7 +108,7 @@ func _get_input_direction() -> Vector3:
 func _get_blocking_event(next_global_pos: Vector3, radius: float) -> Node:
 	if not collide_with_events:
 		return null
-	for node in get_tree().get_nodes_in_group("EventInstance"):
+	for node in get_tree().get_nodes_in_group("event_instance"):
 		if node == self:
 			continue
 		if not (node is Node3D):

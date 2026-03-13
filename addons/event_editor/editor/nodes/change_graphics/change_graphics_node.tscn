@@ -5,7 +5,7 @@
 
 [node name="ChangeGraphicsNode" type="GraphNode" unique_id=1135125552 node_paths=PackedStringArray("event_selector", "file_dialog")]
 offset_right = 139.0
-offset_bottom = 81.0
+offset_bottom = 88.0
 title = "Change Graphics"
 slot/0/left_enabled = true
 slot/0/left_type = 0
@@ -34,7 +34,19 @@ size_flags_horizontal = 0
 custom_minimum_size = Vector2(56, 0)
 layout_mode = 2
 clip_text = true
+selected = 0
 fit_to_longest_item = false
+item_count = 5
+popup/item_0/text = "Event"
+popup/item_0/id = 0
+popup/item_1/text = "PlayerInstanceGrid"
+popup/item_1/id = 1
+popup/item_2/text = "Event2"
+popup/item_2/id = 2
+popup/item_3/text = "Event4"
+popup/item_3/id = 3
+popup/item_4/text = "Event7"
+popup/item_4/id = 4
 
 [node name="Button" type="Button" parent="HBoxContainer" unique_id=580361948]
 layout_mode = 2

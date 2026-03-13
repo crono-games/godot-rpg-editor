@@ -6,7 +6,6 @@ class_name SetPositionCommandNode
 @export var position_picker: PositionPickerBase
 @export var facing_dir_selector: OptionButton
 
-var _event_manager: EventEditorManager = EventEditorManager
 var event_instances: Array = []
 var selected_target_id: String = ""
 var selected_target_name: String = ""
@@ -21,7 +20,6 @@ func _ready() -> void:
 	if position_picker != null:
 		if not position_picker.position_confirmed.is_connected(_on_position_confirmed):
 			position_picker.position_confirmed.connect(_on_position_confirmed)
-	_reload_events()
 
 func _on_changed() -> void:
 	selected_target_id = rebuild_option_button(option_button, get_event_options(), selected_target_id)
@@ -59,11 +57,6 @@ func _to_vec3(value) -> Vector3:
 func import_params(params: Dictionary) -> void:
 	selected_target_id = str(params.get("target_id", ""))
 	selected_target_name = str(params.get("target_name", ""))
-	if selected_target_id == "":
-		var legacy_name := str(params.get("target", ""))
-		if legacy_name != "":
-			selected_target_id = _event_id_from_name(legacy_name)
-			selected_target_name = legacy_name
 	target_position = _parse_target_position(params.get("target_position", Vector3.ZERO))
 	_ensure_valid_selection(false)
 	emit_changed()
@@ -78,24 +71,10 @@ func export_params() -> Dictionary:
 func load_from_data(data: NodeData) -> void:
 	_data = data
 	if EventEditorManager != null:
-		if not EventEditorManager.available_events_changed.is_connected(_on_available_events_changed):
-			EventEditorManager.available_events_changed.connect(_on_available_events_changed)
 		event_instances = get_event_items_for_active_map()
 	else:
 		event_instances = []
 	import_params(data.params)
-
-func bind_event_manager(_manager: EventEditorManager) -> void:
-	_event_manager = EventEditorManager
-	if _event_manager == null:
-		return
-	if not _event_manager.events_changed.is_connected(_on_event_refs_changed):
-		_event_manager.events_changed.connect(_on_event_refs_changed)
-	if not _event_manager.events_changed.is_connected(_on_available_events_changed):
-		_event_manager.events_changed.connect(_on_available_events_changed)
-	if not _event_manager.active_map_changed.is_connected(_on_active_map_changed):
-		_event_manager.active_map_changed.connect(_on_active_map_changed)
-	_reload_events()
 
 func get_event_options() -> Array:
 	return event_instances.duplicate(true)

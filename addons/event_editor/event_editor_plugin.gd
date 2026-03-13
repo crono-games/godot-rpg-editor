@@ -10,14 +10,11 @@ const DEFAULT_MAPS_DIR := "res://maps"
 
 var _main: Control
 var _event_editor: EventEditor
-var _scene_root: Node
-var _refresh_timer: Timer
 var _edit_selected_button: Button
 var _create_map_button: Button
 var _create_map_dialog: ConfirmationDialog
 var _map_name_input: LineEdit
 var _map_path_preview: Label
-
 var _ctx_plugin : EditorContextMenuPlugin
 
 func _enter_tree():
@@ -45,13 +42,10 @@ func _enter_tree():
 	_create_map_dialog = _build_create_map_dialog()
 	add_child(_create_map_dialog)
 
-	_refresh_timer = Timer.new()
-	_refresh_timer.one_shot = true
-	_refresh_timer.wait_time = 0.2
-	add_child(_refresh_timer)
-	_refresh_timer.timeout.connect(_do_refresh_events)
 	if get_editor_interface().has_signal("scene_changed"):
 		get_editor_interface().scene_changed.connect(_on_scene_changed)
+	
+	main_screen_changed.connect(_on_main_screen_changed)
 	var selection := get_editor_interface().get_selection()
 	if selection != null and not selection.selection_changed.is_connected(_on_editor_selection_changed):
 		selection.selection_changed.connect(_on_editor_selection_changed)
@@ -77,7 +71,6 @@ func _exit_tree() -> void:
 	if selection != null and selection.selection_changed.is_connected(_on_editor_selection_changed):
 		selection.selection_changed.disconnect(_on_editor_selection_changed)
 
-	_unbind_scene_root()
 	if _main != null:
 		_main.queue_free()
 		_main = null
@@ -89,10 +82,10 @@ func _make_visible(visible: bool) -> void:
 	if _main != null:
 		_main.visible = visible
 	if visible:
-		_bind_scene_root()
 		get_editor_interface().distraction_free_mode = true
+		_notify_main_screen_active(true)
 	else:
-		_unbind_scene_root()
+		_notify_main_screen_active(false)
 	_update_create_map_button_visibility()
 
 func _get_plugin_name() -> String:
@@ -105,54 +98,17 @@ func _get_plugin_icon() -> Texture2D:
 	return base.get_theme_icon("GraphNode", "EditorIcons")
 
 func _on_scene_changed(_root: Node) -> void:
-	_bind_scene_root()
 	if EventEditorManager != null and EventEditorManager.has_method("refresh_maps"):
 		EventEditorManager.refresh_maps()
-	_queue_refresh()
+	_request_sync_refresh(true, true)
 	_on_editor_selection_changed()
 	_update_create_map_button_visibility()
 
-func _forward_canvas_gui_input(event: InputEvent) -> bool:
-	if event is InputEventMouseButton and event.pressed:
-		_ctx_plugin.last_click_pos = event.position
-		return false
-	return false
-
-func _bind_scene_root() -> void:
-	var root := get_editor_interface().get_edited_scene_root()
-	if root == _scene_root:
+func _on_main_screen_changed(screen_name: String) -> void:
+	if screen_name != _get_plugin_name():
+		_notify_main_screen_active(false)
 		return
-	_unbind_scene_root()
-	_scene_root = root
-	if _scene_root == null:
-		return
-	var tree := _scene_root.get_tree()
-	if tree != null:
-		tree.node_added.connect(_on_node_added)
-		tree.node_removed.connect(_on_node_removed)
-
-func _unbind_scene_root() -> void:
-	if _scene_root == null:
-		return
-	var tree := _scene_root.get_tree()
-	if tree != null:
-		if tree.node_added.is_connected(_on_node_added):
-			tree.node_added.disconnect(_on_node_added)
-		if tree.node_removed.is_connected(_on_node_removed):
-			tree.node_removed.disconnect(_on_node_removed)
-	_scene_root = null
-
-func _on_node_added(node: Node) -> void:
-	if node != null and node.is_in_group("EventInstance"):
-		_queue_refresh()
-
-func _on_node_removed(node: Node) -> void:
-	if node != null and node.is_in_group("EventInstance"):
-		_queue_refresh()
-
-func _queue_refresh() -> void:
-	if _refresh_timer != null:
-		_refresh_timer.start()
+	_notify_main_screen_active(true)
 
 func _on_editor_selection_changed() -> void:
 	if _edit_selected_button == null:
@@ -172,7 +128,7 @@ func _get_selected_event_instance() -> Node:
 	var node := nodes[0] as Node
 	if node == null:
 		return null
-	if node.is_in_group("EventInstance") and str(node.get("id")) != "":
+	if node.is_in_group("event_instance") and str(node.get("id")) != "":
 		return node
 	return null
 
@@ -201,9 +157,25 @@ func _resolve_active_map_id(node: Node) -> String:
 		return ""
 	return scene_path.get_file().get_basename()
 
-func _do_refresh_events() -> void:
-	if _event_editor != null:
-		_event_editor.refresh_events()
+func _notify_main_screen_active(active: bool) -> void:
+	var sync := _get_sync_service()
+	if sync != null:
+		sync.set_main_screen_active(active)
+
+func _request_sync_refresh(refresh_previewer: bool, force: bool = false) -> void:
+	var sync := _get_sync_service()
+	if sync == null:
+		return
+	var root := get_editor_interface().get_edited_scene_root()
+	if root != null and is_instance_valid(root):
+		sync.queue_refresh(refresh_previewer, force, root)
+	else:
+		sync.queue_refresh(refresh_previewer, force)
+
+func _get_sync_service() -> EventEditorSyncService:
+	if _event_editor == null:
+		return null
+	return _event_editor.get_sync_service()
 
 func _update_create_map_button_visibility() -> void:
 	if _create_map_button == null:

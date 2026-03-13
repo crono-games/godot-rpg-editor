@@ -32,9 +32,9 @@ func process_grid_move(delta):
 	update_input(delta)
 
 	if _input_dir == Vector2.ZERO:
+		if not _moving:
+			update_animation(Vector2.ZERO)
 		return
-
-	update_animation(_as_cardinal(_input_dir))
 
 	if _input_time >= MOVE_BUFFER:
 		try_move(_input_dir)
@@ -47,9 +47,10 @@ func update_input(delta):
 	var dir := _get_input_direction()
 	
 	if dir != _input_dir:
-		update_animation(Vector2.ZERO)
 		_input_dir = dir
 		_input_time = 0.0
+		if _input_dir != Vector2.ZERO:
+			update_animation(_as_cardinal(_input_dir))
 	else:
 		_input_time += delta
 
@@ -91,6 +92,7 @@ func _perform_move(dir: Vector2):
 
 	_moving = true
 	update_animation(dir)
+	_sync_anim_speed_to_step(duration)
 
 	_stop_tween()
 
@@ -103,6 +105,7 @@ func _perform_move(dir: Vector2):
 func _on_move_finished():
 	_moving = false
 	_snap_to_grid()
+	_reset_anim_speed()
 	update_animation(Vector2.ZERO)
 	move_finished.emit(self)
 
@@ -116,7 +119,7 @@ func _get_blocking_event_grid(next_global_pos: Vector2) -> Node:
 	if not collide_with_events or debug_noclip:
 		return null
 	var radius := maxf(2.0, grid_size * 0.45)
-	for node in get_tree().get_nodes_in_group("EventInstance"):
+	for node in get_tree().get_nodes_in_group("event_instance"):
 		if node == self:
 			continue
 		if not (node is Node2D):

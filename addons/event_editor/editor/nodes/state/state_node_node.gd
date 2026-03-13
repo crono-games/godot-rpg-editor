@@ -23,6 +23,7 @@ var trigger_mode: String = "action"
 var properties: Dictionary = {}
 
 var conditions: Dictionary = {}
+var is_default: bool = false
 
 @onready var titlebar := get_titlebar_hbox()
 @onready var title_label : Label = titlebar.get_child(0) if titlebar != null else null
@@ -150,6 +151,7 @@ func import_params(params: Dictionary) -> void:
 			name = state_id
 	display_name = name
 	trigger_mode = _normalize_trigger_mode(str(params.get("trigger_mode", "action")))
+	is_default = bool(params.get("is_default", false))
 
 	properties = params.get("properties", {}).duplicate(true)
 	conditions = params.get("conditions", {}).duplicate(true)
@@ -161,6 +163,7 @@ func export_params() -> Dictionary:
 		"state_id": state_id,
 		"name": display_name,
 		"trigger_mode": trigger_mode,
+		"is_default": is_default,
 		"properties": properties.duplicate(true),
 		"conditions": conditions.duplicate(true),
 	}

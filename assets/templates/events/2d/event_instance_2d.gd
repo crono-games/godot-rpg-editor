@@ -39,7 +39,26 @@ func _enter_tree():
 	add_to_group("event_instance")
 
 func _ready() -> void:
+	_resolve_runtime_links()
 	_apply_trigger_area_shape()
+
+func _resolve_runtime_links() -> void:
+	if animation_player == null or not is_instance_valid(animation_player):
+		var ap := get_node_or_null("AnimationPlayer")
+		if ap is AnimationPlayer:
+			animation_player = ap as AnimationPlayer
+	#if sprite == null or not is_instance_valid(sprite):
+		#var sp := get_node_or_null("Sprite2D")
+		#if sp is Sprite2D:
+			#sprite = sp as Sprite2D
+	if trigger_area == null or not is_instance_valid(trigger_area):
+		var ta := get_node_or_null("TriggerArea")
+		if ta is Area2D:
+			trigger_area = ta as Area2D
+	if hitbox_area == null or not is_instance_valid(hitbox_area):
+		var hb := get_node_or_null("HitboxArea")
+		if hb is Area2D:
+			hitbox_area = hb as Area2D
 
 func update_animation(direction) -> void:
 	if not _can_play_animation():
@@ -104,6 +123,27 @@ func _can_play_animation() -> bool:
 	if Engine.is_editor_hint() and not editor_preview_enabled:
 		return false
 	return true
+
+func _sync_anim_speed_to_step(step_time: float) -> void:
+	if step_time <= 0.0 or animation_player == null:
+		return
+	var player := animation_player
+	var cycles_per_step := maxf(0.0, float(max_anim_cycles_per_step))
+	if cycles_per_step <= 0.0:
+		cycles_per_step = 1.0
+	var anim_name := StringName(player.current_animation)
+	if anim_name == StringName(""):
+		return
+	var anim := player.get_animation(anim_name)
+	if anim == null:
+		return
+	var len := maxf(0.001, anim.length)
+	player.speed_scale = (len * cycles_per_step) / step_time
+
+func _reset_anim_speed() -> void:
+	if animation_player == null:
+		return
+	animation_player.speed_scale = 1.0
 
 ##Used to update triggers area.
 

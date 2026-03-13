@@ -24,10 +24,10 @@
 							},
 							"name": "Default",
 							"properties": {
-
+								"movement_type": "fixed"
 							},
 							"state_id": "default",
-							"trigger_mode": "action"
+							"trigger_mode": "touch_overlap"
 						},
 						"position": [
 							0.0,
@@ -56,14 +56,26 @@
 				}
 			}
 		},
-		"985521961201925453": {
+		"6734413488568581358": {
 			"flow": {
 				"edges": [],
 				"nodes": {
 					"state_1": {
 						"params": {
+							"conditions": {
+
+							},
 							"is_default": true,
 							"name": "Default",
+							"properties": {
+								"graphics": {
+									"frame": 0.0,
+									"hframes": 8.0,
+									"offset_x": 0.0,
+									"texture": "res://assets/graphics/actors/Player Base.png",
+									"vframes": 4.0
+								}
+							},
 							"state_id": "default",
 							"trigger_mode": "action"
 						},
@@ -76,37 +88,26 @@
 				}
 			}
 		},
-		"evt_5582423511244394517": {
+		"866232617001610141": {
 			"flow": {
 				"edges": [
 					{
 						"from": "state_1",
-						"from_port": 0,
-						"to": "show_dialogue_1",
-						"to_port": 0
+						"from_port": 0.0,
+						"to": "set_followers_1",
+						"to_port": 0.0
 					}
 				],
 				"nodes": {
-					"show_dialogue_1": {
+					"set_followers_1": {
 						"params": {
-							"dialogues": [
-								{
-									"id": "dlg_2",
-									"portrait": "",
-									"text": "Godot  RPG Editor is a framework for building event-based gameplay logic using a graph nodes / visual scripting interface. The idea is to make it easier to design event workflows (dialogue, triggers, scripted sequences, gameplay logic, etc.) without writing everything directly in code.\nInstead of scripting events manually, you build them through nodes that represent different actions and logic blocks.\n"
-								},
-								{
-									"id": "dlg_3",
-									"portrait": "",
-									"text": "Hello world!"
-								}
-							]
+
 						},
 						"position": [
-							180.0,
-							0.0
+							300.0,
+							-20.0
 						],
-						"type": "show_dialogue"
+						"type": "set_followers"
 					},
 					"state_1": {
 						"params": {
@@ -119,11 +120,11 @@
 
 							},
 							"state_id": "default",
-							"trigger_mode": "action"
+							"trigger_mode": "auto"
 						},
 						"position": [
-							-40.0,
-							20.0
+							0.0,
+							0.0
 						],
 						"type": "state"
 					},
@@ -132,12 +133,13 @@
 							"conditions": {
 								"flags": [
 									{
-										"name": "A",
-										"scope": "local",
+										"name": "Is flag",
+										"scope": "global",
 										"value": true
 									}
 								]
 							},
+							"is_default": false,
 							"name": "New State 2",
 							"properties": {
 
@@ -146,8 +148,53 @@
 							"trigger_mode": "action"
 						},
 						"position": [
-							3.27506113052368,
-							229.497207641602
+							40.0,
+							280.0
+						],
+						"type": "state"
+					}
+				}
+			}
+		},
+		"evt_5582423511244394517": {
+			"flow": {
+				"edges": [
+					{
+						"from": "state_1",
+						"from_port": 0,
+						"to": "change_graphics_1",
+						"to_port": 0
+					}
+				],
+				"nodes": {
+					"change_graphics_1": {
+						"params": {
+							"graphics": "res://assets/graphics/tilemaps/tiles/7.png",
+							"target_id": "evt_5582423511244394517",
+							"target_name": "Event"
+						},
+						"position": [
+							175.5,
+							71.0
+						],
+						"type": "change_graphics"
+					},
+					"state_1": {
+						"params": {
+							"conditions": {
+
+							},
+							"is_default": true,
+							"name": "Default",
+							"properties": {
+								"movement_type": "fixed"
+							},
+							"state_id": "default",
+							"trigger_mode": "parallel"
+						},
+						"position": [
+							-40.0,
+							40.0
 						],
 						"type": "state"
 					}

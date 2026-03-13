@@ -46,16 +46,16 @@ func _clear_view() -> void:
 		c.free()
 
 func on_node_created(node_id: String) -> EventCommandNode:
-	# creates the node view and stores it
+	## Creates the node view and stores it
 	return _on_node_created_internal(node_id)
 
 func _on_node_created_internal(node_id: String) -> EventCommandNode:
 	var data := _model.get_node(node_id)
 
-	var _node_graph := _event_graph.create_node_view(data)
-	_graph_nodes[node_id] = _node_graph
+	var _graph_node := _event_graph.create_graph_node(data)
+	_graph_nodes[node_id] = _graph_node
 
-	# handle pending connection if exists
+	## Handle pending connection if exists
 	if _pending_connection:
 		var from = str(_pending_connection.from_node)
 		var from_port = _pending_connection.from_port
@@ -64,12 +64,12 @@ func _on_node_created_internal(node_id: String) -> EventCommandNode:
 			_pending_connection = null
 		else:
 			if _model.has_node(node_id) and _model.has_node(from):
-				# try connect from -> node at port 0
+				## try connect from -> node at port 0
 				_model.add_edge(from, from_port, node_id, 0)
 				_event_graph.connect_node(from, from_port, node_id, 0)
 			_pending_connection = null
 
-	return _node_graph
+	return _graph_node
 
 func on_node_removed(node_id: String) -> void:
 	if not _graph_nodes.has(node_id):

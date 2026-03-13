@@ -29,7 +29,7 @@ func _gui_input(event: InputEvent) -> void:
 		if event.keycode == KEY_DELETE:
 			_try_delete_connection()
 
-func create_node_view(node_data: NodeData) -> EventCommandNode:
+func create_graph_node(node_data: NodeData) -> EventCommandNode:
 	var scene := EventNodeRegistry.get_scene_for_type(node_data.type)
 	if scene:
 		var ev_command_node: EventCommandNode = scene.instantiate()

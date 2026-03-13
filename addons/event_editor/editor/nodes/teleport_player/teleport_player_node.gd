@@ -14,7 +14,6 @@ var target_position: Vector3 = Vector3.ZERO
 var auto_fade: bool = true
 var fade_frames: int = 30
 var facing_dir: String = "keep"
-var _context: EventEditorManager
 
 const FACING_OPTIONS := [
 	{"id": "keep", "label": "Keep"},
@@ -105,19 +104,14 @@ func export_params() -> Dictionary:
 
 func load_from_data(data: NodeData) -> void:
 	_data = data
-	if EventEditorManager != null:
-		_context = EventEditorManager
-		if _context != null and not _context.maps_changed.is_connected(_on_maps_changed):
-			_context.maps_changed.connect(_on_maps_changed)
-		_on_maps_changed()
-	else:
-		available_maps = []
+	_reload_events()
 	import_params(data.params)
 
-func _on_maps_changed() -> void:
-	if _context == null:
-		return
-	available_maps = _context.get_maps()
+func _reload_events() -> void:
+	if EventEditorManager != null:
+		available_maps = EventEditorManager.get_maps()
+	else:
+		available_maps = []
 	if selected_map_id == "" and available_maps.size() > 0:
 		selected_map_id = available_maps[0]
 		request_apply_changes()

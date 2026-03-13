@@ -1,0 +1,48 @@
+{
+	"events": {
+		"evt_5582423511244394517": {
+			"flow": {
+				"edges": [
+					{
+						"from": "state_1",
+						"from_port": 0,
+						"to": "show_dialogue_1",
+						"to_port": 0
+					}
+				],
+				"nodes": {
+					"show_dialogue_1": {
+						"params": {
+							"dialogues": [
+								{
+									"id": "dlg_1",
+									"portrait": "",
+									"text": "AAAAAAA"
+								}
+							]
+						},
+						"position": [
+							235.488189697266,
+							37.1422805786133
+						],
+						"type": "show_dialogue"
+					},
+					"state_1": {
+						"params": {
+							"is_default": true,
+							"name": "Default",
+							"state_id": "default",
+							"trigger_mode": "action"
+						},
+						"position": [
+							0.0,
+							0.0
+						],
+						"type": "state"
+					}
+				}
+			}
+		}
+	},
+	"version": 1.0
+}

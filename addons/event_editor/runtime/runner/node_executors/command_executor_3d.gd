@@ -1,4 +1,4 @@
-class_name CommandExecutor3D
+class_name CommandExecutor2D
 extends RefCounted
 
 var _handlers := {}

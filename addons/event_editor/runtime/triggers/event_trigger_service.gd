@@ -3,6 +3,7 @@ extends RefCounted
 
 var _pending_by_event: Dictionary = {}
 
+## Binds touch overlap triggers for the current map data.
 func bind_touch_triggers(
 	map_data: Dictionary,
 	scene_root: Node,
@@ -40,9 +41,36 @@ func bind_touch_triggers(
 			[map_data, scene_root, event_id, trigger, player_group, runtime_context, run_event_callback]
 		)
 
-func resolve_action_event_id():
-	pass
+## Attempts an action trigger from the player's facing area.
+func try_run_action_trigger(
+	map_data: Dictionary,
+	scene_root: Node,
+	player: Node,
+	runtime_context: EventRuntimeContext,
+	run_event_callback: Callable
+) -> bool:
+	if map_data.is_empty():
+		return false
+	if scene_root == null:
+		return false
+	if player == null:
+		return false
+	if run_event_callback == null or not run_event_callback.is_valid():
+		return false
+	if not player.has_method("get_area_in_front") or not player.has_method("get_facing_direction"):
+		return false
+	var area = player.call("get_area_in_front", player.call("get_facing_direction"))
+	if area == null:
+		return false
+	var event = area.get_parent()
+	if event is EventInstance2D or event is EventInstance3D:
+		var event_id = event.id
+		runtime_context.set_last_trigger_for_event(event_id, "action")
+		run_event_callback.call(map_data, scene_root, event_id)
+		return true
+	return false
 
+## Returns true if the event's current state allows a bump trigger.
 func event_allows_touch_trigger(map_data: Dictionary, event_id: String, runtime_context: EventRuntimeContext) -> bool:
 	if event_id == "":
 		return false
@@ -59,6 +87,7 @@ func event_allows_touch_trigger(map_data: Dictionary, event_id: String, runtime_
 	var trigger := _normalize_trigger_mode(str(params.get("trigger_mode", "")))
 	return trigger == "touch_bump"
 
+## Finds an EventInstance node by id within the active scene.
 func find_event_instance_by_id(
 	scene_tree: SceneTree,
 	scene_root: Node,
@@ -68,7 +97,7 @@ func find_event_instance_by_id(
 ) -> Node:
 	if scene_root == null or event_id == "":
 		return null
-	for node in scene_tree.get_nodes_in_group("EventInstance"):
+	for node in scene_tree.get_nodes_in_group("event_instance"):
 		if not (node is Node):
 			continue
 		if is_node_in_scene.is_valid() and not bool(is_node_in_scene.call(node, scene_root)):
@@ -139,26 +168,6 @@ func _on_area_entered(
 	runtime_context.set_last_trigger_for_event(event_id, trigger)
 	run_event_callback.call(map_data, scene_root, event_id)
 
-func _resolve_player_facing(player: Node) -> Vector3:
-	if player == null:
-		return Vector3.ZERO
-	var facing := Vector3.ZERO
-	if player.has_method("get_facing_direction"):
-		var v = player.call("get_facing_direction")
-		if v is Vector3:
-			facing = v
-	if facing == Vector3.ZERO and player.has_method("get"):
-		var v2 = player.get("_last_dir")
-		if v2 is Vector3:
-			facing = v2
-		elif v2 is Vector2:
-			var vv := v2 as Vector2
-			facing = Vector3(vv.x, 0.0, vv.y)
-	facing.y = 0.0
-	if facing.length_squared() <= 0.000001:
-		return Vector3.ZERO
-	return facing.normalized()
-
 func _normalize_trigger_mode(raw_trigger: String) -> String:
 	var trigger := str(raw_trigger).to_lower()
 	match trigger:
@@ -170,14 +179,6 @@ func _normalize_trigger_mode(raw_trigger: String) -> String:
 			return "touch_bump"
 		_:
 			return trigger
-
-func _node_world_pos3(node: Node) -> Vector3:
-	if node is Node3D:
-		return (node as Node3D).global_position
-	if node is Node2D:
-		var p := (node as Node2D).global_position
-		return Vector3(p.x, p.y, 0.0)
-	return Vector3.ZERO
 
 func _resolve_event_trigger(map_data: Dictionary, event_id: String, runtime_context: EventRuntimeContext) -> String:
 	if event_id == "":
@@ -261,6 +262,7 @@ func _uses_grid_resolution(actor: Node) -> bool:
 	var mode_text := str(raw_mode).to_lower()
 	return mode_text == "grid"
 
+## Connects touch area signals for a given event instance.
 func bind_touch(event_instance: Node, body_handler: Callable, area_handler: Callable, bind_args: Array = []) -> void:
 	if event_instance == null:
 		return
@@ -306,4 +308,33 @@ func _call_trigger_method(node: Node) -> Node:
 		var result = node.call("get_trigger_area")
 		if result is Area2D or result is Area3D:
 			return result
+	return null
+
+func get_area_in_front(player: Node2D, direction: Vector2, grid_size: int, mask := 0) -> Area2D:
+	if player == null:
+		return null
+	var cell := Vector2i(player.global_position / grid_size)
+	var next_cell := cell + Vector2i(direction)
+	return get_area_at_cell(player.get_world_2d(), next_cell, grid_size, mask)
+
+func get_area_under_player(player: Node2D, grid_size: int, mask := 0) -> Area2D:
+	if player == null:
+		return null
+	var cell := Vector2i(player.global_position / grid_size)
+	return get_area_at_cell(player.get_world_2d(), cell, grid_size, mask)
+
+func get_area_at_cell(world: World2D, cell: Vector2i, grid_size: int, mask := 0) -> Area2D:
+	if world == null:
+		return null
+	var space_state = world.direct_space_state
+	var world_pos = (Vector2(cell) * grid_size) + Vector2(grid_size * 0.5, grid_size * 0.5)
+	var query := PhysicsPointQueryParameters2D.new()
+	query.position = world_pos
+	query.collide_with_areas = true
+	query.collide_with_bodies = false
+	if mask != 0:
+		query.collision_mask = mask
+	var result = space_state.intersect_point(query)
+	if result.size() > 0:
+		return result[0].collider
 	return null

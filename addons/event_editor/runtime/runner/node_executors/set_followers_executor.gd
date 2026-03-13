@@ -68,7 +68,7 @@ func _scan_actor(scene_root: Node, actor_id: String, actor_name: String) -> Node
 	var stack: Array[Node] = [scene_root]
 	while not stack.is_empty():
 		var node = stack.pop_back()
-		if node.is_in_group("EventInstance"):
+		if node.is_in_group("event_instance"):
 			var node_id := ""
 			if node.has_method("get"):
 				node_id = str(node.get("id"))

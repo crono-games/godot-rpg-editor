@@ -15,8 +15,11 @@ var _original_states_by_id: Dictionary = {}
 
 func clear() -> void:
 	_set_preview_mode_for_events(false)
-	if preview_scene and preview_scene.is_inside_tree():
-		preview_scene.queue_free()
+	if preview_scene and is_instance_valid(preview_scene):
+		if preview_scene.get_parent() != null:
+			preview_scene.get_parent().remove_child(preview_scene)
+		if preview_scene.is_inside_tree():
+			preview_scene.queue_free()
 	preview_scene = null
 	event_instances.clear()
 	original_event_states.clear()
@@ -272,7 +275,7 @@ func _stop_event_motion_loops() -> void:
 				ev.call("update_animation", Vector2.ZERO)
 
 func _is_event_node(node: Node) -> bool:
-	if node.is_in_group("EventInstance"):
+	if node.is_in_group("event_instance"):
 		return true
 	if node is EventInstance2D:
 		return true

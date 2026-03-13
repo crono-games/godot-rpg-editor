@@ -106,7 +106,7 @@ func _get_input_direction() -> Vector2:
 func _get_blocking_event(next_global_pos: Vector2, radius: float) -> Node:
 	if not collide_with_events:
 		return null
-	for node in get_tree().get_nodes_in_group("EventInstance"):
+	for node in get_tree().get_nodes_in_group("event_instance"):
 		if node == self:
 			continue
 		if not (node is Node2D):
@@ -223,3 +223,24 @@ func _can_play_animation() -> bool:
 	if Engine.is_editor_hint() and not editor_preview_enabled:
 		return false
 	return true
+
+func _sync_anim_speed_to_step(step_time: float) -> void:
+	if step_time <= 0.0 or animation_player == null:
+		return
+	var player := animation_player
+	var cycles_per_step := maxf(0.0, float(max_anim_cycles_per_step))
+	if cycles_per_step <= 0.0:
+		cycles_per_step = 1.0
+	var anim_name := StringName(player.current_animation)
+	if anim_name == StringName(""):
+		return
+	var anim := player.get_animation(anim_name)
+	if anim == null:
+		return
+	var len := maxf(0.001, anim.length)
+	player.speed_scale = (len * cycles_per_step) / step_time
+
+func _reset_anim_speed() -> void:
+	if animation_player == null:
+		return
+	animation_player.speed_scale = 1.0

@@ -29,9 +29,9 @@ graph_controller = NodePath("GraphController")
 event_previewer = NodePath("SplitContainer/EventGraphView/EventPreviewer")
 game_state_dock = NodePath("SplitContainer/EventGraphView/GameStateDock")
 
-[node name="GraphController" type="Node" parent="." unique_id=283366614 node_paths=PackedStringArray("view", "context_menu_panel")]
+[node name="GraphController" type="Node" parent="." unique_id=283366614 node_paths=PackedStringArray("graph", "context_menu_panel")]
 script = ExtResource("3_wjsfg")
-view = NodePath("../SplitContainer/EventGraphView")
+graph = NodePath("../SplitContainer/EventGraphView")
 context_menu_panel = NodePath("../ContextMenuPanel")
 
 [node name="ContextMenuPanel" parent="." unique_id=474963166 instance=ExtResource("7_wjsfg")]
@@ -61,10 +61,9 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_22skt")
-item_count = 3
+item_count = 2
 item_0/text = "map1"
 item_1/text = "map2"
-item_2/text = "map_3d"
 
 [node name="Label2" type="Label" parent="SplitContainer/MapSelector/VBoxContainer" unique_id=1213381106]
 layout_mode = 2
@@ -75,10 +74,11 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_wjsfg")
-item_count = 3
+item_count = 4
 item_0/text = "Event"
 item_1/text = "Event2"
 item_2/text = "Event4"
+item_3/text = "Event7"
 
 [node name="EventGraphView" type="GraphEdit" parent="SplitContainer" unique_id=1113955513]
 layout_mode = 2
@@ -87,7 +87,13 @@ connections = Array[Dictionary]([{
 "from_node": &"state_1",
 "from_port": 0,
 "keep_alive": false,
-"to_node": &"teleport_player_1",
+"to_node": &"move_1",
+"to_port": 0
+}, {
+"from_node": &"move_1",
+"from_port": 0,
+"keep_alive": false,
+"to_node": &"set_position_1",
 "to_port": 0
 }])
 minimap_enabled = false

@@ -31,40 +31,62 @@ func _ready() -> void:
 	_session.selection_changed.connect(_on_session_selection_changed)
 
 func refresh_from_scene_root(scene_root: Node, preferred_event_id: String = "") -> void:
-	var dup := _duplicate_scene_root(scene_root)
-	if dup == null:
+	if scene_root == null:
 		return
-	_session.build_from_scene_root(dup, preferred_event_id)
-	_session.add_to_viewport(preview_viewport)
+	if preview_viewport == null or not preview_viewport.is_inside_tree():
+		return
+	_clear_preview_viewport()
+	_session.clear()
+	var scne = _duplicate_scene_root(scene_root)
+	if scne == null:
+		return
+	_session.build_from_scene_root(scne, preferred_event_id)
+	call_deferred("_add_preview_to_viewport", scne)
 	_apply_initial_graphics_from_map_data()
 	_populate_event_selector()
 	if _session.selected_event_id != "":
 		_session.set_event_camera(_session.selected_event_id)
 
+func _add_preview_to_viewport(root: Node) -> void:
+	if preview_viewport == null or root == null:
+		return
+	if not is_instance_valid(preview_viewport) or not is_instance_valid(root):
+		return
+	if root.get_parent() == null:
+		preview_viewport.add_child(root)
+
+func _clear_preview_viewport() -> void:
+	if preview_viewport == null:
+		return
+	for child in preview_viewport.get_children():
+		if child is Node:
+			preview_viewport.remove_child(child)
+			(child as Node).queue_free()
+
 func _populate_event_selector() -> void:
+	if event_selector == null:
+		return
+	var prev_id := _get_selected_event_id()
+	var events: Array = EventEditorManager.get_event_refs_for_active_map()
+	var was_blocked := event_selector.is_blocking_signals()
+	event_selector.set_block_signals(true)
 	event_selector.clear()
-	var events : Array= EventEditorManager.get_event_refs_for_active_map()
+	var selected_idx := -1
 	for i in events.size():
 		var event_inst = events[i]
 		var event_id := str(event_inst.get("id"))
 		event_selector.add_item(event_inst.name, i)
 		event_selector.set_item_metadata(i, event_id)
-		event_selector.select(i)
+		if prev_id != "" and event_id == prev_id:
+			selected_idx = i
+		elif prev_id == "" and _session.selected_event_id != "" and event_id == _session.selected_event_id:
+			selected_idx = i
+	if selected_idx < 0 and event_selector.item_count > 0:
+		selected_idx = 0
+	if selected_idx >= 0:
+		event_selector.select(selected_idx)
+	event_selector.set_block_signals(was_blocked)
 
-
-func _populate_event_selector_deprecated() -> void:
-	var events := _session.get_event_list()
-	for i in events.size():
-		var event_inst = events[i]
-		if not (event_inst is Node):
-			continue
-		var event_node := event_inst as Node
-		var event_id := str(event_node.get("id"))
-		event_selector.add_item(event_node.name, i)
-		event_selector.set_item_metadata(i, event_id)
-
-		if _session.selected_event_id != "" and event_id == _session.selected_event_id:
-			event_selector.select(i)
 
 func _on_preview_button_pressed() -> void:
 	if _session.selected_event_node == null or _session.preview_scene == null:
@@ -153,16 +175,7 @@ func _on_session_selection_changed(event_id: String) -> void:
 	emit_signal("event_selection_changed", event_id)
 
 func _duplicate_scene_root(scene_root: Node) -> Node:
-	if scene_root == null:
-		return null
-	if not scene_root.is_inside_tree():
-
-		pass
-	if preview_viewport == null:
-		return null
 	var dup := scene_root.duplicate(DUPLICATE_USE_INSTANTIATION | DUPLICATE_SIGNALS) as Node
-	if scene_root.has_meta("preview_temp_root") and not scene_root.is_inside_tree():
-		scene_root.free()
 	return dup
 
 func _get_selected_event_id(index: int = -1) -> String:
@@ -318,6 +331,15 @@ func _apply_graphics_to_event(event_node: Node, graphics: Dictionary) -> void:
 	var vframes := maxi(1, int(graphics.get("vframes", 1)))
 	var total := maxi(1, hframes * vframes)
 	var frame := clampi(int(graphics.get("frame", 0)), 0, total - 1)
+	var offset_x := float(graphics.get("offset_x", 0.0))
+	var offset_y := float(graphics.get("offset_y", 0.0))
+	var offset := Vector2(offset_x, offset_y)
+	var offset_value = graphics.get("offset", null)
+	if offset_value is Vector2:
+		offset = offset_value
+	elif offset_value is Dictionary:
+		var od := offset_value as Dictionary
+		offset = Vector2(float(od.get("x", offset_x)), float(od.get("y", offset_y)))
 
 	var sprite_node: Node = null
 	if event_node.has_node("Sprite2D"):
@@ -344,6 +366,7 @@ func _apply_graphics_to_event(event_node: Node, graphics: Dictionary) -> void:
 		s2d.hframes = hframes
 		s2d.vframes = vframes
 		s2d.frame = frame
+		s2d.offset = offset
 	elif sprite_node is Sprite3D:
 		var s3d := sprite_node as Sprite3D
 		s3d.texture = tex
@@ -351,6 +374,8 @@ func _apply_graphics_to_event(event_node: Node, graphics: Dictionary) -> void:
 		s3d.hframes = hframes
 		s3d.vframes = vframes
 		s3d.frame = frame
+		if s3d.has_method("set_offset"):
+			s3d.offset = offset
 
 func _apply_initial_graphics_from_map_data() -> void:
 	var map_data := get_map_data()

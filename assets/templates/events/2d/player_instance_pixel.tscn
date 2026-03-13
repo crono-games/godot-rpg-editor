@@ -174,7 +174,7 @@ _data = {
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_uuvhu"]
 size = Vector2(15, 15)
 
-[node name="PlayerInstance2D" type="Node2D" unique_id=908728827 node_paths=PackedStringArray("trigger_area", "hitbox_area", "hitbox", "camera", "animation_player", "sprite", "area") groups=["Event"]]
+[node name="PlayerInstance2D" type="Node2D" unique_id=908728827 node_paths=PackedStringArray("trigger_area", "hitbox_area", "hitbox", "camera", "animation_player", "sprite", "area") groups=["Event", "PlayerInstance"]]
 script = ExtResource("1_sd13r")
 trigger_area = NodePath("TriggerArea")
 hitbox_area = NodePath("HitboxArea")

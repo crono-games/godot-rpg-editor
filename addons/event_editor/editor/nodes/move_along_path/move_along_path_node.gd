@@ -12,7 +12,6 @@ class_name MoveAlongPathNode
 @export var path_picker_popup: PathPickerPopup
 @export var path_preview: PathPreviewControl
 
-var _event_manager: EventEditorManager = EventEditorManager
 var event_instances: Array = []
 var selected_target_id: String = ""
 var selected_target_name: String = ""
@@ -126,11 +125,6 @@ func set_scene_root_provider(provider: Callable) -> void:
 func import_params(params: Dictionary) -> void:
 	selected_target_id = str(params.get("target_id", ""))
 	selected_target_name = str(params.get("target_name", ""))
-	if selected_target_id == "":
-		var legacy_name := str(params.get("target", ""))
-		if legacy_name != "":
-			selected_target_id = _event_id_from_name(legacy_name)
-			selected_target_name = legacy_name
 	points = _parse_points(params.get("points", []))
 	speed_px_per_sec = maxf(1.0, float(params.get("speed_px_per_sec", params.get("speed", 64.0))))
 	loop = bool(params.get("loop", false))
@@ -159,24 +153,10 @@ func export_params() -> Dictionary:
 func load_from_data(data: NodeData) -> void:
 	_data = data
 	if EventEditorManager != null:
-		if not EventEditorManager.available_events_changed.is_connected(_on_available_events_changed):
-			EventEditorManager.available_events_changed.connect(_on_available_events_changed)
 		event_instances = EventEditorManager.get_event_refs_for_active_map()
 	else:
 		event_instances = []
 	import_params(data.params)
-
-func bind_event_manager(_manager: EventEditorManager) -> void:
-	_event_manager = EventEditorManager
-	if _event_manager == null:
-		return
-	if not _event_manager.event_refs_changed.is_connected(_on_event_refs_changed):
-		_event_manager.event_refs_changed.connect(_on_event_refs_changed)
-	if not _event_manager.available_events_changed.is_connected(_on_available_events_changed):
-		_event_manager.available_events_changed.connect(_on_available_events_changed)
-	if not _event_manager.active_map_changed.is_connected(_on_active_map_changed):
-		_event_manager.active_map_changed.connect(_on_active_map_changed)
-	_reload_events()
 
 func get_event_options() -> Array:
 	return event_instances.duplicate(true)

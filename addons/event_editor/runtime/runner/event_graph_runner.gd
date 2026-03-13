@@ -12,7 +12,7 @@ var _state_property_applier := StatePropertyApplier.new()
 var _state_selector := EventStateSelector.new()
 var _last_auto_state_run_by_event := {}
 var _payload_validator := NodePayloadValidator.new()
-var _command_executor := CommandExecutor3D.new()
+var _command_executor := CommandExecutor2D.new()
 var _running_events := {}
 
 func _init() -> void:
@@ -232,6 +232,10 @@ func invalidate_scene_environment() -> void:
 	if _scene_env == null:
 		return
 	_scene_env.mark_dirty()
+
+func ensure_scene_environment(scene_root: Node) -> EventEnvironment:
+	_prepare_scene_environment(scene_root)
+	return _scene_env
 
 func _create_scene_environment(scene_root: Node) -> EventEnvironment:
 	if scene_root is Node2D:

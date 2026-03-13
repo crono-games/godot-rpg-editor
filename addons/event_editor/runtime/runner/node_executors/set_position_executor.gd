@@ -94,7 +94,7 @@ func _resolve_target_fallback(scene_root: Node, target_id: String, target_name: 
 	var stack: Array[Node] = [scene_root]
 	while not stack.is_empty():
 		var node = stack.pop_back()
-		if node.is_in_group("EventInstance") or node.is_in_group("player"):
+		if node.is_in_group("event_instance") or node.is_in_group("player"):
 			var node_id := ""
 			if node.has_method("get"):
 				node_id = str(node.get("id"))

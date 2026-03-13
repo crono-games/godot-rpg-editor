@@ -21,7 +21,7 @@ var _scene_root_provider: Callable
 # UI References
 # ================================
 
-@export var view: EventGraph
+@export var graph: EventGraph
 @export var context_menu_panel: ContextMenuPanel
 
 var _id_generator: GraphIdGenerator
@@ -63,7 +63,7 @@ func _enter_tree():
 		_persistence_service = GraphPersistenceService.new()
 
 	if _synchronizer == null:
-		_synchronizer = GraphSynchronizer.new(_graph_model, view)
+		_synchronizer = GraphSynchronizer.new(_graph_model, graph)
 	if _edit_service == null:
 		_rebuild_edit_service()
 	_bind_graph_shortcut_signals()
@@ -74,8 +74,8 @@ func set_context(context: EventEditorManager) -> void:
 	_event_editor_manager = context
 	context.active_event_changed.connect(_on_event_selected)
 
-	if view != null:
-		view.event_manager = _event_editor_manager
+	if graph != null:
+		graph.event_manager = _event_editor_manager
 
 #func sync_with_event_editor_manager_selection() -> void:
 	#if _event_editor_manager.active_event_id == "":
@@ -101,9 +101,9 @@ func set_undo_redo(ur: UndoRedo) -> void:
 	_rebuild_edit_service()
 
 func _rebuild_edit_service() -> void:
-	if _graph_model == null or view == null or _undo_redo == null or _connection_policy == null:
+	if _graph_model == null or graph == null or _undo_redo == null or _connection_policy == null:
 		return
-	_edit_service = GraphEditService.new(_graph_model, view, _undo_redo, _connection_policy)
+	_edit_service = GraphEditService.new(_graph_model, graph, _undo_redo, _connection_policy)
 
 # ==================================================
 # API (user intentions)
@@ -111,7 +111,7 @@ func _rebuild_edit_service() -> void:
 
 
 func _on_request_create_node(type: String) -> void:
-	var pos := _last_popup_graph_position if _has_popup_graph_position else view.get_mouse_position_in_graph()
+	var pos := _last_popup_graph_position if _has_popup_graph_position else graph.get_mouse_position_in_graph()
 	_has_popup_graph_position = false
 	_ensure_id_generator_ready()
 	_edit_service.create_node(
@@ -125,8 +125,8 @@ func _on_request_create_node(type: String) -> void:
 
 func _on_request_delete_nodes(node_ids: Array = []) -> void:
 	var ids := _coerce_node_id_array(node_ids)
-	if ids.is_empty() and view != null:
-		ids = view.get_selected_node_ids()
+	if ids.is_empty() and graph != null:
+		ids = graph.get_selected_node_ids()
 	_edit_service.delete_nodes(
 		ids,
 		_is_default_state_node,
@@ -140,8 +140,8 @@ func _on_request_delete_nodes(node_ids: Array = []) -> void:
 
 func _on_request_duplicate_nodes(node_ids: Array = []) -> void:
 	var ids := _coerce_node_id_array(node_ids)
-	if ids.is_empty() and view != null:
-		ids = view.get_selected_node_ids()
+	if ids.is_empty() and graph != null:
+		ids = graph.get_selected_node_ids()
 	_ensure_id_generator_ready()
 	_edit_service.duplicate_nodes(
 		ids,
@@ -210,8 +210,8 @@ func _on_node_created(node_id: String) -> void:
 	var data := _graph_model.get_node(node_id)
 	if data == null:
 		return
-	var node_view := _synchronizer.on_node_created(node_id)
-	_bind_node_view_with_data(node_view, data)
+	var graph_node := _synchronizer.on_node_created(node_id)
+	_bind_graph_node_with_data(graph_node, data)
 
 
 func _on_node_request_apply(ev_command_node: EventCommandNode) -> void:
@@ -246,7 +246,6 @@ func _apply_node_params(node_id: String, params: Dictionary) -> void:
 		emit_signal("state_properties_updated", _event_editor_manager.active_event_id, state_id, data.params.duplicate(true))
 
 	_mark_dirty()
-	_update_states_in_event_editor_manager()
 
 func _normalize_node_id(node_ref) -> String:
 	if _synchronizer != null:
@@ -280,11 +279,10 @@ func rebuild() -> void:
 	_is_building = true
 	# Delegate rebuild to the synchronizer
 	_synchronizer.rebuild()
-	_bind_node_views_after_rebuild()
-	_update_states_in_event_editor_manager()
+	_bind_graph_nodes_after_rebuild()
 	_is_building = false
 
-func _bind_node_views_after_rebuild() -> void:
+func _bind_graph_nodes_after_rebuild() -> void:
 	if _graph_model == null or _synchronizer == null:
 		return
 	for node_id in _graph_model.get_node_ids():
@@ -294,7 +292,7 @@ func _bind_node_views_after_rebuild() -> void:
 		var node_view := _synchronizer.get_node_view(node_id)
 		if node_view == null:
 			continue
-		_bind_node_view_with_data(node_view, data)
+		_bind_graph_node_with_data(node_view, data)
 
 
 func _clear_view() -> void:
@@ -309,22 +307,21 @@ func _clear_view() -> void:
 func popup_request(at_position: Vector2) -> void:
 	if context_menu_panel == null:
 		return
-	if _synchronizer != null and view != null and view.has_method("was_last_popup_from_connection"):
-		var from_connection := bool(view.call("was_last_popup_from_connection"))
-		# Clear stale pending links when opening context menu manually.
+	if _synchronizer != null and graph != null and graph.has_method("was_last_popup_from_connection"):
+		var from_connection := bool(graph.call("was_last_popup_from_connection"))
 		if not from_connection:
 			_synchronizer.clear_pending_connection()
-	if view == null:
+	if graph == null:
 		context_menu_panel.position = at_position
 		context_menu_panel.popup()
 		return
 
-	_last_popup_graph_position = view.get_graph_position_from_local(at_position)
+	_last_popup_graph_position = graph.get_graph_position_from_local(at_position)
 	_has_popup_graph_position = true
 
 	var parent_item := context_menu_panel.get_parent() as CanvasItem
 	if parent_item != null:
-		var view_global := view.get_global_transform_with_canvas() * at_position
+		var view_global := graph.get_global_transform_with_canvas() * at_position
 		var parent_local := parent_item.get_global_transform_with_canvas().affine_inverse() * view_global
 		context_menu_panel.position = parent_local
 	else:
@@ -360,14 +357,13 @@ func _post_load_graph() -> void:
 	_ensure_state_labels()
 	if changed:
 		_dirty = true
-	_update_states_in_event_editor_manager()
 	if _id_generator != null:
 		_id_generator.reset_from_model(_graph_model)
 
 func get_selected_node_snapshot() -> Dictionary:
-	if view == null or _graph_model == null:
+	if graph == null or _graph_model == null:
 		return {}
-	var selected := view.get_selected_node_ids()
+	var selected := graph.get_selected_node_ids()
 	if selected.is_empty():
 		return {}
 	var node_id := str(selected[0])
@@ -395,12 +391,6 @@ func save_current_graph() -> void:
 func _mark_dirty() -> void:
 	_dirty = true
 	emit_signal("graph_dirty")
-	_update_states_in_event_editor_manager()
-
-func _update_states_in_event_editor_manager() -> void:
-	if _event_editor_manager == null:
-		return
-	_event_editor_manager.set_states(_build_state_catalog())
 
 func _sync_view_positions_to_model() -> bool:
 	if _synchronizer != null:
@@ -454,7 +444,7 @@ func _should_save_current() -> bool:
 		return false
 	return _dirty
 
-func _bind_node_view_with_data(event_command_node: EventCommandNode, data: NodeData) -> void:
+func _bind_graph_node_with_data(event_command_node: EventCommandNode, data: NodeData) -> void:
 	if event_command_node == null:
 		return
 	if _scene_root_provider != null and event_command_node.has_method("set_scene_root_provider"):
@@ -463,25 +453,6 @@ func _bind_node_view_with_data(event_command_node: EventCommandNode, data: NodeD
 		event_command_node.load_from_data(data)
 	if not event_command_node.request_apply.is_connected(_on_node_request_apply):
 		event_command_node.request_apply.connect(_on_node_request_apply)
-
-func _build_state_catalog() -> Array:
-	if _graph_model == null:
-		return []
-	var states := []
-	for node_id in _graph_model.get_node_ids():
-		var node := _graph_model.get_node(node_id)
-		if node == null or node.type != "state":
-			continue
-		var params := node.params
-		var state_name := str(params.get("name", ""))
-		var state_id := str(params.get("state_id", ""))
-		var id_value := state_id if state_id != "" else str(node_id)
-		var label := state_name if state_name != "" else id_value
-		states.append({
-			"id": id_value,
-			"label": label
-		})
-	return states
 
 func _build_state_params_for_new_node(id: String) -> Dictionary:
 	var number := _extract_state_number(id)
@@ -558,10 +529,10 @@ func _extract_state_number(id: String) -> int:
 	return 0
 
 func _copy_selected_nodes_to_clipboard() -> void:
-	if view == null or _graph_model == null:
+	if graph == null or _graph_model == null:
 		return
 	
-	var selected_ids := view.get_selected_node_ids()
+	var selected_ids := graph.get_selected_node_ids()
 	if selected_ids.is_empty():
 		return
 	_clipboard_nodes.clear()
@@ -612,8 +583,8 @@ func _paste_nodes_from_clipboard() -> void:
 	_ensure_id_generator_ready()
 
 	var paste_origin := _clipboard_anchor + Vector2(40, 40)
-	if view != null:
-		paste_origin = view.get_mouse_position_in_graph()
+	if graph != null:
+		paste_origin = graph.get_mouse_position_in_graph()
 	_edit_service.paste_nodes(
 		_clipboard_nodes,
 		_clipboard_edges,
@@ -628,9 +599,9 @@ func _paste_nodes_from_clipboard() -> void:
 	)
 
 func _clear_node_selection() -> void:
-	if view == null:
+	if graph == null:
 		return
-	for child in view.get_children():
+	for child in graph.get_children():
 		if child is GraphElement:
 			(child as GraphElement).selected = false
 
@@ -655,16 +626,16 @@ func _normalize_pasted_node(node: NodeData) -> void:
 		node.params["name"] = "%s (Copy)" % state_name
 
 func _bind_graph_shortcut_signals() -> void:
-	if _graph_shortcuts_bound or view == null:
+	if _graph_shortcuts_bound or graph == null:
 		return
 	_graph_shortcuts_bound = true
 
-	if view.has_signal("copy_nodes_request") and not view.is_connected("copy_nodes_request", Callable(self, "_on_copy_nodes_request")):
-		view.connect("copy_nodes_request", Callable(self, "_on_copy_nodes_request"))
-	if view.has_signal("paste_nodes_request") and not view.is_connected("paste_nodes_request", Callable(self, "_on_paste_nodes_request")):
-		view.connect("paste_nodes_request", Callable(self, "_on_paste_nodes_request"))
-	if view.has_signal("cut_nodes_request") and not view.is_connected("cut_nodes_request", Callable(self, "_on_cut_nodes_request")):
-		view.connect("cut_nodes_request", Callable(self, "_on_cut_nodes_request"))
+	if graph.has_signal("copy_nodes_request") and not graph.is_connected("copy_nodes_request", Callable(self, "_on_copy_nodes_request")):
+		graph.connect("copy_nodes_request", Callable(self, "_on_copy_nodes_request"))
+	if graph.has_signal("paste_nodes_request") and not graph.is_connected("paste_nodes_request", Callable(self, "_on_paste_nodes_request")):
+		graph.connect("paste_nodes_request", Callable(self, "_on_paste_nodes_request"))
+	if graph.has_signal("cut_nodes_request") and not graph.is_connected("cut_nodes_request", Callable(self, "_on_cut_nodes_request")):
+		graph.connect("cut_nodes_request", Callable(self, "_on_cut_nodes_request"))
 
 func _on_copy_nodes_request() -> void:
 	_copy_selected_nodes_to_clipboard()

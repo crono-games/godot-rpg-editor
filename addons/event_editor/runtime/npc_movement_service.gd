@@ -8,8 +8,12 @@ const CARDINAL_DIRS := [
 	Vector3(0, 0, -1)
 ]
 const META_MOVING := "_npc_moving"
+const DEBUG_NPC_MOVE := false
+const ACTION_PAUSE_SECONDS := 0.35
 
 var _accum_by_event: Dictionary = {}
+var _action_pause_by_event: Dictionary = {}
+var _last_dir_by_event: Dictionary = {}
 
 func clear() -> void:
 	_accum_by_event.clear()
@@ -30,10 +34,14 @@ func process(map_data: Dictionary, ctx: EventRuntimeContext, delta: float, playe
 func _process_event(map_data: Dictionary, ctx: EventRuntimeContext, event_id: String, delta: float, player_group: String, player: Node, active_radius_tiles: float) -> void:
 	var event := _resolve_event_node(map_data, ctx, event_id)
 	if event == null or not (event is Node2D or event is Node3D):
+		if DEBUG_NPC_MOVE:
+			print("NpcMovementService: skip event_id=", event_id, " reason=no_scene_node")
 		return
 	if _is_player_node(event, player_group, player):
 		return
 	if not _is_event_active(event, player, active_radius_tiles):
+		return
+	if _should_pause_for_action(ctx, event_id, delta):
 		return
 
 
@@ -44,14 +52,20 @@ func _process_event(map_data: Dictionary, ctx: EventRuntimeContext, event_id: St
 	if state_id == "":
 		state_id = graph.get_start_node_id()
 	if state_id == "":
+		if DEBUG_NPC_MOVE:
+			print("NpcMovementService: skip event_id=", event_id, " reason=no_state")
 		return
 	var state_node := graph.get_node(state_id)
 	if state_node == null or str(state_node.get("type", "")) != "state":
+		if DEBUG_NPC_MOVE:
+			print("NpcMovementService: skip event_id=", event_id, " reason=state_node_invalid state_id=", state_id)
 		return
 	var params: Dictionary = state_node.get("params", {})
 	var props: Dictionary = params.get("properties", {})
 	var movement_type := str(props.get("movement_type", "fixed")).to_lower()
 	if movement_type == "" or movement_type == "fixed":
+		if DEBUG_NPC_MOVE:
+			print("NpcMovementService: skip event_id=", event_id, " reason=fixed")
 		return
 
 	var frequency := clampi(int(props.get("movement_frequency", 3)), 1, 5)
@@ -65,8 +79,14 @@ func _process_event(map_data: Dictionary, ctx: EventRuntimeContext, event_id: St
 		return
 	_accum_by_event[event_id] = 0.0
 
-	var dir := _pick_direction(movement_type, event, ctx, player_group)
+	var dir := _pick_direction(movement_type, event, ctx, player_group, event_id)
+	if _is_player_adjacent(event, player):
+		var away := _pick_away_from_player(event, player)
+		if away != Vector3.ZERO:
+			dir = away
 	if dir == Vector3.ZERO:
+		if DEBUG_NPC_MOVE:
+			print("NpcMovementService: skip event_id=", event_id, " reason=zero_dir type=", movement_type)
 		return
 
 	var grid_size := _resolve_grid_size(event)
@@ -76,11 +96,35 @@ func _process_event(map_data: Dictionary, ctx: EventRuntimeContext, event_id: St
 	var current_pos3 := _node_pos3(event)
 	var next := GridUtils.cell_to_world(next_cell, current_pos3.y, grid_size, grid_centered)
 	if _is_event_cell_occupied(ctx, event_id, next_cell, grid_size, grid_centered):
-		return
+		if DEBUG_NPC_MOVE:
+			print("NpcMovementService: skip event_id=", event_id, " reason=cell_occupied cell=", next_cell)
+		dir = _reroll_direction(movement_type, event, ctx, player_group, event_id, dir)
+		if dir == Vector3.ZERO:
+			return
+		next_cell = current_cell + Vector2i(int(dir.x), int(dir.z))
+		next = GridUtils.cell_to_world(next_cell, current_pos3.y, grid_size, grid_centered)
 	if _is_player_cell_occupied(player, next_cell, grid_size, grid_centered):
-		return
+		if DEBUG_NPC_MOVE:
+			print("NpcMovementService: skip event_id=", event_id, " reason=player_occupied cell=", next_cell)
+		dir = _reroll_direction(movement_type, event, ctx, player_group, event_id, dir)
+		if dir == Vector3.ZERO:
+			return
+		next_cell = current_cell + Vector2i(int(dir.x), int(dir.z))
+		next = GridUtils.cell_to_world(next_cell, current_pos3.y, grid_size, grid_centered)
 	if _is_world_blocked_for_event(event, current_pos3, next):
-		return
+		if DEBUG_NPC_MOVE:
+			print("NpcMovementService: skip event_id=", event_id, " reason=world_blocked")
+		dir = _reroll_direction(movement_type, event, ctx, player_group, event_id, dir)
+		if dir == Vector3.ZERO:
+			return
+		next_cell = current_cell + Vector2i(int(dir.x), int(dir.z))
+		next = GridUtils.cell_to_world(next_cell, current_pos3.y, grid_size, grid_centered)
+		if _is_event_cell_occupied(ctx, event_id, next_cell, grid_size, grid_centered):
+			return
+		if _is_player_cell_occupied(player, next_cell, grid_size, grid_centered):
+			return
+		if _is_world_blocked_for_event(event, current_pos3, next):
+			return
 
 	var duration := _duration_from_speed(speed)
 	if props.has("movement_step_time"):
@@ -114,10 +158,10 @@ func _is_player_node(node: Node, player_group: String, player_ref: Node) -> bool
 			return true
 	return false
 
-func _pick_direction(movement_type: String, event: Node, ctx: EventRuntimeContext, player_group: String) -> Vector3:
+func _pick_direction(movement_type: String, event: Node, ctx: EventRuntimeContext, player_group: String, event_id: String = "") -> Vector3:
 	match movement_type:
 		"random":
-			return CARDINAL_DIRS[randi() % CARDINAL_DIRS.size()]
+			return _pick_random_dir(event_id)
 		"approach":
 			var env := ctx.get_scene_event_environment()
 			if env == null:
@@ -131,6 +175,41 @@ func _pick_direction(movement_type: String, event: Node, ctx: EventRuntimeContex
 			return Vector3(0, 0, 1) if d.z > 0 else Vector3(0, 0, -1)
 		_:
 			return Vector3.ZERO
+
+func _pick_away_from_player(event: Node, player: Node) -> Vector3:
+	if event == null or player == null:
+		return Vector3.ZERO
+	var grid_size := _resolve_grid_size(event)
+	var grid_centered := _resolve_grid_centered(event)
+	var event_cell := GridUtils.world_to_cell(_node_pos3(event), grid_size, grid_centered)
+	var player_cell := GridUtils.world_to_cell(_node_pos3(player), grid_size, grid_centered)
+	var dx := event_cell.x - player_cell.x
+	var dy := event_cell.y - player_cell.y
+	if abs(dx) >= abs(dy):
+		return Vector3(1, 0, 0) if dx > 0 else Vector3(-1, 0, 0)
+	return Vector3(0, 0, 1) if dy > 0 else Vector3(0, 0, -1)
+
+func _reroll_direction(movement_type: String, event: Node, ctx: EventRuntimeContext, player_group: String, event_id: String, current_dir: Vector3) -> Vector3:
+	if movement_type != "random":
+		return current_dir
+	var tried := 0
+	var dir := current_dir
+	while tried < 3:
+		dir = _pick_random_dir(event_id)
+		if dir != current_dir:
+			return dir
+		tried += 1
+	return dir
+
+func _pick_random_dir(event_id: String) -> Vector3:
+	var last := _last_dir_by_event.get(event_id, Vector3.ZERO)
+	var dir = CARDINAL_DIRS[randi() % CARDINAL_DIRS.size()]
+	var tries := 0
+	while tries < 4 and dir == last:
+		dir = CARDINAL_DIRS[randi() % CARDINAL_DIRS.size()]
+		tries += 1
+	_last_dir_by_event[event_id] = dir
+	return dir
 
 func _resolve_grid_size(event: Node) -> float:
 	if event.has_method("get") and event.get("grid_size") != null:
@@ -151,7 +230,7 @@ func _is_event_cell_occupied(ctx: EventRuntimeContext, moving_event_id: String, 
 		scene_root = env.call("get_root")
 	if scene_root == null:
 		return false
-	for node in scene_root.get_tree().get_nodes_in_group("EventInstance"):
+	for node in scene_root.get_tree().get_nodes_in_group("event_instance"):
 		if not (node is Node2D or node is Node3D):
 			continue
 		var nid := ""
@@ -184,6 +263,10 @@ func _is_world_blocked_for_event(event: Node, current_pos3: Vector3, next_pos3: 
 	if not (hitbox_area is Area2D):
 		return false
 	if not (hitbox is CollisionShape2D):
+		var resolved := _resolve_hitbox_shape(hitbox_area)
+		if resolved != null:
+			hitbox = resolved
+	if not (hitbox is CollisionShape2D):
 		return false
 	var hb_area := hitbox_area as Area2D
 	var hb_shape := hitbox as CollisionShape2D
@@ -201,14 +284,63 @@ func _is_world_blocked_for_event(event: Node, current_pos3: Vector3, next_pos3: 
 	var result = state.cast_motion(params)
 	return result == null or result.size() == 0 or float(result[0]) < 1.0
 
+func _resolve_hitbox_shape(hitbox_area: Area2D) -> CollisionShape2D:
+	if hitbox_area == null:
+		return null
+	var direct := hitbox_area.get_node_or_null("HitboxShape")
+	if direct is CollisionShape2D:
+		return direct
+	var generic := hitbox_area.get_node_or_null("CollisionShape2D")
+	if generic is CollisionShape2D:
+		return generic
+	for child in hitbox_area.get_children():
+		if child is CollisionShape2D:
+			return child
+	return null
+
+func _is_player_adjacent(event: Node, player: Node) -> bool:
+	if player == null:
+		return false
+	var grid_size := _resolve_grid_size(event)
+	var grid_centered := _resolve_grid_centered(event)
+	var event_cell := GridUtils.world_to_cell(_node_pos3(event), grid_size, grid_centered)
+	var player_cell := GridUtils.world_to_cell(_node_pos3(player), grid_size, grid_centered)
+	var dx := abs(event_cell.x - player_cell.x)
+	var dy := abs(event_cell.y - player_cell.y)
+	return dx + dy <= 1
+
+func _should_pause_for_action(ctx: EventRuntimeContext, event_id: String, delta: float) -> bool:
+	if event_id == "":
+		return false
+	if delta <= 0.0:
+		return false
+	var remaining := float(_action_pause_by_event.get(event_id, 0.0))
+	if remaining > 0.0:
+		remaining = maxf(0.0, remaining - delta)
+		_action_pause_by_event[event_id] = remaining
+		return remaining > 0.0
+	var last := ""
+	if ctx != null:
+		last = ctx.get_last_trigger_for_event(event_id)
+	if last == "action":
+		_action_pause_by_event[event_id] = ACTION_PAUSE_SECONDS
+		return true
+	if last == "":
+		_action_pause_by_event.erase(event_id)
+	return false
+
 func _apply_move(event: Node, next_pos: Vector3, dir: Vector3, duration: float) -> void:
 	event.set_meta(META_MOVING, true)
 	if event.has_method("update_animation"):
 		event.call("update_animation", _anim_direction_for(event, dir))
+	if event.has_method("_sync_anim_speed_to_step"):
+		event.call("_sync_anim_speed_to_step", duration)
 	var tween := event.get_tree().create_tween()
 	tween.tween_property(event, "position", _pos_value_for(event, next_pos), duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	tween.finished.connect(func():
 		if event != null and is_instance_valid(event):
+			if event.has_method("_reset_anim_speed"):
+				event.call("_reset_anim_speed")
 			if event.has_method("update_animation"):
 				event.call("update_animation", _anim_direction_for(event, Vector3.ZERO))
 			event.set_meta(META_MOVING, false)

@@ -15,6 +15,7 @@ const LOCAL_VAR_OPTIONS := ["A", "B", "C", "D"]
 
 var _ev_command_node: StateNode
 var _context: EventEditorManager
+var _global_state: GlobalState
 var _loading := false
 var _available_flags: Array = []
 var _available_variables: Array = []
@@ -28,28 +29,29 @@ func _ready() -> void:
 func setup(ev_command_node: StateNode, context: EventEditorManager) -> void:
 	_ev_command_node = ev_command_node
 	_context = context
-	_bind_context_signals()
+	_global_state = GlobalStateManager.get_global_state()
+	_bind_global_state_signals()
 	_refresh_options()
 	_load_from_ev_command_node()
 
 func apply_conditions() -> void:
 	_apply_conditions()
 
-func _bind_context_signals() -> void:
-	if _context == null:
+func _bind_global_state_signals() -> void:
+	if _global_state == null:
 		return
-	if not _context.flags_changed.is_connected(_on_flags_changed):
-		_context.flags_changed.connect(_on_flags_changed)
-	if not _context.variables_changed.is_connected(_on_variables_changed):
-		_context.variables_changed.connect(_on_variables_changed)
+	if not _global_state.flags_changed.is_connected(_on_global_flags_changed):
+		_global_state.flags_changed.connect(_on_global_flags_changed)
+	if not _global_state.variables_changed.is_connected(_on_global_variables_changed):
+		_global_state.variables_changed.connect(_on_global_variables_changed)
 
 func _refresh_options() -> void:
-	if _context == null:
+	if _global_state == null:
 		_available_flags = []
 		_available_variables = []
 		return
-	_available_flags = _context.get_flags()
-	_available_variables = _context.get_variables()
+	_available_flags = GlobalStateManager.get_flag_names()
+	_available_variables = GlobalStateManager.get_variable_names()
 
 func _load_from_ev_command_node() -> void:
 	if _ev_command_node == null:
@@ -83,12 +85,12 @@ func _on_add_variable_pressed() -> void:
 	_add_variable_row("global", "", "==", 0)
 	_apply_conditions()
 
-func _on_flags_changed(flags: Array) -> void:
-	_available_flags = flags.duplicate(true)
+func _on_global_flags_changed() -> void:
+	_available_flags = GlobalStateManager.get_flag_names()
 	_refresh_row_options(flags_container, _available_flags)
 
-func _on_variables_changed(vars: Array) -> void:
-	_available_variables = vars.duplicate(true)
+func _on_global_variables_changed() -> void:
+	_available_variables = GlobalStateManager.get_variable_names()
 	_refresh_row_options(variables_container, _available_variables)
 
 func _add_flag_row(scope: String, selected_name: String, value: bool) -> void:

@@ -51,6 +51,8 @@ func _on_add_event_instance(nodes, _scene):
 		_assign_event_defaults(inst, scene)
 	if inst is Node2D:
 		(inst as Node2D).position = last_click_pos
+	if EventEditorManager != null:
+		EventEditorManager.refresh_events_for_active_map(scene)
 
 func _resolve_world_mouse_position() -> Vector2:
 	var view := EditorInterface.get_editor_viewport_2d()

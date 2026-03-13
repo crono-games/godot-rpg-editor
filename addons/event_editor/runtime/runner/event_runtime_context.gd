@@ -1,6 +1,4 @@
 class_name EventRuntimeContext
-#Helper Class used by runners.
-
 extends RefCounted
 
 signal changed

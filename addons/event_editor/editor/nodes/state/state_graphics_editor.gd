@@ -43,6 +43,10 @@ func _ready() -> void:
 		frame_spin_box.min_value = 0
 		frame_spin_box.step = 1
 		frame_spin_box.rounded = true
+	if offset_x_spin != null and not offset_x_spin.value_changed.is_connected(_on_offset_x_changed):
+		offset_x_spin.value_changed.connect(_on_offset_x_changed)
+	if offset_y_spin != null and not offset_y_spin.value_changed.is_connected(_on_offset_y_changed):
+		offset_y_spin.value_changed.connect(_on_offset_y_changed)
 
 func setup(ev_command_node: StateNode) -> void:
 	_ev_command_node = ev_command_node
@@ -111,6 +115,16 @@ func _on_frame_changed(value: float) -> void:
 		return
 	_set_graphics_int("frame", maxi(0, int(round(value))))
 
+func _on_offset_x_changed(value: float) -> void:
+	if _updating_controls:
+		return
+	_set_graphics_float("offset_x", value)
+
+func _on_offset_y_changed(value: float) -> void:
+	if _updating_controls:
+		return
+	_set_graphics_float("offset_y", value)
+
 func _set_graphics_int(key: String, value: int) -> void:
 	if _ev_command_node == null:
 		return
@@ -118,6 +132,15 @@ func _set_graphics_int(key: String, value: int) -> void:
 	gfx[key] = value
 	var total := maxi(1, int(gfx.get("hframes", 1)) * int(gfx.get("vframes", 1)))
 	gfx["frame"] = clampi(int(gfx.get("frame", 0)), 0, total - 1)
+	_ev_command_node.set_property("graphics", gfx)
+	_update_graphics_button()
+	_update_frames_controls()
+
+func _set_graphics_float(key: String, value: float) -> void:
+	if _ev_command_node == null:
+		return
+	var gfx := _get_graphics_dict()
+	gfx[key] = value
 	_ev_command_node.set_property("graphics", gfx)
 	_update_graphics_button()
 	_update_frames_controls()
@@ -171,6 +194,10 @@ func _update_frames_controls() -> void:
 		frame_spin_box.editable = true
 	if autoslice_check_box != null:
 		autoslice_check_box.button_pressed = autoslice_enabled
+	if offset_x_spin != null:
+		offset_x_spin.value = float(gfx.get("offset_x", 0.0))
+	if offset_y_spin != null:
+		offset_y_spin.value = float(gfx.get("offset_y", 0.0))
 	_updating_controls = false
 
 func _update_graphics_button() -> void:

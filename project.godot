@@ -24,6 +24,7 @@ config/icon="res://icon.svg"
 
 EventEditorManager="*res://addons/event_editor/core/events/event_editor_manager.gd"
 MapEventManager="*res://addons/event_editor/runtime/map_event_manager.gd"
+GlobalStateManager="*res://addons/event_editor/core/global_state/global_state_manager.gd"
 
 [display]
 

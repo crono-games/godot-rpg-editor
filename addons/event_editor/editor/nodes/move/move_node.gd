@@ -20,8 +20,6 @@ var wait_for_completion := true
 func _ready() -> void:
 	super._ready()
 	_connect_move_buttons()
-	if available_events.is_empty() and event_manager != null:
-		_reload_events()
 
 func _connect_move_buttons() -> void:
 	for btn in button_container.get_children():
@@ -122,7 +120,7 @@ func _format_step(step: Dictionary) -> String:
 	var d = step.direction 
 	var v := Vector3(d.x, d.y, d.z) 
 
-	var target_id := str(step.get("target_id", step.get("target", "")))
+	var target_id := str(step.get("target_id", ""))
 	var label := str(step.get("target_name", ""))
 	if label == "":
 		var name := get_event_name_by_id(target_id)
@@ -219,10 +217,7 @@ func get_route_items() -> Array:
 
 func load_from_data(data: NodeData) -> void:
 	_data = data
-
 	if EventEditorManager != null:
-		if not EventEditorManager.events_changed.is_connected(_on_available_events_changed):
-			EventEditorManager.events_changed.connect(_on_available_events_changed)
 		available_events = EventEditorManager.get_event_refs_for_active_map()
 	else:
 		available_events = []
@@ -230,18 +225,6 @@ func load_from_data(data: NodeData) -> void:
 	_rebuild_event_selector()
 
 	emit_changed()
-
-func bind_event_manager(manager: EventEditorManager) -> void:
-	event_manager = manager
-	if event_manager == null:
-		return
-	if not event_manager.events_changed.is_connected(_on_event_refs_changed):
-		event_manager.events_changed.connect(_on_event_refs_changed)
-	if not event_manager.events_changed.is_connected(_on_available_events_changed):
-		event_manager.events_changed.connect(_on_available_events_changed)
-	if not event_manager.active_map_changed.is_connected(_on_active_map_changed):
-		event_manager.active_map_changed.connect(_on_active_map_changed)
-	_reload_events()
 
 func _on_available_events_changed(events: Array) -> void:
 	available_events = events
@@ -304,17 +287,6 @@ func _upgrade_route_targets() -> void:
 					new_route[i] = step
 					changed = true
 			continue
-		var legacy_name := str(step.get("target", ""))
-		if legacy_name == "":
-			continue
-		var id := _event_id_from_name(legacy_name)
-		if id == "":
-			continue
-		step["target_id"] = id
-		step["target_name"] = legacy_name
-		step.erase("target")
-		new_route[i] = step
-		changed = true
 	if changed:
 		route = new_route
 

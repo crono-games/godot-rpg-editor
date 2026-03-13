@@ -8,7 +8,6 @@ class_name SetVariableNode
 var available_variables: Array[String] = []
 var selected_variable: String = ""
 var value := 0
-var _context: EventEditorManager
 var _global_state: GlobalState
 
 func _ready() -> void:
@@ -53,13 +52,10 @@ func load_from_data(data: NodeData) -> void:
 	_data = data
 	var ctx := EventEditorManager
 	if ctx != null:
-		_context = ctx
-		if not _context.variables_changed.is_connected(_on_variables_changed):
-			_context.variables_changed.connect(_on_variables_changed)
-		_global_state = _context.get_global_state()
+		_global_state = GlobalStateManager.get_global_state()
 		if _global_state != null and not _global_state.variables_changed.is_connected(_on_global_state_variables_changed):
 			_global_state.variables_changed.connect(_on_global_state_variables_changed)
-		_on_variables_changed(_context.get_variables())
+		_on_variables_changed(GlobalStateManager.get_variable_names())
 	else:
 		available_variables = []
 	emit_changed()
@@ -78,9 +74,7 @@ func _on_variables_changed(vars: Array) -> void:
 		emit_changed()
 
 func _on_global_state_variables_changed() -> void:
-	if _context == null:
-		return
-	_on_variables_changed(_context.get_variables())
+	_on_variables_changed(GlobalStateManager.get_variable_names())
 
 func get_variable_options() -> Array:
 	return available_variables.duplicate(true)

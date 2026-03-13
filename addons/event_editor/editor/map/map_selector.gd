@@ -37,6 +37,7 @@ func _on_event_selected(index: int) -> void:
 
 func set_context(ctx: EventEditorManager) -> void:
 	if _context == ctx and _context != null:
+		_connect_context()
 		_rebuild_maps()
 		_rebuild_events()
 		_ensure_active_map_and_event()
@@ -64,39 +65,35 @@ func _get_context() -> EventEditorManager:
 	return null
 
 func _connect_context() -> void:
-	if not _context.maps_changed.is_connected(_on_maps_changed):
-		_context.maps_changed.connect(_on_maps_changed)
 	if not _context.active_map_changed.is_connected(_on_active_map_changed):
 		_context.active_map_changed.connect(_on_active_map_changed)
 	if not _context.events_changed.is_connected(_on_available_events_changed):
 		_context.events_changed.connect(_on_available_events_changed)
 	if not _context.active_event_changed.is_connected(_on_active_event_changed):
 		_context.active_event_changed.connect(_on_active_event_changed)
+	# Defensive: clean stale legacy connection
+	if _context.active_event_changed.is_connected(_on_available_events_changed):
+		_context.active_event_changed.disconnect(_on_available_events_changed)
 
 
 func _disconnect_context() -> void:
-	if _context.maps_changed.is_connected(_on_maps_changed):
-		_context.maps_changed.disconnect(_on_maps_changed)
-
 	if _context.active_map_changed.is_connected(_on_active_map_changed):
 		_context.active_map_changed.disconnect(_on_active_map_changed)
-	if _context.available_events_changed.is_connected(_on_available_events_changed):
-		_context.available_events_changed.disconnect(_on_available_events_changed)
+	if _context.events_changed.is_connected(_on_available_events_changed):
+		_context.events_changed.disconnect(_on_available_events_changed)
+	if _context.active_event_changed.is_connected(_on_available_events_changed):
+		_context.active_event_changed.disconnect(_on_available_events_changed)
 	if _context.active_event_changed.is_connected(_on_active_event_changed):
 		_context.active_event_changed.disconnect(_on_active_event_changed)
 
 
-func _on_maps_changed() -> void:
+func _on_active_map_changed(_map_id: String) -> void:
 	_rebuild_maps()
 	_rebuild_events()
 	_ensure_active_map_and_event()
 
-
-func _on_active_map_changed(_map_id: String) -> void:
-	_rebuild_events()
-	_ensure_active_map_and_event()
-
 func _on_available_events_changed(_events: Array) -> void:
+	_rebuild_maps()
 	_rebuild_events()
 	_ensure_active_map_and_event()
 

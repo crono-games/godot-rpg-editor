@@ -11,7 +11,6 @@ const ACTION_ADD := "add"
 const ACTION_REMOVE := "remove"
 const ACTION_CLEAR := "clear"
 
-var _event_manager: EventEditorManager = EventEditorManager
 var event_instances: Array = []
 
 var action: String = ACTION_ADD
@@ -128,10 +127,6 @@ func import_params(params: Dictionary) -> void:
 		action = ACTION_ADD
 	actor_id = str(params.get("actor_id", ""))
 	actor_name = str(params.get("actor_name", ""))
-	if actor_id == "":
-		var legacy_target := str(params.get("target_id", params.get("target", "")))
-		if legacy_target != "":
-			actor_id = legacy_target
 	slot_index = -1
 	make_persistent = bool(params.get("make_persistent", false))
 	_ensure_valid_actor(false)
@@ -149,24 +144,10 @@ func export_params() -> Dictionary:
 func load_from_data(data: NodeData) -> void:
 	_data = data
 	if EventEditorManager != null:
-		if not EventEditorManager.available_events_changed.is_connected(_on_available_events_changed):
-			EventEditorManager.available_events_changed.connect(_on_available_events_changed)
 		event_instances = EventEditorManager.get_event_refs_for_active_map()
 	else:
 		event_instances = []
 	import_params(data.params)
-
-func bind_event_manager(_manager: EventEditorManager) -> void:
-	_event_manager = EventEditorManager
-	if _event_manager == null:
-		return
-	if not _event_manager.event_refs_changed.is_connected(_on_event_refs_changed):
-		_event_manager.event_refs_changed.connect(_on_event_refs_changed)
-	if not _event_manager.available_events_changed.is_connected(_on_available_events_changed):
-		_event_manager.available_events_changed.connect(_on_available_events_changed)
-	if not _event_manager.active_map_changed.is_connected(_on_active_map_changed):
-		_event_manager.active_map_changed.connect(_on_active_map_changed)
-	_reload_events()
 
 func get_action_options() -> Array:
 	return [

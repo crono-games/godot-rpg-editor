@@ -6,7 +6,6 @@ class_name SetVisibilityNode
 @export var visible_check_box: CheckBox
 @export var disable_collision_check_box: CheckBox
 
-var _event_manager: EventEditorManager = EventEditorManager
 var event_instances: Array = []
 var target_id: String = ""
 var target_name: String = ""
@@ -61,10 +60,6 @@ func _on_disable_collision_toggled(value: bool) -> void:
 func import_params(params: Dictionary) -> void:
 	target_id = str(params.get("target_id", ""))
 	target_name = str(params.get("target_name", ""))
-	if target_id == "":
-		var legacy := str(params.get("target", ""))
-		if legacy != "":
-			target_id = legacy
 	visibility = bool(params.get("visible", true))
 	disable_collision = bool(params.get("disable_collision", false))
 	_ensure_valid_target(false)
@@ -81,24 +76,10 @@ func export_params() -> Dictionary:
 func load_from_data(data: NodeData) -> void:
 	_data = data
 	if EventEditorManager != null:
-		if not EventEditorManager.available_events_changed.is_connected(_on_available_events_changed):
-			EventEditorManager.available_events_changed.connect(_on_available_events_changed)
 		event_instances = EventEditorManager.get_event_refs_for_active_map()
 	else:
 		event_instances = []
 	import_params(data.params)
-
-func bind_event_manager(_manager: EventEditorManager) -> void:
-	_event_manager = EventEditorManager
-	if _event_manager == null:
-		return
-	if not _event_manager.event_refs_changed.is_connected(_on_event_refs_changed):
-		_event_manager.event_refs_changed.connect(_on_event_refs_changed)
-	if not _event_manager.available_events_changed.is_connected(_on_available_events_changed):
-		_event_manager.available_events_changed.connect(_on_available_events_changed)
-	if not _event_manager.active_map_changed.is_connected(_on_active_map_changed):
-		_event_manager.active_map_changed.connect(_on_active_map_changed)
-	_reload_events()
 
 func get_event_options() -> Array:
 	return event_instances.duplicate(true)

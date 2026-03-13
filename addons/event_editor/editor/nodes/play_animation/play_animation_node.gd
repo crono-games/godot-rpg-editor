@@ -9,7 +9,6 @@ class_name PlayAnimationNode
 const TARGET_CURRENT := "__current__"
 const TARGET_PLAYER := "__player__"
 
-var _event_manager: EventEditorManager = EventEditorManager
 var animation_id := ""
 var target_id := TARGET_CURRENT
 var wait_for_completion := false
@@ -99,29 +98,11 @@ func load_from_data(data: NodeData) -> void:
 	_data = data
 	import_params(data.params)
 	if EventEditorManager != null:
-		if not EventEditorManager.available_events_changed.is_connected(_on_available_events_changed):
-			EventEditorManager.available_events_changed.connect(_on_available_events_changed)
-		if not EventEditorManager.active_map_changed.is_connected(_on_active_map_changed):
-			EventEditorManager.active_map_changed.connect(_on_active_map_changed)
-		if not EventEditorManager.active_event_changed.is_connected(_on_active_event_changed):
-			EventEditorManager.active_event_changed.connect(_on_active_event_changed)
 		_on_available_events_changed(EventEditorManager.get_event_refs_for_active_map())
 	else:
 		available_events = []
 	refresh_animation_options()
 	emit_changed()
-
-func bind_event_manager(_manager: EventEditorManager) -> void:
-	_event_manager = EventEditorManager
-	if _event_manager == null:
-		return
-	if not _event_manager.event_refs_changed.is_connected(_on_event_refs_changed):
-		_event_manager.event_refs_changed.connect(_on_event_refs_changed)
-	if not _event_manager.available_events_changed.is_connected(_on_available_events_changed):
-		_event_manager.available_events_changed.connect(_on_available_events_changed)
-	if not _event_manager.active_map_changed.is_connected(_on_active_map_changed):
-		_event_manager.active_map_changed.connect(_on_active_map_changed)
-	_reload_events()
 
 func get_target_options() -> Array:
 	var items: Array = []
@@ -246,7 +227,7 @@ func _resolve_target_node_for_editor() -> Node:
 	var event_id := target_id
 	if event_id == "":
 		return null
-	for node in scene_root.get_tree().get_nodes_in_group("EventInstance"):
+	for node in scene_root.get_tree().get_nodes_in_group("event_instance"):
 		if str(node.get("id")) == event_id:
 			return node
 	return null

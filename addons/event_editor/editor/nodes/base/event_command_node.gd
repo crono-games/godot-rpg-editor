@@ -7,11 +7,11 @@ signal request_apply(vm)
 
 var _node_id: String
 var _data: NodeData
-
-var _dirty := false
+var _event_manager: EventEditorManager
 
 func _ready() -> void:
 	changed.connect(_on_changed)
+	_bind_event_manager()
 	_on_changed()
 
 func _on_changed() -> void:
@@ -56,8 +56,51 @@ func get_display_items() -> Array:
 
 ## Helpers
 
-func _replace_array(old: Array, new_value: Array) -> Array:
-	return new_value.duplicate(true)
+## Event manager binding (optional)
+
+func _bind_event_manager() -> void:
+	if EventEditorManager == null:
+		return
+	_event_manager = EventEditorManager
+	_connect_manager_signal("events_changed", "_on_events_changed")
+	_connect_manager_signal("active_map_changed", "_on_active_map_changed")
+	_reload_events_if_available()
+
+func _connect_manager_signal(signal_name: String, method_name: String) -> void:
+	if _event_manager == null:
+		return
+	if not _event_manager.has_signal(signal_name):
+		return
+	if not has_method(method_name):
+		return
+	if not _event_manager.is_connected(signal_name, Callable(self, method_name)):
+		_event_manager.connect(signal_name, Callable(self, method_name))
+
+func _reload_events_if_available() -> void:
+	if has_method("_reload_events"):
+		call("_reload_events")
+		return
+	if has_method("_on_available_events_changed"):
+		var refs: Array = []
+		if EventEditorManager != null:
+			refs = EventEditorManager.get_event_refs_for_active_map()
+		call("_on_available_events_changed", refs)
+		return
+	if has_method("_on_event_refs_changed"):
+		var refs2: Array = []
+		if EventEditorManager != null:
+			refs2 = EventEditorManager.get_event_refs_for_active_map()
+		call("_on_event_refs_changed", refs2)
+
+func _on_events_changed(events: Array) -> void:
+	if has_method("_on_available_events_changed"):
+		call("_on_available_events_changed", events)
+		return
+	if has_method("_on_event_refs_changed"):
+		call("_on_event_refs_changed", events)
+		return
+	if has_method("_reload_events"):
+		call("_reload_events")
 
 func rebuild_option_button(
 	option: OptionButton,
@@ -130,12 +173,3 @@ func get_event_items_for_active_map() -> Array:
 			"name": str(item.get("name", ""))
 		})
 	return out
-
-func mark_dirty() -> void:
-	_dirty = true
-
-func clear_dirty() -> void:
-	_dirty = false
-
-func is_dirty() -> bool:
-	return _dirty

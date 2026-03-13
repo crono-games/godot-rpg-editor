@@ -5,7 +5,6 @@ class_name ChangeGraphicsNode
 @export var event_selector: OptionButton
 @export var file_dialog: FileDialog
 
-var _event_manager: EventEditorManager = EventEditorManager
 var available_events: Array = []
 
 var selected_event_id : String = ""
@@ -59,11 +58,6 @@ func _on_button_pressed() -> void:
 func import_params(params: Dictionary) -> void:
 	selected_event_id = str(params.get("target_id", ""))
 	selected_event_name = str(params.get("target_name", ""))
-	if selected_event_id == "":
-		var legacy_name := str(params.get("target", ""))
-		if legacy_name != "":
-			selected_event_id = _event_id_from_name(legacy_name)
-			selected_event_name = legacy_name
 	graphics_path = str(params.get("graphics", ""))
 	emit_changed()
 
@@ -78,25 +72,11 @@ func load_from_data(data: NodeData) -> void:
 	_data = data
 
 	if EventEditorManager != null:
-		if not EventEditorManager.available_events_changed.is_connected(_on_available_events_changed):
-			EventEditorManager.available_events_changed.connect(_on_available_events_changed)
 		available_events = EventEditorManager.get_event_refs_for_active_map()
 	else:
 		available_events = []
 
 	import_params(data.params)
-
-func bind_event_manager(_manager: EventEditorManager) -> void:
-	_event_manager = EventEditorManager
-	if _event_manager == null:
-		return
-	if not _event_manager.event_refs_changed.is_connected(_on_event_refs_changed):
-		_event_manager.event_refs_changed.connect(_on_event_refs_changed)
-	if not _event_manager.available_events_changed.is_connected(_on_available_events_changed):
-		_event_manager.available_events_changed.connect(_on_available_events_changed)
-	if not _event_manager.active_map_changed.is_connected(_on_active_map_changed):
-		_event_manager.active_map_changed.connect(_on_active_map_changed)
-	_reload_events()
 
 func _on_available_events_changed(events: Array) -> void:
 	available_events = events

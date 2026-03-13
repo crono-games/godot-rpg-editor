@@ -225,7 +225,7 @@ func _is_move_blocked_2d(target: Node, next_pos3: Vector3, scene_root: Node) -> 
 
 	if scene_root == null or not scene_root.is_inside_tree():
 		return false
-	var all_nodes := scene_root.get_tree().get_nodes_in_group("EventInstance")
+	var all_nodes := scene_root.get_tree().get_nodes_in_group("event_instance")
 	for n in all_nodes:
 		if not (n is Node2D):
 			continue
