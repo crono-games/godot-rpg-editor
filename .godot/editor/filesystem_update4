@@ -1,6 +1,2 @@
 res://maps/map1.tscn
 res://assets/data/tilesets/field.tres
-res://addons/event_editor/runtime/map_2d.gd
-res://assets/templates/events/2d/event_instance_2d.tscn
-res://assets/templates/events/2d/event_instance_2d.gd
-res://addons/event_editor/runtime/runner/node_executors/change_graphics_executor.gd
