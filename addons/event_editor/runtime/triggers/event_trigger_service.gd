@@ -49,6 +49,7 @@ func try_run_action_trigger(
 	runtime_context: EventRuntimeContext,
 	run_event_callback: Callable
 ) -> bool:
+
 	if map_data.is_empty():
 		return false
 	if scene_root == null:
@@ -57,18 +58,46 @@ func try_run_action_trigger(
 		return false
 	if run_event_callback == null or not run_event_callback.is_valid():
 		return false
-	if not player.has_method("get_area_in_front") or not player.has_method("get_facing_direction"):
+
+	if not (player is Node2D):
 		return false
-	var area = player.call("get_area_in_front", player.call("get_facing_direction"))
+
+	if not player.has_method("get_facing_direction"):
+		return false
+
+	var direction: Vector2 = player.call("get_facing_direction")
+
+	var grid_size := 16
+	if player.has_method("get"):
+		var maybe_grid = player.get("grid_size")
+		if typeof(maybe_grid) == TYPE_INT:
+			grid_size = maybe_grid
+
+	var area := get_area_in_front(player, direction, grid_size)
+
+	if area == null:
+		area = get_area_under_player(player, grid_size)
+
 	if area == null:
 		return false
+
 	var event = area.get_parent()
+
 	if event is EventInstance2D or event is EventInstance3D:
 		var event_id = event.id
 		runtime_context.set_last_trigger_for_event(event_id, "action")
 		run_event_callback.call(map_data, scene_root, event_id)
 		return true
+
 	return false
+
+func _resolve_event_from_area(area: Node) -> Node:
+	var n := area
+	while n != null:
+		if n is EventInstance2D or n is EventInstance3D:
+			return n
+		n = n.get_parent()
+	return null
 
 ## Returns true if the event's current state allows a bump trigger.
 func event_allows_touch_trigger(map_data: Dictionary, event_id: String, runtime_context: EventRuntimeContext) -> bool:

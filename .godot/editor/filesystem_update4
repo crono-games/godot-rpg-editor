@@ -3,3 +3,4 @@ res://assets/data/tilesets/field.tres
 res://assets/templates/events/2d/player_instance_grid.tscn
 res://assets/templates/events/2d/player_instance_grid.gd
 res://assets/templates/events/2d/player_actor_2d_base.gd
+res://addons/event_editor/runtime/triggers/event_trigger_service.gd

@@ -138,7 +138,6 @@ func _on_move_finished():
 	else:
 		update_animation(Vector2.ZERO)
 
-
 func _get_move_duration() -> float:
 
 	if move_speed <= 0.0:
@@ -172,6 +171,9 @@ func _get_blocking_event(next_global_pos: Vector2) -> Node:
 
 	return null
 
+
+func get_facing_direction() -> Vector2:
+	return Vector2(_last_dir.x, _last_dir.y)
 
 func _is_world_blocked(dir: Vector2) -> bool:
 
