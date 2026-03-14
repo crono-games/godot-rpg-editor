@@ -180,3 +180,6 @@ func _unique_trigger_shape(shape_node: CollisionShape2D) -> Shape2D:
 		shape.resource_local_to_scene = true
 		shape_node.shape = shape
 	return shape
+
+func is_moving():
+	pass

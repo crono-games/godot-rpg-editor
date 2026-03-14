@@ -172,7 +172,7 @@ func _apply_pending_map_hint() -> void:
 func _refresh_map_binding(scene_root: Node) -> void:
 	if scene_root == null:
 		return
-	# If we have a pending teleport target, honor it over scene-derived ids.
+	## If we have a pending teleport target, honor it over scene-derived ids.
 	if _pending_map_id != "":
 		_current_map_id = _pending_map_id
 		map_json_path = _map_loader.map_json_path_from_map_id(_current_map_id)
@@ -259,7 +259,7 @@ func _deferred_refresh() -> void:
 		_runner.refresh_event_states(_map_data, scene_root)
 	_refreshing = false
 
-# Per-tick runtime processing for NPCs and auto/parallel events.
+## Per-tick runtime processing for NPCs and auto/parallel events.
 func _on_tick_runtime(step: float) -> void:
 	if _map_data.is_empty():
 		return
@@ -269,7 +269,7 @@ func _on_tick_runtime(step: float) -> void:
 	_runner.run_auto_parallel(_map_data, scene_root, step)
 	_npc_movement.process(_map_data, _runtime_context, step, player_group, npc_active_radius_tiles)
 	
-# Handles action-trigger input (ui_accept).
+## Handles action-trigger input (ui_accept).
 func _input(event: InputEvent) -> void:
 	if _map_data.is_empty():
 		return

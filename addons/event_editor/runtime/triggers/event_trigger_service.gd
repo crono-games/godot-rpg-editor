@@ -58,7 +58,6 @@ func try_run_action_trigger(
 		return false
 	if run_event_callback == null or not run_event_callback.is_valid():
 		return false
-
 	if not (player is Node2D):
 		return false
 
@@ -67,29 +66,28 @@ func try_run_action_trigger(
 
 	var direction: Vector2 = player.call("get_facing_direction")
 
-	var grid_size := 16
-	if player.has_method("get"):
-		var maybe_grid = player.get("grid_size")
-		if typeof(maybe_grid) == TYPE_INT:
-			grid_size = maybe_grid
+	var grid_size := player.get("grid_size") if player.has_method("get") else 32
 
-	var area := get_area_in_front(player, direction, grid_size)
+	var area := EventNodeResolver.area_in_front(player, direction, grid_size)
 
 	if area == null:
-		area = get_area_under_player(player, grid_size)
+		area = EventNodeResolver.area_under_player(player, grid_size)
 
 	if area == null:
 		return false
 
-	var event = area.get_parent()
+	var event := EventNodeResolver.resolve_event_from_area(area)
 
-	if event is EventInstance2D or event is EventInstance3D:
-		var event_id = event.id
-		runtime_context.set_last_trigger_for_event(event_id, "action")
-		run_event_callback.call(map_data, scene_root, event_id)
-		return true
+	if event == null:
+		return false
 
-	return false
+	var event_id = event.id
+
+	runtime_context.set_last_trigger_for_event(event_id, "action")
+
+	run_event_callback.call(map_data, scene_root, event_id)
+
+	return true
 
 func _resolve_event_from_area(area: Node) -> Node:
 	var n := area
@@ -293,10 +291,12 @@ func _uses_grid_resolution(actor: Node) -> bool:
 
 ## Connects touch area signals for a given event instance.
 func bind_touch(event_instance: Node, body_handler: Callable, area_handler: Callable, bind_args: Array = []) -> void:
+
 	if event_instance == null:
 		return
 
-	var touch_area := _resolve_touch_area(event_instance)
+	var touch_area := EventNodeResolver.resolve_touch_area(event_instance)
+
 	if touch_area == null:
 		return
 

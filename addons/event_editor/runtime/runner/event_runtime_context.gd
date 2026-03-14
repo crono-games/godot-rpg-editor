@@ -14,7 +14,7 @@ var last_trigger: String = ""
 var last_trigger_by_event := {}
 var local_flags_by_event := {}
 var last_delta := 0.0
-var scene_event_environment: EventEnvironment = null
+static var scene_event_environment: EventEnvironment = null
 
 func apply_global_state(state: GlobalState) -> void:
 	if state == null:
@@ -62,10 +62,6 @@ func set_local_flag(event_id: String, name: String, value: bool) -> void:
 		local_flags_by_event[event_id] = {}
 	local_flags_by_event[event_id][name] = value
 	local_flags_changed.emit(event_id)
-	# Important: local flags are event-scoped.
-	# Emitting `changed` here causes a full map refresh in MapEventManager,
-	# which can re-evaluate unrelated events and restart things like BGM.
-	# Callers that care about local flags should subscribe to `local_flags_changed`.
 
 func get_local_flag(event_id: String, name: String) -> bool:
 	if event_id == "":
@@ -101,15 +97,15 @@ func set_last_delta(delta: float) -> void:
 func set_scene_event_environment(env: EventEnvironment) -> void:
 	scene_event_environment = env
 
-func get_scene_event_environment() -> EventEnvironment:
+static func get_scene_event_environment() -> EventEnvironment:
 	return scene_event_environment
 
-func get_event_by_id(event_id: String) -> Node:
+static func get_event_by_id(event_id: String) -> Node:
 	if scene_event_environment == null:
 		return null
 	return scene_event_environment.get_event_by_id(event_id)
 
-func get_event_by_name(name: String) -> Node:
+static func get_event_by_name(name: String) -> Node:
 	if scene_event_environment == null:
 		return null
 	return scene_event_environment.get_event_by_name(name)
