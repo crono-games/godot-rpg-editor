@@ -5,9 +5,9 @@
 				"edges": [
 					{
 						"from": "state_1",
-						"from_port": 0.0,
+						"from_port": 0,
 						"to": "show_dialogue_1",
-						"to_port": 0.0
+						"to_port": 0
 					}
 				],
 				"nodes": {
@@ -101,7 +101,7 @@
 								{
 									"id": "dlg_1",
 									"portrait": "",
-									"text": "You obtained an Sword!"
+									"text": "You obtained a Sword!"
 								}
 							]
 						},
@@ -259,9 +259,9 @@
 				"edges": [
 					{
 						"from": "state_1",
-						"from_port": 0,
+						"from_port": 0.0,
 						"to": "teleport_player_1",
-						"to_port": 0
+						"to_port": 0.0
 					}
 				],
 				"nodes": {
@@ -273,12 +273,6 @@
 							"is_default": true,
 							"name": "Default",
 							"properties": {
-								"graphics": {
-									"frame": 0.0,
-									"hframes": 8.0,
-									"texture": "res://assets/graphics/actors/Player Base.png",
-									"vframes": 4.0
-								},
 								"movement_type": "fixed"
 							},
 							"state_id": "default",
@@ -294,12 +288,12 @@
 						"params": {
 							"auto_fade": true,
 							"facing_dir": "keep",
-							"fade_frames": 30,
+							"fade_frames": 30.0,
 							"map_id": "map2",
 							"target_position": {
-								"x": 184,
-								"y": 152,
-								"z": 152
+								"x": 184.0,
+								"y": 152.0,
+								"z": 152.0
 							}
 						},
 						"position": [
