@@ -1,5 +1,226 @@
 {
 	"events": {
+		"4360376732617874500": {
+			"flow": {
+				"edges": [
+					{
+						"from": "state_1",
+						"from_port": 0.0,
+						"to": "move_along_path_1",
+						"to_port": 0.0
+					}
+				],
+				"nodes": {
+					"move_along_path_1": {
+						"params": {
+							"curve_enabled": false,
+							"curve_subdivisions": 6.0,
+							"loop": false,
+							"points": [
+								{
+									"x": 385.0,
+									"y": 186.0
+								},
+								{
+									"x": 364.0,
+									"y": 162.0
+								},
+								{
+									"x": 366.0,
+									"y": 195.0
+								},
+								{
+									"x": 325.0,
+									"y": 208.0
+								},
+								{
+									"x": 295.0,
+									"y": 218.0
+								},
+								{
+									"x": 310.0,
+									"y": 237.0
+								},
+								{
+									"x": 330.0,
+									"y": 256.0
+								},
+								{
+									"x": 365.0,
+									"y": 252.0
+								},
+								{
+									"x": 389.0,
+									"y": 242.0
+								},
+								{
+									"x": 404.0,
+									"y": 235.0
+								}
+							],
+							"return_back_on_finish": false,
+							"snap_to_first_point": false,
+							"speed_px_per_sec": 64.0,
+							"target_id": "4360376732617874500",
+							"target_name": "Event3",
+							"wait_for_completion": true
+						},
+						"position": [
+							224.0,
+							-64.0
+						],
+						"type": "move_along_path"
+					},
+					"state_1": {
+						"params": {
+							"conditions": {
+
+							},
+							"is_default": true,
+							"name": "Default",
+							"properties": {
+								"graphics": {
+									"frame": 0.0,
+									"hframes": 8.0,
+									"offset_y": -8.0,
+									"texture": "res://assets/graphics/actors/human_base.png",
+									"vframes": 4.0
+								}
+							},
+							"state_id": "default",
+							"trigger_mode": "parallel"
+						},
+						"position": [
+							0.0,
+							0.0
+						],
+						"type": "state"
+					}
+				}
+			}
+		},
+		"5332173686138629322": {
+			"flow": {
+				"edges": [
+					{
+						"from": "state_1",
+						"from_port": 0.0,
+						"to": "show_dialogue_1",
+						"to_port": 0.0
+					},
+					{
+						"from": "show_dialogue_1",
+						"from_port": 0.0,
+						"to": "set_local_flag_1",
+						"to_port": 0.0
+					},
+					{
+						"from": "state_2",
+						"from_port": 0.0,
+						"to": "show_dialogue_2",
+						"to_port": 0.0
+					}
+				],
+				"nodes": {
+					"set_local_flag_1": {
+						"params": {
+							"flag_name": "A",
+							"scope": "local",
+							"state": true
+						},
+						"position": [
+							380.120574951172,
+							73.4848556518555
+						],
+						"type": "set_local_flag"
+					},
+					"show_dialogue_1": {
+						"params": {
+							"dialogues": [
+								{
+									"id": "dlg_1",
+									"portrait": "",
+									"text": "You obtained a POTION!"
+								}
+							]
+						},
+						"position": [
+							181.020568847656,
+							29.4848556518555
+						],
+						"type": "show_dialogue"
+					},
+					"show_dialogue_2": {
+						"params": {
+							"dialogues": [
+								{
+									"id": "dlg_1",
+									"portrait": "",
+									"text": "The chest is empty."
+								}
+							]
+						},
+						"position": [
+							193.120574951172,
+							194.48486328125
+						],
+						"type": "show_dialogue"
+					},
+					"state_1": {
+						"params": {
+							"conditions": {
+
+							},
+							"is_default": true,
+							"name": "Default",
+							"properties": {
+								"graphics": {
+									"frame": 0.0,
+									"hframes": 2.0,
+									"texture": "res://assets/graphics/actors/chest.png"
+								}
+							},
+							"state_id": "default",
+							"trigger_mode": "action"
+						},
+						"position": [
+							0.0,
+							0.0
+						],
+						"type": "state"
+					},
+					"state_2": {
+						"params": {
+							"conditions": {
+								"flags": [
+									{
+										"name": "A",
+										"scope": "local",
+										"value": true
+									}
+								]
+							},
+							"is_default": false,
+							"name": "New State 2",
+							"properties": {
+								"graphics": {
+									"frame": 1.0,
+									"hframes": 2.0,
+									"texture": "res://assets/graphics/actors/chest.png"
+								}
+							},
+							"state_id": "state_2",
+							"trigger_mode": "action"
+						},
+						"position": [
+							13.8205633163452,
+							163.684860229492
+						],
+						"type": "state"
+					}
+				}
+			}
+		},
 		"6050016514044768545": {
 			"flow": {
 				"edges": [
@@ -56,128 +277,6 @@
 						"position": [
 							0.0,
 							0.0
-						],
-						"type": "state"
-					}
-				}
-			}
-		},
-		"7040096717162243803": {
-			"flow": {
-				"edges": [
-					{
-						"from": "state_1",
-						"from_port": 0.0,
-						"to": "show_dialogue_1",
-						"to_port": 0.0
-					},
-					{
-						"from": "show_dialogue_1",
-						"from_port": 0.0,
-						"to": "set_local_flag_1",
-						"to_port": 0.0
-					},
-					{
-						"from": "state_2",
-						"from_port": 0.0,
-						"to": "show_dialogue_2",
-						"to_port": 0.0
-					}
-				],
-				"nodes": {
-					"set_local_flag_1": {
-						"params": {
-							"flag_name": "A",
-							"scope": "local",
-							"state": true
-						},
-						"position": [
-							400.0,
-							0.0
-						],
-						"type": "set_local_flag"
-					},
-					"show_dialogue_1": {
-						"params": {
-							"dialogues": [
-								{
-									"id": "dlg_1",
-									"portrait": "",
-									"text": "You obtained a Sword!"
-								}
-							]
-						},
-						"position": [
-							180.0,
-							-20.0
-						],
-						"type": "show_dialogue"
-					},
-					"show_dialogue_2": {
-						"params": {
-							"dialogues": [
-								{
-									"id": "dlg_1",
-									"portrait": "",
-									"text": "The chest is empty."
-								}
-							]
-						},
-						"position": [
-							192.0,
-							144.0
-						],
-						"type": "show_dialogue"
-					},
-					"state_1": {
-						"params": {
-							"conditions": {
-
-							},
-							"is_default": true,
-							"name": "Default",
-							"properties": {
-								"graphics": {
-									"frame": 0.0,
-									"hframes": 2.0,
-									"texture": "res://assets/graphics/actors/chest.png"
-								}
-							},
-							"state_id": "default",
-							"trigger_mode": "action"
-						},
-						"position": [
-							0.0,
-							0.0
-						],
-						"type": "state"
-					},
-					"state_2": {
-						"params": {
-							"conditions": {
-								"flags": [
-									{
-										"name": "A",
-										"scope": "local",
-										"value": true
-									}
-								]
-							},
-							"is_default": false,
-							"name": "New State 2",
-							"properties": {
-								"graphics": {
-									"frame": 1.0,
-									"hframes": 2.0,
-									"texture": "res://assets/graphics/actors/chest.png"
-								}
-							},
-							"state_id": "state_2",
-							"trigger_mode": "action"
-						},
-						"position": [
-							0.0,
-							160.0
 						],
 						"type": "state"
 					}
@@ -258,7 +357,14 @@
 		},
 		"evt_5582423511244394517": {
 			"flow": {
-				"edges": [],
+				"edges": [
+					{
+						"from": "state_1",
+						"from_port": 0,
+						"to": "teleport_player_1",
+						"to_port": 0
+					}
+				],
 				"nodes": {
 					"state_1": {
 						"params": {
@@ -271,13 +377,31 @@
 								"movement_type": "fixed"
 							},
 							"state_id": "default",
-							"trigger_mode": "action"
+							"trigger_mode": "touch_overlap"
 						},
 						"position": [
 							-20.0,
 							40.0
 						],
 						"type": "state"
+					},
+					"teleport_player_1": {
+						"params": {
+							"auto_fade": true,
+							"facing_dir": "right",
+							"fade_frames": 30,
+							"map_id": "map2",
+							"target_position": {
+								"x": 8,
+								"y": 184,
+								"z": 184
+							}
+						},
+						"position": [
+							194.993041992188,
+							76.5293502807617
+						],
+						"type": "teleport_player"
 					}
 				}
 			}

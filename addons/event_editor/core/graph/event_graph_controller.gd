@@ -4,10 +4,6 @@ class_name GraphController
 # Central coordinator for graph editing:
 # owns model/view sync, graph persistence and state-node conventions.
 
-# ================================
-# Dependencies (composition root)
-# ================================
-
 signal graph_dirty
 signal state_properties_updated(event_id: String, state_id: String, params: Dictionary)
 
@@ -17,17 +13,11 @@ var _connection_policy: GraphConnectionPolicy
 var _persistence_service: GraphPersistenceService
 var _scene_root_provider: Callable
 
-# ================================
-# UI References
-# ================================
-
 @export var graph: EventGraph
 @export var context_menu_panel: ContextMenuPanel
 
 var _id_generator: GraphIdGenerator
 var _undo_redo : UndoRedo
-
-## Graph-specific id generator — inject from composition root using `set_id_generator()`.
 
 # ================================
 # Internal State
@@ -77,10 +67,6 @@ func set_context(context: EventEditorManager) -> void:
 	if graph != null:
 		graph.event_manager = _event_editor_manager
 
-#func sync_with_event_editor_manager_selection() -> void:
-	#if _event_editor_manager.active_event_id == "":
-		#return
-	#_on_event_selected(_event_editor_manager.active_event_id)
 
 func set_scene_root_provider(provider: Callable) -> void:
 	_scene_root_provider = provider

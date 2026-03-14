@@ -1,13 +1,59 @@
 {
 	"events": {
-		"evt_5582423511244394517": {
+		"8029428997933849834": {
 			"flow": {
 				"edges": [
 					{
 						"from": "state_1",
 						"from_port": 0,
-						"to": "show_dialogue_1",
+						"to": "play_bgm_1",
 						"to_port": 0
+					}
+				],
+				"nodes": {
+					"play_bgm_1": {
+						"params": {
+							"loop": true,
+							"pitch_scale": 1.0,
+							"stream_path": "res://assets/audio/bgm/town_theme.mp3",
+							"volume_db": 0.0
+						},
+						"position": [
+							160.0,
+							-16.0
+						],
+						"type": "play_bgm"
+					},
+					"state_1": {
+						"params": {
+							"conditions": {
+
+							},
+							"is_default": true,
+							"name": "Default",
+							"properties": {
+
+							},
+							"state_id": "default",
+							"trigger_mode": "auto"
+						},
+						"position": [
+							0.0,
+							0.0
+						],
+						"type": "state"
+					}
+				}
+			}
+		},
+		"evt_5582423511244394517": {
+			"flow": {
+				"edges": [
+					{
+						"from": "state_1",
+						"from_port": 0.0,
+						"to": "show_dialogue_1",
+						"to_port": 0.0
 					}
 				],
 				"nodes": {

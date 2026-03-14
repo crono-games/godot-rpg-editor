@@ -1,4 +1,3 @@
-	# FilesystemMapRepository.gd
 class_name MapRepository
 
 extends RefCounted
