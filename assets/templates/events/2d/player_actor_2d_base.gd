@@ -89,6 +89,21 @@ func _unhandled_input(event: InputEvent) -> void:
 		debug_noclip = not debug_noclip
 
 
+func _get_input_direction() -> Vector2:
+
+	var x := Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
+	var y := Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
+
+	var v := Vector2(x, y)
+
+	if v == Vector2.ZERO:
+		return v
+
+	if absf(v.x) > absf(v.y):
+		return Vector2.RIGHT if v.x > 0 else Vector2.LEFT
+
+	return Vector2.DOWN if v.y > 0 else Vector2.UP
+
 func is_moving() -> bool:
 	return _moving
 
@@ -121,6 +136,9 @@ func update_animation(direction: Vector2) -> void:
 func play_animation(base: String, vec: Vector2) -> void:
 
 	if not _can_play_animation():
+		return
+	# Don't try to play animation if sprite doesn't have a texture
+	if sprite == null or not is_instance_valid(sprite) or sprite.texture == null:
 		return
 
 	var dir := _main_dir(vec)

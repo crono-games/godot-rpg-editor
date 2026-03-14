@@ -3,9 +3,9 @@
 [ext_resource type="Script" uid="uid://chwop37o1g5vw" path="res://addons/event_editor/editor/nodes/change_graphics/change_graphics_node.gd" id="1_kdwih"]
 [ext_resource type="Texture2D" uid="uid://dajkc6b264i4c" path="res://addons/event_editor/icons/FileDialog.svg" id="2_wecf6"]
 
-[node name="ChangeGraphicsNode" type="GraphNode" unique_id=1135125552 node_paths=PackedStringArray("event_selector", "file_dialog")]
-offset_right = 139.0
-offset_bottom = 88.0
+[node name="ChangeGraphicsNode" type="GraphNode" unique_id=1135125552 node_paths=PackedStringArray("event_selector", "file_dialog", "h_frames_spin", "v_frames_spin")]
+offset_right = 196.0
+offset_bottom = 158.0
 title = "Change Graphics"
 slot/0/left_enabled = true
 slot/0/left_type = 0
@@ -17,8 +17,10 @@ slot/0/right_color = Color(1, 1, 1, 1)
 slot/0/right_icon = null
 slot/0/draw_stylebox = true
 script = ExtResource("1_kdwih")
-event_selector = NodePath("HBoxContainer/EventSelector")
+event_selector = NodePath("GridContainer/EventSelector")
 file_dialog = NodePath("FileDialog")
+h_frames_spin = NodePath("GridContainer/HFramesSpin")
+v_frames_spin = NodePath("GridContainer/VFramesSpin")
 
 [node name="FileDialog" type="FileDialog" parent="." unique_id=1967903582]
 title = "Open a File"
@@ -26,32 +28,56 @@ file_mode = 0
 root_subfolder = "res://graphics/actors/"
 filters = PackedStringArray("*.png")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=790166206]
+[node name="GridContainer" type="GridContainer" parent="." unique_id=1258725003]
 layout_mode = 2
-size_flags_horizontal = 0
+columns = 2
 
-[node name="EventSelector" type="OptionButton" parent="HBoxContainer" unique_id=1507662102]
+[node name="EventSelector" type="OptionButton" parent="GridContainer" unique_id=1507662102]
 custom_minimum_size = Vector2(56, 0)
 layout_mode = 2
 clip_text = true
 selected = 0
 fit_to_longest_item = false
-item_count = 5
-popup/item_0/text = "Event"
+item_count = 6
+popup/item_0/text = "WarpZone2"
 popup/item_0/id = 0
-popup/item_1/text = "PlayerInstanceGrid"
+popup/item_1/text = "WarpHouse"
 popup/item_1/id = 1
-popup/item_2/text = "Event2"
+popup/item_2/text = "Chest"
 popup/item_2/id = 2
-popup/item_3/text = "Event4"
+popup/item_3/text = "BGMPlayer"
 popup/item_3/id = 3
-popup/item_4/text = "Event7"
+popup/item_4/text = "Event"
 popup/item_4/id = 4
+popup/item_5/text = "PlayerInstanceGrid"
+popup/item_5/id = 5
 
-[node name="Button" type="Button" parent="HBoxContainer" unique_id=580361948]
+[node name="Button" type="Button" parent="GridContainer" unique_id=580361948]
+layout_direction = 2
 layout_mode = 2
+size_flags_horizontal = 8
 icon = ExtResource("2_wecf6")
 
+[node name="Label" type="Label" parent="GridContainer" unique_id=575026976]
+layout_mode = 2
+text = "HFrames"
+
+[node name="HFramesSpin" type="SpinBox" parent="GridContainer" unique_id=430694283]
+layout_mode = 2
+min_value = 1.0
+value = 1.0
+rounded = true
+
+[node name="Label2" type="Label" parent="GridContainer" unique_id=2007922953]
+layout_mode = 2
+text = "VFrames"
+
+[node name="VFramesSpin" type="SpinBox" parent="GridContainer" unique_id=1827603647]
+layout_mode = 2
+min_value = 1.0
+value = 1.0
+rounded = true
+
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_selected"]
-[connection signal="item_selected" from="HBoxContainer/EventSelector" to="." method="_on_event_selector_item_selected"]
-[connection signal="pressed" from="HBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="item_selected" from="GridContainer/EventSelector" to="." method="_on_event_selector_item_selected"]
+[connection signal="pressed" from="GridContainer/Button" to="." method="_on_button_pressed"]

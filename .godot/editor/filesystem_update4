@@ -1,4 +1,8 @@
 res://maps/map1.tscn
 res://assets/data/tilesets/field.tres
+res://addons/event_editor/runtime/dialog/dialog_runner.gd
+res://addons/event_editor/core/graph/event_graph_controller.gd
+res://addons/event_editor/runtime/npc_movement_service.gd
+res://assets/templates/events/2d/event_instance_2d.gd
 res://addons/event_editor/runtime/triggers/event_node_resolver.gd
-res://addons/event_editor/runtime/map_event_manager.gd
+res://addons/event_editor/infraestructure/repositories/map_repository.gd

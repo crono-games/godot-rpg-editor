@@ -124,8 +124,8 @@
 							]
 						},
 						"position": [
-							180.0,
-							140.0
+							192.0,
+							144.0
 						],
 						"type": "show_dialogue"
 					},
@@ -189,9 +189,9 @@
 				"edges": [
 					{
 						"from": "state_1",
-						"from_port": 0,
+						"from_port": 0.0,
 						"to": "play_bgm_1",
-						"to_port": 0
+						"to_port": 0.0
 					}
 				],
 				"nodes": {
@@ -245,7 +245,7 @@
 
 							},
 							"state_id": "default",
-							"trigger_mode": "touch_bump"
+							"trigger_mode": "action"
 						},
 						"position": [
 							0.0,
@@ -258,14 +258,7 @@
 		},
 		"evt_5582423511244394517": {
 			"flow": {
-				"edges": [
-					{
-						"from": "state_1",
-						"from_port": 0.0,
-						"to": "teleport_player_1",
-						"to_port": 0.0
-					}
-				],
+				"edges": [],
 				"nodes": {
 					"state_1": {
 						"params": {
@@ -278,31 +271,13 @@
 								"movement_type": "fixed"
 							},
 							"state_id": "default",
-							"trigger_mode": "touch_overlap"
+							"trigger_mode": "action"
 						},
 						"position": [
 							-20.0,
 							40.0
 						],
 						"type": "state"
-					},
-					"teleport_player_1": {
-						"params": {
-							"auto_fade": true,
-							"facing_dir": "keep",
-							"fade_frames": 30.0,
-							"map_id": "map2",
-							"target_position": {
-								"x": 184.0,
-								"y": 152.0,
-								"z": 152.0
-							}
-						},
-						"position": [
-							160.0,
-							20.0
-						],
-						"type": "teleport_player"
 					}
 				}
 			}

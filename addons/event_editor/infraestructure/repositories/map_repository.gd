@@ -93,19 +93,14 @@ func get_events_for_map(map_id: String) -> Array:
 	var scene = packed.instantiate()
 	var result: Array = []
 
-	# ensure we have an id generator (preload fallback)
 	if _event_id_generator == null:
 		var gen_script := preload("res://addons/event_editor/infraestructure/ids/event_id_generator.gd")
 		_event_id_generator = gen_script.new()
 
 	_scene_changed = false
 	_seen_event_ids.clear()
-
-	# traverse scene and collect EventInstance nodes
-
 	_collect_events(scene, result)
 
-	# if ids were assigned, persist the scene so ids remain in the TSCN
 	if _scene_changed:
 		var new_packed := PackedScene.new()
 		new_packed.pack(scene)
@@ -120,7 +115,6 @@ func get_events_from_root(root: Node) -> Array:
 	if root == null:
 		return []
 	var result: Array = []
-	# ensure we have an id generator (preload fallback)
 	if _event_id_generator == null:
 		var gen_script := preload("res://addons/event_editor/infraestructure/ids/event_id_generator.gd")
 		_event_id_generator = gen_script.new()

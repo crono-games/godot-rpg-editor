@@ -29,6 +29,10 @@ func run(node_id: String, node: Dictionary, graph: EventGraphRuntime, ctx: Event
 		else:
 			return graph.get_next(node_id, 0)
 
+	if target != null and (target is EventInstance2D or target is EventInstance3D):
+		if not _target_can_animate(target):
+			return graph.get_next(node_id, 0)
+
 	player.play(animation_id)
 	if wait_for_completion:
 		var anim := player.get_animation(StringName(animation_id))
@@ -55,3 +59,19 @@ func _resolve_animation_name(target: Node, logical_id: String) -> String:
 	if target != null and target.has_method("resolve_animation_name"):
 		return str(target.call("resolve_animation_name", logical_id))
 	return logical_id
+
+func _target_can_animate(target: Node) -> bool:
+	if target == null:
+		return false
+	if target is EventInstance2D:
+		var sprite := target.get("sprite") as Sprite2D
+		if sprite == null or not is_instance_valid(sprite):
+			return false
+		if sprite.texture == null:
+			return false
+		return true
+	if target is EventInstance3D:
+		if not target.has_method("has_visible_graphics"):
+			return true
+		return target.call("has_visible_graphics")
+	return true

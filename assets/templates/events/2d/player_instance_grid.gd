@@ -59,22 +59,6 @@ func _update_input(delta: float) -> void:
 		_input_time += delta
 
 
-func _get_input_direction() -> Vector2:
-
-	var x := Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
-	var y := Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
-
-	var v := Vector2(x, y)
-
-	if v == Vector2.ZERO:
-		return v
-
-	if absf(v.x) > absf(v.y):
-		return Vector2.RIGHT if v.x > 0 else Vector2.LEFT
-
-	return Vector2.DOWN if v.y > 0 else Vector2.UP
-
-
 func _attempt_move(dir: Vector2) -> void:
 
 	if _moving:

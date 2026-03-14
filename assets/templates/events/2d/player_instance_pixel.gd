@@ -60,8 +60,7 @@ func move_pixel(dir: Vector2, delta: float) -> void:
 		if _step(dir):
 			moved_any = true
 		_accum -= pixel_step
-	# Keep move animation active while input is held. Avoid idle flicker on frames
-	# where diagonal movement is accumulating sub-pixel budget.
+
 	if moved_any:
 		_moving = true
 

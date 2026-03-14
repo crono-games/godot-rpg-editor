@@ -72,6 +72,8 @@ func update_animation(direction) -> void:
 func play_animation(base: String, vec: Vector2) -> void:
 	if not _can_play_animation():
 		return
+	if sprite == null or not is_instance_valid(sprite) or sprite.texture == null:
+		return
 	var dir = get_main_direction(vec)
 	if dir == Vector2.ZERO:
 		dir = _last_dir
@@ -79,7 +81,6 @@ func play_animation(base: String, vec: Vector2) -> void:
 		_last_dir = dir
 	var dir_str = dir_to_string(dir)
 	var anim_name = base + "_" + dir_str
-
 	if str(animation_player.current_animation) != anim_name:
 		animation_player.play(anim_name)
 

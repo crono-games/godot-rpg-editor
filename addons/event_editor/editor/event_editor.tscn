@@ -74,26 +74,22 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_wjsfg")
-item_count = 4
-item_0/text = "Event"
-item_1/text = "Event2"
-item_2/text = "Event4"
-item_3/text = "Event7"
+item_count = 5
+item_0/text = "WarpZone2"
+item_1/text = "WarpHouse"
+item_2/text = "Chest"
+item_3/text = "BGMPlayer"
+item_4/text = "Event"
 
 [node name="EventGraphView" type="GraphEdit" parent="SplitContainer" unique_id=1113955513]
 layout_mode = 2
 size_flags_horizontal = 3
+snapping_distance = 16
 connections = Array[Dictionary]([{
 "from_node": &"state_1",
 "from_port": 0,
 "keep_alive": false,
-"to_node": &"move_1",
-"to_port": 0
-}, {
-"from_node": &"move_1",
-"from_port": 0,
-"keep_alive": false,
-"to_node": &"set_position_1",
+"to_node": &"change_graphics_1",
 "to_port": 0
 }])
 minimap_enabled = false

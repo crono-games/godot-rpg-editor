@@ -146,3 +146,63 @@ static func area_at_cell(
 			return collider
 
 	return null
+
+
+static func node_to_pos3(node: Node) -> Vector3:
+	if node is Node3D:
+		return (node as Node3D).position
+	if node is Node2D:
+		var p := (node as Node2D).position
+		return Vector3(p.x, 0.0, p.y)
+	return Vector3.ZERO
+
+static func pos3_to_node_value(node: Node, pos3: Vector3):
+	if node is Node3D:
+		return pos3
+	return Vector2(pos3.x, pos3.z)
+
+static func dir3_to_animation_dir(node: Node, dir3: Vector3):
+	if node is Node2D:
+		return Vector2(dir3.x, dir3.z)
+	return dir3
+
+
+static func resolve_grid_size(event: Node) -> float:
+	if event.has_method("get") and event.get("grid_size") != null:
+		return maxf(0.01, float(event.get("grid_size")))
+	return 1.0
+
+static func resolve_grid_centered(event: Node) -> bool:
+	if event.has_method("get") and event.get("grid_centered") != null:
+		return bool(event.get("grid_centered"))
+	return true
+
+static func resolve_hitbox_shape(hitbox_area: Area2D) -> CollisionShape2D:
+	if hitbox_area == null:
+		return null
+	var direct := hitbox_area.get_node_or_null("HitboxShape")
+	if direct is CollisionShape2D:
+		return direct
+	var generic := hitbox_area.get_node_or_null("CollisionShape2D")
+	if generic is CollisionShape2D:
+		return generic
+	for child in hitbox_area.get_children():
+		if child is CollisionShape2D:
+			return child
+	return null
+
+static func is_player_node(node: Node, player_group: String, player_ref: Node) -> bool:
+	if node == null:
+		return false
+	if player_ref != null and node == player_ref:
+		return true
+	if node.is_in_group(player_group):
+		return true
+	var name_l := String(node.name).to_lower()
+	if name_l.contains("player"):
+		return true
+	if node.has_method("get"):
+		var node_id := str(node.get("id"))
+		if player_ref != null and player_ref.has_method("get") and node_id != "" and node_id == str(player_ref.get("id")):
+			return true
+	return false

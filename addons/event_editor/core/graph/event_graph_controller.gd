@@ -257,7 +257,7 @@ func _is_default_state_node(node_id: String) -> bool:
 	return data != null and data.type == "state" and data.params.get("is_default", false)
 
 func _on_node_removed(node_id: String) -> void:
-	# Delegate removal to the synchronizer
+	## Delegate removal to the synchronizer
 	_synchronizer.on_node_removed(node_id)
 
 # ==================================================
@@ -277,7 +277,6 @@ func reload_graph(event_id):
 
 func rebuild() -> void:
 	_is_building = true
-	# Delegate rebuild to the synchronizer
 	_synchronizer.rebuild()
 	_bind_graph_nodes_after_rebuild()
 	_is_building = false
@@ -294,10 +293,6 @@ func _bind_graph_nodes_after_rebuild() -> void:
 			continue
 		_bind_graph_node_with_data(node_view, data)
 
-
-func _clear_view() -> void:
-	# moved to GraphSynchronizer
-	pass
 
 # ==================================================
 # UI / Popups

@@ -4,15 +4,31 @@ class_name ChangeGraphicsNode
 
 @export var event_selector: OptionButton
 @export var file_dialog: FileDialog
+@export var h_frames_spin: SpinBox
+@export var v_frames_spin: SpinBox
 
 var available_events: Array = []
 
 var selected_event_id : String = ""
 var selected_event_name: String = ""
 var graphics_path : String = ""
+var h_frames: int = 1
+var v_frames: int = 1
+
+var _updating_controls := false
 
 func _ready() -> void:
 	super._ready()
+	if h_frames_spin != null and not h_frames_spin.value_changed.is_connected(_on_h_frames_changed):
+		h_frames_spin.value_changed.connect(_on_h_frames_changed)
+		h_frames_spin.min_value = 1
+		h_frames_spin.step = 1
+		h_frames_spin.rounded = true
+	if v_frames_spin != null and not v_frames_spin.value_changed.is_connected(_on_v_frames_changed):
+		v_frames_spin.value_changed.connect(_on_v_frames_changed)
+		v_frames_spin.min_value = 1
+		v_frames_spin.step = 1
+		v_frames_spin.rounded = true
 
 func _on_changed():
 	event_selector.clear()
@@ -59,13 +75,18 @@ func import_params(params: Dictionary) -> void:
 	selected_event_id = str(params.get("target_id", ""))
 	selected_event_name = str(params.get("target_name", ""))
 	graphics_path = str(params.get("graphics", ""))
+	h_frames = maxi(1, int(params.get("h_frames", 1)))
+	v_frames = maxi(1, int(params.get("v_frames", 1)))
+	_update_frames_controls()
 	emit_changed()
 
 func export_params() -> Dictionary:
 	return {
 		"target_id": selected_event_id,
 		"target_name": selected_event_name,
-		"graphics": graphics_path
+		"graphics": graphics_path,
+		"h_frames": h_frames,
+		"v_frames": v_frames
 	}
 
 func load_from_data(data: NodeData) -> void:
@@ -133,7 +154,22 @@ func _resolve_selected_event() -> void:
 		return
 	var name := _event_name_from_id(selected_event_id)
 	if name == "":
-		# allow UI to show id if name not found
 		return
 	if selected_event_name != name:
 		selected_event_name = name
+
+func _update_frames_controls() -> void:
+	if h_frames_spin != null:
+		h_frames_spin.value = h_frames
+	if v_frames_spin != null:
+		v_frames_spin.value = v_frames
+
+func _on_h_frames_changed(value: float) -> void:
+	h_frames = maxi(1, int(round(value)))
+	emit_signal("changed")
+	request_apply_changes()
+
+func _on_v_frames_changed(value: float) -> void:
+	v_frames = maxi(1, int(round(value)))
+	emit_signal("changed")
+	request_apply_changes()

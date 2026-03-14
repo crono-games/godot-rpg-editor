@@ -3,8 +3,11 @@ extends Node
 class_name DialogueRunner
 
 signal page_started(text: String)
+
 signal choices_started(choices: Array[String])
+
 signal finished
+
 signal choice_selected(index: int)
 
 enum State {
@@ -21,6 +24,8 @@ var page_index := 0
 func _enter_tree() -> void:
 	add_to_group("dialogue_runner")
 
+## Starts the dialogue sequence with the given pages.
+## Pages can be strings or dictionaries with text data.
 func run(pages_in: Array) -> void:
 	pages = pages_in
 	page_index = 0

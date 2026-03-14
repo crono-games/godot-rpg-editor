@@ -14,8 +14,8 @@ metadata/_snap_count = 2
 
 [node name="DialogueNode" type="GraphNode" unique_id=1000000000 node_paths=PackedStringArray("dialogue_container", "add_button", "edit_text_dialog", "edit_text_edit", "edit_graphics_button", "graphics_file_dialog")]
 custom_minimum_size = Vector2(127, 35)
-offset_right = 196.0
-offset_bottom = 123.0
+offset_right = 163.0
+offset_bottom = 90.0
 title = "Show Dialogue"
 slot/0/left_enabled = true
 slot/0/left_type = 0

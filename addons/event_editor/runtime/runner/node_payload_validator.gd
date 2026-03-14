@@ -246,7 +246,6 @@ func _normalize_change_graphics(params: Dictionary) -> Dictionary:
 	if graphics_path == "":
 		return _error("change_graphics.params.graphics is empty")
 	params["graphics"] = graphics_path.strip_edges()
-	print(graphics_path)
 	return _ok_with_warnings([])
 
 func _normalize_set_flag(params: Dictionary, node_type: String) -> Dictionary:

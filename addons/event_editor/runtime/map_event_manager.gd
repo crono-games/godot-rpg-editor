@@ -42,7 +42,7 @@ var _tick_callback: Callable
 
 var _map_loader := MapRepository.new()
 var _teleport := TeleportOrchestrator.new()
-var _npc_movement := NpcMovementService.new()
+var _npc_movement := EventMovementService.new()
 var _trigger_service := EventTriggerService.new()
 
 func _ready() -> void:
@@ -65,12 +65,12 @@ func _ready() -> void:
 	call_deferred("_deferred_initial_refresh")
 
 func _deferred_initial_refresh() -> void:
-	# In some boot orders current_scene is still null during _ready.
+	## In some boot orders current_scene is still null during _ready.
 	if _get_scene_root() == null:
 		await get_tree().process_frame
 	_on_scene_changed()
 
-# Runs a specific event id on the current map.
+## Runs a specific event id on the current map.
 func run_event(event_id: String) -> void:
 	if _map_data.is_empty():
 		return
@@ -79,20 +79,20 @@ func run_event(event_id: String) -> void:
 		return
 	_runner.run_event(_map_data, scene_root, event_id)
 
-# Returns the current map id (resolves binding if needed).
+## Returns the current map id (resolves binding if needed).
 func get_current_map_id() -> String:
 	_ensure_map_binding()
 	return _current_map_id
 
-# Returns the current active scene root.
+## Returns the current active scene root.
 func get_scene_root() -> Node:
 	return _get_scene_root()
 
-# Returns the runtime context used by the event runner.
+## Returns the runtime context used by the event runner.
 func get_runtime_context() -> EventRuntimeContext:
 	return _runtime_context
 
-# Teleports within a map or changes scenes when the map id differs.
+## Teleports within a map or changes scenes when the map id differs.
 func request_map_change(map_id: String, pos: Vector3, fade_in: bool = false, fade_frames: int = 0, facing_dir: String = "keep") -> void:
 	var scene_root := _get_scene_root()
 	if scene_root == null:
@@ -118,7 +118,7 @@ func request_map_change(map_id: String, pos: Vector3, fade_in: bool = false, fad
 	_teleport.begin_pending(scene_path, pos, fade_in, fade_frames, source_player_scene_path, facing_dir)
 	get_tree().change_scene_to_file(scene_path)
 
-# Scene change pipeline for binding map data.
+## Scene change pipeline for binding map data.
 func _on_scene_changed() -> void:
 	_apply_pending_map_hint()
 	var scene_root := _get_scene_root()
