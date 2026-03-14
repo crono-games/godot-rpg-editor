@@ -18,7 +18,7 @@ The goal is to provide a **more visual and data-driven workflow** for designing 
 
 ## Project Status
 
-The project is still evolving. While the **core systems are already functional**, several aspects of the framework are still being improved, including architecture, usability, and tooling.
+The project is still in development. While the **core systems are already functional**, several aspects of the framework are still being improved, including architecture, usability, and tooling.
 
 > The foundation is stable, but the editor should still be considered **work in progress**.
 
