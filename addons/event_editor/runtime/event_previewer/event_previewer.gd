@@ -27,6 +27,8 @@ var event_runner: Object
 @export var sub_viewport_container: SubViewportContainer
 
 func _ready() -> void:
+	if not Engine.is_editor_hint():
+		return
 	_session.preview_ready.connect(_on_preview_ready)
 	_session.selection_changed.connect(_on_session_selection_changed)
 

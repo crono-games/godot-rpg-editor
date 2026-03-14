@@ -1,7 +1,7 @@
 [gd_scene load_steps=14 format=3 uid="uid://uqrlhuktbayx"]
 
 [ext_resource type="Script" uid="uid://bxqjcfi3mu1yk" path="res://assets/templates/events/2d/player_instance_grid.gd" id="1_la3st"]
-[ext_resource type="Texture2D" uid="uid://kb7s3vc8u67c" path="res://assets/graphics/actors/Player Base.png" id="2_2s2qu"]
+[ext_resource type="Texture2D" uid="uid://ddx5crr48fjpg" path="res://assets/graphics/actors/human_base.png" id="2_2s2qu"]
 
 [sub_resource type="Animation" id="Animation_sqpen"]
 length = 0.001
@@ -175,6 +175,7 @@ _data = {
 size = Vector2(15, 15)
 
 [node name="PlayerInstanceGrid" type="Node2D" unique_id=1599663330 node_paths=PackedStringArray("trigger_area", "hitbox_area", "camera", "animation_player", "sprite", "area") groups=["Event", "PlayerInstance"]]
+position = Vector2(8, 8)
 script = ExtResource("1_la3st")
 trigger_area = NodePath("TriggerArea")
 hitbox_area = NodePath("HitboxArea")

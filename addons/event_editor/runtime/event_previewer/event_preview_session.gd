@@ -14,6 +14,8 @@ var original_event_states: Array[Dictionary] = []
 var _original_states_by_id: Dictionary = {}
 
 func clear() -> void:
+	if not Engine.is_editor_hint():
+		return
 	_set_preview_mode_for_events(false)
 	if preview_scene and is_instance_valid(preview_scene):
 		if preview_scene.get_parent() != null:

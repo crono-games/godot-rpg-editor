@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://baukb7yx4ls5l"
-path="res://.godot/imported/4.png-3d0b4a678eed7ce039a01fd3df9eb319.ctex"
+uid="uid://mqkirsvd6pao"
+path="res://.godot/imported/11_roofs.png-2257ec11532398c539975455da793a2e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/graphics/tilemaps/tiles/4.png"
-dest_files=["res://.godot/imported/4.png-3d0b4a678eed7ce039a01fd3df9eb319.ctex"]
+source_file="res://assets/graphics/tilemaps/tiles/11_roofs.png"
+dest_files=["res://.godot/imported/11_roofs.png-2257ec11532398c539975455da793a2e.ctex"]
 
 [params]
 
@@ -23,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=false
+mipmaps/generate=true
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
@@ -37,4 +37,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

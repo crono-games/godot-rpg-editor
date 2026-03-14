@@ -52,20 +52,14 @@ func _process_event(map_data: Dictionary, ctx: EventRuntimeContext, event_id: St
 	if state_id == "":
 		state_id = graph.get_start_node_id()
 	if state_id == "":
-		if DEBUG_NPC_MOVE:
-			print("NpcMovementService: skip event_id=", event_id, " reason=no_state")
 		return
 	var state_node := graph.get_node(state_id)
 	if state_node == null or str(state_node.get("type", "")) != "state":
-		if DEBUG_NPC_MOVE:
-			print("NpcMovementService: skip event_id=", event_id, " reason=state_node_invalid state_id=", state_id)
 		return
 	var params: Dictionary = state_node.get("params", {})
 	var props: Dictionary = params.get("properties", {})
 	var movement_type := str(props.get("movement_type", "fixed")).to_lower()
 	if movement_type == "" or movement_type == "fixed":
-		if DEBUG_NPC_MOVE:
-			print("NpcMovementService: skip event_id=", event_id, " reason=fixed")
 		return
 
 	var frequency := clampi(int(props.get("movement_frequency", 3)), 1, 5)
@@ -85,8 +79,6 @@ func _process_event(map_data: Dictionary, ctx: EventRuntimeContext, event_id: St
 		if away != Vector3.ZERO:
 			dir = away
 	if dir == Vector3.ZERO:
-		if DEBUG_NPC_MOVE:
-			print("NpcMovementService: skip event_id=", event_id, " reason=zero_dir type=", movement_type)
 		return
 
 	var grid_size := _resolve_grid_size(event)
@@ -96,16 +88,13 @@ func _process_event(map_data: Dictionary, ctx: EventRuntimeContext, event_id: St
 	var current_pos3 := _node_pos3(event)
 	var next := GridUtils.cell_to_world(next_cell, current_pos3.y, grid_size, grid_centered)
 	if _is_event_cell_occupied(ctx, event_id, next_cell, grid_size, grid_centered):
-		if DEBUG_NPC_MOVE:
-			print("NpcMovementService: skip event_id=", event_id, " reason=cell_occupied cell=", next_cell)
 		dir = _reroll_direction(movement_type, event, ctx, player_group, event_id, dir)
 		if dir == Vector3.ZERO:
 			return
 		next_cell = current_cell + Vector2i(int(dir.x), int(dir.z))
 		next = GridUtils.cell_to_world(next_cell, current_pos3.y, grid_size, grid_centered)
 	if _is_player_cell_occupied(player, next_cell, grid_size, grid_centered):
-		if DEBUG_NPC_MOVE:
-			print("NpcMovementService: skip event_id=", event_id, " reason=player_occupied cell=", next_cell)
+
 		dir = _reroll_direction(movement_type, event, ctx, player_group, event_id, dir)
 		if dir == Vector3.ZERO:
 			return

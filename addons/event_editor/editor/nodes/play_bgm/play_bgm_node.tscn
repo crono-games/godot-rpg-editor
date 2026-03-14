@@ -51,6 +51,7 @@ button_pressed = true
 text = "On"
 
 [node name="AudioPreviewPopup" parent="." unique_id=1619106520 instance=ExtResource("4_audio_popup")]
+visible = false
 
 [connection signal="pressed" from="VBoxContainer/AudioPickerRow/EditButton" to="." method="_on_advanced_pressed"]
 [connection signal="toggled" from="VBoxContainer/LoopRow/LoopCheck" to="." method="_on_loop_toggled"]

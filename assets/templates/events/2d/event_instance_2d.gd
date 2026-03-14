@@ -47,10 +47,10 @@ func _resolve_runtime_links() -> void:
 		var ap := get_node_or_null("AnimationPlayer")
 		if ap is AnimationPlayer:
 			animation_player = ap as AnimationPlayer
-	#if sprite == null or not is_instance_valid(sprite):
-		#var sp := get_node_or_null("Sprite2D")
-		#if sp is Sprite2D:
-			#sprite = sp as Sprite2D
+	if sprite == null or not is_instance_valid(sprite):
+		var sp := get_node_or_null("Sprite2D")
+		if sp is Sprite2D:
+			sprite = sp as Sprite2D
 	if trigger_area == null or not is_instance_valid(trigger_area):
 		var ta := get_node_or_null("TriggerArea")
 		if ta is Area2D:

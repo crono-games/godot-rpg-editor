@@ -1,7 +1,7 @@
 [gd_scene load_steps=14 format=3 uid="uid://dagp2c3mx6fcs"]
 
 [ext_resource type="Script" uid="uid://clogpv05g023y" path="res://assets/templates/events/2d/player_instance_pixel.gd" id="1_sd13r"]
-[ext_resource type="Texture2D" uid="uid://kb7s3vc8u67c" path="res://assets/graphics/actors/Player Base.png" id="2_hip7e"]
+[ext_resource type="Texture2D" uid="uid://ddx5crr48fjpg" path="res://assets/graphics/actors/human_base.png" id="2_uuvhu"]
 
 [sub_resource type="Animation" id="Animation_sqpen"]
 length = 0.001
@@ -187,7 +187,7 @@ sprite = NodePath("Sprite2D")
 area = NodePath("TriggerArea")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1886762130]
-texture = ExtResource("2_hip7e")
+texture = ExtResource("2_uuvhu")
 offset = Vector2(0, -8)
 hframes = 8
 vframes = 4

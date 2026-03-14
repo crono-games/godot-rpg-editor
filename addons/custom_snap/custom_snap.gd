@@ -14,7 +14,6 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			_begin_drag(event)
-			print(event)
 		else:
 			_end_drag()
 		return false
