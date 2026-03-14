@@ -5,9 +5,9 @@
 				"edges": [
 					{
 						"from": "state_1",
-						"from_port": 0,
+						"from_port": 0.0,
 						"to": "show_dialogue_1",
-						"to_port": 0
+						"to_port": 0.0
 					}
 				],
 				"nodes": {
@@ -43,6 +43,8 @@
 								"graphics": {
 									"frame": 0.0,
 									"hframes": 8.0,
+									"offset_x": 0.0,
+									"offset_y": -8.0,
 									"texture": "res://assets/graphics/actors/human_base.png",
 									"vframes": 4.0
 								},
@@ -187,18 +189,18 @@
 				"edges": [
 					{
 						"from": "state_1",
-						"from_port": 0.0,
+						"from_port": 0,
 						"to": "play_bgm_1",
-						"to_port": 0.0
+						"to_port": 0
 					}
 				],
 				"nodes": {
 					"play_bgm_1": {
 						"params": {
 							"loop": true,
-							"pitch_scale": 1.0,
+							"pitch_scale": 0.9,
 							"stream_path": "res://assets/audio/bgm/town_theme.mp3",
-							"volume_db": 2.0
+							"volume_db": -3.5
 						},
 						"position": [
 							200.0,

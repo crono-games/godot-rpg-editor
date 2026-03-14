@@ -34,8 +34,6 @@ func process(map_data: Dictionary, ctx: EventRuntimeContext, delta: float, playe
 func _process_event(map_data: Dictionary, ctx: EventRuntimeContext, event_id: String, delta: float, player_group: String, player: Node, active_radius_tiles: float) -> void:
 	var event := _resolve_event_node(map_data, ctx, event_id)
 	if event == null or not (event is Node2D or event is Node3D):
-		if DEBUG_NPC_MOVE:
-			print("NpcMovementService: skip event_id=", event_id, " reason=no_scene_node")
 		return
 	if _is_player_node(event, player_group, player):
 		return
