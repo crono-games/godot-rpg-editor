@@ -107,7 +107,7 @@
 								"operator": "==",
 								"value": 100
 							},
-							"var_name": "Timer"
+							"var_name": "Saved"
 						},
 						"position": [
 							192.0,
@@ -120,7 +120,7 @@
 							"mode": "ticks",
 							"operator": "+",
 							"value": 1,
-							"variable_name": "Timer"
+							"variable_name": "Saved"
 						},
 						"position": [
 							448.0,

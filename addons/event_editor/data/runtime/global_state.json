@@ -1,5 +1,12 @@
 {
-	"flags": [],
+	"flags": [
+		{
+			"id": "flag_1",
+			"name": "Test",
+			"value": false,
+			"value_type": "bool"
+		}
+	],
 	"variables": [],
 	"version": 1
 }

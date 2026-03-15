@@ -14,7 +14,6 @@ var _next_var_id := 0
 func get_flags() -> Dictionary:
 	return _flags
 
-
 func get_variables() -> Dictionary:
 	return _variables
 
@@ -77,7 +76,6 @@ func set_flag_value(id: String, value: bool) -> void:
 		return
 	entry.value = value
 	_emit_flags_changed()
-
 
 func set_variable_name(id: String, name: String) -> void:
 	var entry: GlobalStateEntry = _variables.get(id)

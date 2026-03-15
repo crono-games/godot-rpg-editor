@@ -1,5 +1,1 @@
-res://maps/map1.tscn
-res://assets/data/tilesets/field.tres
-res://addons/event_editor/editor/nodes/variable_operation/variable_operation_node.gd
-res://addons/event_editor/editor/nodes/variable_condition/variable_condition_node.tscn
-res://addons/event_editor/editor/nodes/variable_operation/variable_operation_node.tscn
+res://addons/event_editor/data/runtime/global_state.json

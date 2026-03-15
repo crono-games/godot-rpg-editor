@@ -13,10 +13,12 @@ func _ready() -> void:
 	if not Engine.is_editor_hint():
 		return
 	_save_timer = Timer.new()
-	_save_timer.one_shot = true
 	_save_timer.wait_time = SAVE_DELAY
 	add_child(_save_timer)
 	_save_timer.timeout.connect(_on_save_timeout)
+	if not _global_state:
+		_global_state = GlobalState.new()
+	_global_state.changed.connect(_on_state_changed)
 
 func get_global_state() -> GlobalState:
 	return _global_state
