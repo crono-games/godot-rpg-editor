@@ -12,7 +12,7 @@ var _move_progress := 0.0
 var _input_dir := Vector2.ZERO
 var _input_time := 0.0
 
-const MOVE_BUFFER := 0.12
+const MOVE_BUFFER := 0.10
 
 func _ready() -> void:
 	_common_ready("Grid", true)
@@ -27,13 +27,15 @@ func _physics_process(delta: float) -> void:
 
 func _process_grid_move(delta: float):
 	_update_input(delta)
+
 	if _moving:
 		return
 
 	if _input_dir == Vector2.ZERO:
 		update_animation(Vector2.ZERO)
 		return
-	if _input_time >= MOVE_BUFFER or _move_progress == 0.0:
+
+	if _input_time >= MOVE_BUFFER:
 		_attempt_move(_input_dir)
 
 func _update_input(delta: float) -> void:
@@ -42,11 +44,12 @@ func _update_input(delta: float) -> void:
 	if dir != _input_dir:
 		_input_dir = dir
 		_input_time = 0.0
-
 		if dir != Vector2.ZERO and not _moving:
 			update_animation(dir)
 
-	else:
+		return
+
+	if dir != Vector2.ZERO:
 		_input_time += delta
 
 func _attempt_move(dir: Vector2) -> void:
@@ -72,9 +75,12 @@ func _can_move(dir: Vector2) -> bool:
 func _perform_move(dir: Vector2):
 	var target := global_position + dir * grid_size
 	var duration := _get_move_duration()
+
 	_moving = true
 	update_animation(dir)
+
 	_stop_tween()
+
 	_move_tween = create_tween()
 	_move_tween.tween_property(
 		self,
@@ -82,6 +88,7 @@ func _perform_move(dir: Vector2):
 		target,
 		duration
 	).set_trans(Tween.TRANS_LINEAR)
+
 	_move_tween.finished.connect(_on_move_finished)
 
 func _on_move_finished():
@@ -89,10 +96,13 @@ func _on_move_finished():
 	_snap_to_grid()
 	move_finished.emit(self)
 
-	if _input_dir != Vector2.ZERO and _can_move(_input_dir):
-		_perform_move(_input_dir)
-	else:
+	if _input_dir == Vector2.ZERO:
 		update_animation(Vector2.ZERO)
+		return
+	if _can_move(_input_dir):
+		_perform_move(_input_dir)
+		return
+	_input_time = 0.0
 
 func _get_move_duration() -> float:
 	if move_speed <= 0.0:
