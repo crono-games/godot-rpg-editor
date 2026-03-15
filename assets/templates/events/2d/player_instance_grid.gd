@@ -29,19 +29,23 @@ func _process_grid_move(delta: float):
 	_update_input(delta)
 	if _moving:
 		return
+
 	if _input_dir == Vector2.ZERO:
 		update_animation(Vector2.ZERO)
 		return
-	if _input_time >= MOVE_BUFFER:
+	if _input_time >= MOVE_BUFFER or _move_progress == 0.0:
 		_attempt_move(_input_dir)
 
 func _update_input(delta: float) -> void:
 	var dir := _get_input_direction()
+
 	if dir != _input_dir:
 		_input_dir = dir
 		_input_time = 0.0
-		if dir != Vector2.ZERO:
+
+		if dir != Vector2.ZERO and not _moving:
 			update_animation(dir)
+
 	else:
 		_input_time += delta
 
@@ -84,8 +88,9 @@ func _on_move_finished():
 	_moving = false
 	_snap_to_grid()
 	move_finished.emit(self)
-	if _input_dir != Vector2.ZERO:
-		_attempt_move(_input_dir)
+
+	if _input_dir != Vector2.ZERO and _can_move(_input_dir):
+		_perform_move(_input_dir)
 	else:
 		update_animation(Vector2.ZERO)
 

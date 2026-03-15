@@ -109,14 +109,12 @@ func update_animation(direction: Vector2) -> void:
 
 
 func play_animation(base: String, vec: Vector2) -> void:
-
 	if not _can_play_animation():
 		return
 	if sprite == null or not is_instance_valid(sprite) or sprite.texture == null:
 		return
 
 	var dir := _main_dir(vec)
-
 	if dir == Vector2.ZERO:
 		dir = _last_dir
 	else:

@@ -38,9 +38,6 @@ layout_mode = 2
 
 [node name="OptionButton" type="OptionButton" parent="VBoxContainer/HBoxContainer" unique_id=1507662102]
 layout_mode = 2
-selected = 0
-item_count = 1
-popup/item_0/id = 0
 
 [node name="OptionButton2" type="OptionButton" parent="VBoxContainer/HBoxContainer" unique_id=1781290861]
 layout_mode = 2

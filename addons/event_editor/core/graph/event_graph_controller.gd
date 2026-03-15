@@ -1,8 +1,7 @@
 @tool
 extends Node
 class_name GraphController
-# Central coordinator for graph editing:
-# owns model/view sync, graph persistence and state-node conventions.
+## Central coordinator for graph editing:
 
 signal graph_dirty
 signal state_properties_updated(event_id: String, state_id: String, params: Dictionary)
@@ -19,9 +18,7 @@ var _scene_root_provider: Callable
 var _id_generator: GraphIdGenerator
 var _undo_redo : UndoRedo
 
-# ================================
-# Internal State
-# ================================
+## Internal State
 
 var _is_building := false
 var _synchronizer: GraphSynchronizer
@@ -34,10 +31,6 @@ var _clipboard_nodes: Array = []
 var _clipboard_edges: Array = []
 var _clipboard_anchor := Vector2.ZERO
 var _graph_shortcuts_bound := false
-
-# ================================
-# Lifecycle
-# ================================
 
 func _enter_tree():
 	if _undo_redo == null:
@@ -71,12 +64,10 @@ func set_context(context: EventEditorManager) -> void:
 func set_scene_root_provider(provider: Callable) -> void:
 	_scene_root_provider = provider
 
-	# Dependency-injection helpers (can be used before _enter_tree)
 func set_id_generator(gen: GraphIdGenerator) -> void:
 	_id_generator = gen
 
 func set_persistence_service(ps: MapEventPersistenceService) -> void:
-	# Set the persistence service for saving/loading graph events
 	_persistence_service = ps
 
 func set_connection_policy(policy: GraphConnectionPolicy) -> void:
@@ -94,7 +85,7 @@ func _rebuild_edit_service() -> void:
 	_edit_service.set_graph_controller(self)
 
 # ==================================================
-# API (user intentions)
+# API
 # ==================================================
 
 

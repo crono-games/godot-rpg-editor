@@ -1,5 +1,5 @@
 63f7b34db8d8cdea90c76aacccf841ec
-::res://::1773588569
+::res://::1773590792
 icon.svg::CompressedTexture2D::5526326073137345770::1773528428::1773528428::1::::<><><>0<>0<>331d626b742c79b574c27094ad989a8b<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.s3tc.ctex::
 README.md::TextFile::-1::1773528428::0::1::::<><><>0<>0<><>::
 ::res://addons/::1773570742
@@ -25,8 +25,8 @@ event_editor_manager.gd::GDScript::2817470829993525806::1773528428::0::1::::<>No
 global_state.gd::GDScript::9191268854584230141::1773588437::0::1::::GlobalState<>RefCounted<><>0<>0<><>::
 global_state_entry.gd::GDScript::3603229898876813294::1773528428::0::1::::GlobalStateEntry<>RefCounted<><>0<>0<><>::
 global_state_manager.gd::GDScript::6893127037884913807::1773588515::0::1::::<>Node<><>0<>1<><>::
-::res://addons/event_editor/core/graph/::1773570741
-event_graph_controller.gd::GDScript::7922639754872803795::1773540804::0::1::::GraphController<>Node<><>0<>1<><>::
+::res://addons/event_editor/core/graph/::1773589452
+event_graph_controller.gd::GDScript::7922639754872803795::1773589452::0::1::::GraphController<>Node<><>0<>1<><>::
 event_graph_model.gd::GDScript::7009086506828312013::1773528428::0::1::::EventGraphModel<>RefCounted<><>0<>0<><>::
 event_graph_view.gd::GDScript::8718574194457414184::1773528428::0::1::::EventGraph<>GraphEdit<><>0<>1<><>::
 event_graph_view.tscn::PackedScene::6406475262014329714::1773528428::0::1::::<><><>0<>0<><>::uid://o3rojkadk7je::::res://event_editor/editor/event_editor.gd<>uid://dk41yppoqaby6::::res://event_editor/core/graph/event_graph_controller.gd<>uid://d1byity4hb52p::::res://event_editor/editor/map/map_selector.gd<>uid://dwhlv4rwybwyy::::res://event_editor/core/graph/event_graph_view.gd<>uid://22ddxdryvjgb::::res://event_editor/utilities/popup_panel/context_menu_panel.tscn
@@ -39,10 +39,10 @@ graph_synchronizer.gd::GDScript::4455721586013879560::1773528428::0::1::::GraphS
 edge_data.gd::GDScript::8013746517519298388::1773528428::0::1::::EdgeData<>RefCounted<><>0<>0<><>::
 ::res://addons/event_editor/data/editor/nodes/::1773570741
 node_data.gd::GDScript::8315047888030738965::1773528428::0::1::::NodeData<>RefCounted<><>0<>0<><>::
-::res://addons/event_editor/data/runtime/::1773588564
-global_state.json::JSON::-1::1773588564::0::1::::<><><>0<>0<><>::
-::res://addons/event_editor/data/runtime/maps/::1773587306
-map1.json::JSON::-1::1773587306::0::1::::<><><>0<>0<><>::
+::res://addons/event_editor/data/runtime/::1773590131
+global_state.json::JSON::-1::1773590131::0::1::::<><><>0<>0<><>::
+::res://addons/event_editor/data/runtime/maps/::1773588766
+map1.json::JSON::-1::1773588766::0::1::::<><><>0<>0<><>::
 map2.json::JSON::-1::1773528428::0::1::::<><><>0<>0<><>::
 ::res://addons/event_editor/editor/::1773578939
 event_editor.gd::GDScript::1041504066200460342::1773578939::0::1::::EventEditor<>Control<><>0<>1<><>::
@@ -151,9 +151,9 @@ teleport_player_node.tscn::PackedScene::7045398071765692744::1773528428::0::1:::
 ::res://addons/event_editor/editor/nodes/variable_condition/::1773582777
 variable_condition_node.gd::GDScript::1130694807727708493::1773528428::0::1::::VariableConditionNode<>EventCommandNode<><>0<>1<><>::
 variable_condition_node.tscn::PackedScene::8988214990432583105::1773582777::0::1::::<><><>0<>0<><>::uid://qdym4kgepj22::::res://addons/event_editor/editor/nodes/variable_condition/variable_condition_node.gd
-::res://addons/event_editor/editor/nodes/variable_operation/::1773582843
-variable_operation_node.gd::GDScript::8194706285917645003::1773582842::0::1::::VariableOperationNode<>EventCommandNode<><>0<>1<><>::
-variable_operation_node.tscn::PackedScene::914315979666670008::1773582843::0::1::::<><><>0<>0<><>::uid://do0tu6iqdl5vb::::res://addons/event_editor/editor/nodes/variable_operation/variable_operation_node.gd
+::res://addons/event_editor/editor/nodes/variable_operation/::1773588804
+variable_operation_node.gd::GDScript::8194706285917645003::1773588792::0::1::::VariableOperationNode<>EventCommandNode<><>0<>1<><>::
+variable_operation_node.tscn::PackedScene::914315979666670008::1773588804::0::1::::<><><>0<>0<><>::uid://do0tu6iqdl5vb::::res://addons/event_editor/editor/nodes/variable_operation/variable_operation_node.gd
 ::res://addons/event_editor/editor/nodes/wait/::1773570742
 wait_node.gd::GDScript::895945414926193884::1773528428::0::1::::WaitNode<>EventCommandNode<><>0<>1<><>::
 wait_node.tscn::PackedScene::570605306966497153::1773528428::0::1::::<><><>0<>0<><>::uid://m1adcexixh2s::::res://addons/event_editor/editor/nodes/wait/wait_node.gd
@@ -337,8 +337,8 @@ prev_next_panel.tscn::PackedScene::8077209227521299398::1773528428::0::1::::<><>
 ::res://assets/audio/bgm/::1773570742
 town_theme.mp3::AudioStreamMP3::4419988025502607121::1773528428::1773528428::1::::<><><>0<>0<>a1848dead8c3b483478886585f7c971e<>res://.godot/imported/town_theme.mp3-8a9be90118c938477e94d80620ae0bf8.mp3str::
 ::res://assets/data/::1773570742
-::res://assets/data/tilesets/::1773588551
-field.tres::TileSet::5891980740793790477::1773588551::0::1::::<><><>0<>0<><>::uid://u8kbv06r8qhm::::res://assets/graphics/tilemaps/tiles/7.png<>uid://drrl18vu7e8p8::::res://assets/graphics/tilemaps/tiles/3.png<>uid://crxy5b3gemce::::res://assets/graphics/tilemaps/tiles/4_buildings.png<>uid://bw367oevxae26::::res://assets/graphics/tilemaps/tiles/1.png<>uid://dmbdrpypbckgn::::res://assets/graphics/tilemaps/tiles/10.png<>uid://mqkirsvd6pao::::res://assets/graphics/tilemaps/tiles/11_roofs.png
+::res://assets/data/tilesets/::1773588767
+field.tres::TileSet::5891980740793790477::1773588767::0::1::::<><><>0<>0<><>::uid://u8kbv06r8qhm::::res://assets/graphics/tilemaps/tiles/7.png<>uid://drrl18vu7e8p8::::res://assets/graphics/tilemaps/tiles/3.png<>uid://crxy5b3gemce::::res://assets/graphics/tilemaps/tiles/4_buildings.png<>uid://bw367oevxae26::::res://assets/graphics/tilemaps/tiles/1.png<>uid://dmbdrpypbckgn::::res://assets/graphics/tilemaps/tiles/10.png<>uid://mqkirsvd6pao::::res://assets/graphics/tilemaps/tiles/11_roofs.png
 ::res://assets/fonts/::1773570742
 m5x7.ttf::FontFile::3679454131940048454::1773528428::1773528428::1::::<><><>0<>0<>2c2cbf28cb49d4eae958c28b0c4ea750<>res://.godot/imported/m5x7.ttf-47a8993373daecfb025c7957e719fc41.fontdata::
 ::res://assets/graphics/::1773570742
@@ -383,6 +383,6 @@ player_instance_3d_base.tscn::PackedScene::661367351800853227::1773528428::0::1:
 player_instance_3d_grid.gd::GDScript::5947604505161228595::1773578940::0::1::::PlayerInstance3DGrid<>PlayerActor3DBase<><>0<>1<><>::
 ::res://assets/templates/maps/::1773570743
 map2d_base.tscn::PackedScene::8688755327233922548::1773528428::0::1::::<><><>0<>0<><>::uid://bosefgj03qvaw::::res://event_editor/runtime/map_2d.gd
-::res://maps/::1773588563
-map1.tscn::PackedScene::4349238342346268886::1773588563::0::1::::<><><>0<>0<><>::uid://cje3rr51bpv8x::::res://assets/templates/events/2d/event_instance_2d.tscn<>uid://bosefgj03qvaw::::res://addons/event_editor/runtime/map_2d.gd<>uid://uqrlhuktbayx::::res://assets/templates/events/2d/player_instance_grid.tscn<>uid://d163ta7moafk0::::res://addons/utils/grid_reference.gd<>uid://cp7ecdv0bd158::::res://assets/data/tilesets/field.tres
+::res://maps/::1773589452
+map1.tscn::PackedScene::4349238342346268886::1773589452::0::1::::<><><>0<>0<><>::uid://cje3rr51bpv8x::::res://assets/templates/events/2d/event_instance_2d.tscn<>uid://bosefgj03qvaw::::res://addons/event_editor/runtime/map_2d.gd<>uid://uqrlhuktbayx::::res://assets/templates/events/2d/player_instance_grid.tscn<>uid://d163ta7moafk0::::res://addons/utils/grid_reference.gd<>uid://cp7ecdv0bd158::::res://assets/data/tilesets/field.tres
 map2.tscn::PackedScene::7978009515146126903::1773528428::0::1::::<><><>0<>0<><>::uid://bosefgj03qvaw::::res://addons/event_editor/runtime/map_2d.gd<>uid://cp7ecdv0bd158::::res://assets/data/tilesets/field.tres<>uid://cje3rr51bpv8x::::res://assets/templates/events/2d/event_instance_2d.tscn<>uid://d163ta7moafk0::::res://addons/utils/grid_reference.gd

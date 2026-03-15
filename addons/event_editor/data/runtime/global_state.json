@@ -7,6 +7,13 @@
 			"value_type": "bool"
 		}
 	],
-	"variables": [],
+	"variables": [
+		{
+			"id": "var_1",
+			"name": "Timer",
+			"value": 0,
+			"value_type": "int"
+		}
+	],
 	"version": 1
 }

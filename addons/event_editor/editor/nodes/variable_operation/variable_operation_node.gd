@@ -18,7 +18,6 @@ var _global_state: GlobalState
 func _ready() -> void:
 	super._ready()
 	size = Vector2.ZERO
-	set_slot(0, true, 0, Color.WHITE, true, 0, Color.WHITE)
 	variable_selector.connect("item_selected", Callable(self, "_on_variable_selected"))
 	operation_selector.connect("item_selected", Callable(self, "_on_operator_selected"))
 	spinbox.connect("value_changed", Callable(self, "_on_value_changed"))
