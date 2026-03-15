@@ -20,9 +20,27 @@
 						"from_port": 0,
 						"to": "show_dialogue_1",
 						"to_port": 0
+					},
+					{
+						"from": "show_dialogue_1",
+						"from_port": 0,
+						"to": "set_local_flag_1",
+						"to_port": 0
 					}
 				],
 				"nodes": {
+					"set_local_flag_1": {
+						"params": {
+							"flag_name": "A",
+							"scope": "local",
+							"state": true
+						},
+						"position": [
+							692.844116210938,
+							-15.2395057678223
+						],
+						"type": "set_local_flag"
+					},
 					"show_dialogue_1": {
 						"params": {
 							"dialogues": [
@@ -55,6 +73,31 @@
 						"position": [
 							0.0,
 							0.0
+						],
+						"type": "state"
+					},
+					"state_2": {
+						"params": {
+							"conditions": {
+								"flags": [
+									{
+										"name": "A",
+										"scope": "local",
+										"value": true
+									}
+								]
+							},
+							"is_default": false,
+							"name": "New State 2",
+							"properties": {
+
+							},
+							"state_id": "state_2",
+							"trigger_mode": "action"
+						},
+						"position": [
+							-16.0,
+							192.0
 						],
 						"type": "state"
 					},
