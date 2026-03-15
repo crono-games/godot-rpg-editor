@@ -1,4 +1,5 @@
-res://addons/event_editor/editor/event_editor.tscn
-res://assets/data/tilesets/field.tres
-res://addons/event_editor/editor/event_editor.gd
 res://maps/map1.tscn
+res://assets/data/tilesets/field.tres
+res://assets/templates/events/2d/player_actor_2d_base.gd
+res://assets/templates/events/2d/player_instance_grid.gd
+res://addons/event_editor/runtime/map_2d.gd

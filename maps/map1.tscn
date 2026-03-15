@@ -56,7 +56,6 @@ id = "6050016514044768545"
 [node name="PlayerInstanceGrid" parent="EventContainer" unique_id=1599663330 instance=ExtResource("4_nxseg")]
 position = Vector2(200, 152)
 id = "1013616042918946739"
-move_speed = 64.0
 anim_cycles_per_tile = 0.25
 
 [node name="Event2" parent="EventContainer" unique_id=1478960495 instance=ExtResource("1_rkj35")]

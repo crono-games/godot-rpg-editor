@@ -8,7 +8,7 @@ signal event_bumped(event_id: String, event_node: Node)
 
 @export_storage var id: String = ""
 
-@export var move_speed: float = 96.0
+@export var move_speed: float = 64.0
 @export var collide_with_events := true
 @export var anim_cycles_per_tile := 0.5
 
@@ -21,7 +21,6 @@ signal event_bumped(event_id: String, event_node: Node)
 
 const BUMP_EMIT_COOLDOWN_MS := 150
 
-
 var _moving := false
 var _last_dir := Vector2.DOWN
 var _sprite_base_local := Vector2.ZERO
@@ -33,12 +32,10 @@ var debug_noclip_action := "debug_noclip_toggle"
 var debug_noclip := false
 
 var state := 0
-
+var current_map : Node2D
 
 func _common_ready(mode: String, snap_grid_on_ready: bool) -> void:
-
 	_resolve_runtime_actor_links()
-
 	add_to_group("player")
 
 	if camera:
@@ -58,7 +55,6 @@ func _common_ready(mode: String, snap_grid_on_ready: bool) -> void:
 
 
 func _resolve_runtime_actor_links() -> void:
-
 	if animation_player == null:
 		var ap := get_node_or_null("AnimationPlayer")
 		if ap is AnimationPlayer:
@@ -107,17 +103,6 @@ func _get_input_direction() -> Vector2:
 func is_moving() -> bool:
 	return _moving
 
-
-func get_facing_direction() -> Vector2:
-	return _last_dir
-
-
-func get_trigger_area() -> Variant:
-	if area and is_instance_valid(area):
-		return area
-	return null
-
-
 func snap_to_grid() -> void:
 	pass
 
@@ -137,7 +122,6 @@ func play_animation(base: String, vec: Vector2) -> void:
 
 	if not _can_play_animation():
 		return
-	# Don't try to play animation if sprite doesn't have a texture
 	if sprite == null or not is_instance_valid(sprite) or sprite.texture == null:
 		return
 
@@ -152,29 +136,6 @@ func play_animation(base: String, vec: Vector2) -> void:
 
 	if animation_player.current_animation != anim_name:
 		animation_player.play(anim_name)
-
-
-func _main_dir(vec: Vector2) -> Vector2:
-
-	if vec.length_squared() < 0.01:
-		return Vector2.ZERO
-
-	if absf(vec.x) > absf(vec.y):
-		return Vector2.RIGHT if vec.x > 0 else Vector2.LEFT
-
-	return Vector2.DOWN if vec.y > 0 else Vector2.UP
-
-
-func _dir_to_string(dir: Vector2) -> String:
-
-	match dir:
-		Vector2.DOWN: return "down"
-		Vector2.UP: return "up"
-		Vector2.LEFT: return "left"
-		Vector2.RIGHT: return "right"
-
-	return "down"
-
 
 func _can_play_animation() -> bool:
 
@@ -230,12 +191,9 @@ func _emit_bump_event(blocked_event: Node) -> void:
 
 	_last_bump_event_id = event_id
 	_last_bump_ms = now
-
 	event_bumped.emit(event_id, blocked_event)
 
-
 func _is_dialog_input_locked() -> bool:
-
 	if get_tree() == null:
 		return false
 
@@ -243,7 +201,6 @@ func _is_dialog_input_locked() -> bool:
 
 		if not is_instance_valid(node):
 			continue
-
 		var state = int(node.get("state"))
 
 		if state != int(DialogueRunner.State.IDLE):
@@ -251,20 +208,17 @@ func _is_dialog_input_locked() -> bool:
 
 	return false
 
+## MapRoot applies camera limits from Tilemaps Bounding Boxes.
 
 func _fit_camera_limits() -> void:
 
 	if camera == null:
 		return
 
-	var map_root := _resolve_map_root()
-
-	if map_root and map_root.has_method("apply_camera_limits_to"):
-		map_root.call("apply_camera_limits_to", camera)
-
+	current_map = _resolve_map_root()
+	current_map.apply_camera_limits(camera)
 
 func _resolve_map_root() -> Node:
-
 	var scene_root := get_tree().current_scene
 
 	if scene_root == null:
@@ -275,3 +229,32 @@ func _resolve_map_root() -> Node:
 			return node
 
 	return null
+
+
+## Helpers used by EventTriggerService probably i'll move them in the future.
+
+func get_facing_direction() -> Vector2:
+	return _last_dir
+
+func get_trigger_area() -> Variant:
+	if area and is_instance_valid(area):
+		return area
+	return null
+
+## Helpers for Animation resolve.
+
+func _main_dir(vec: Vector2) -> Vector2:
+	if vec.length_squared() < 0.01:
+		return Vector2.ZERO
+	if absf(vec.x) > absf(vec.y):
+		return Vector2.RIGHT if vec.x > 0 else Vector2.LEFT
+	return Vector2.DOWN if vec.y > 0 else Vector2.UP
+
+
+func _dir_to_string(dir: Vector2) -> String:
+	match dir:
+		Vector2.DOWN: return "down"
+		Vector2.UP: return "up"
+		Vector2.LEFT: return "left"
+		Vector2.RIGHT: return "right"
+	return "down"

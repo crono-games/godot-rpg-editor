@@ -25,7 +25,6 @@ func _physics_process(delta: float) -> void:
 		return
 	_process_grid_move(delta)
 
-
 func _process_grid_move(delta: float):
 	_update_input(delta)
 	if _moving:
@@ -35,7 +34,6 @@ func _process_grid_move(delta: float):
 		return
 	if _input_time >= MOVE_BUFFER:
 		_attempt_move(_input_dir)
-
 
 func _update_input(delta: float) -> void:
 	var dir := _get_input_direction()
@@ -47,7 +45,6 @@ func _update_input(delta: float) -> void:
 	else:
 		_input_time += delta
 
-
 func _attempt_move(dir: Vector2) -> void:
 	if _moving:
 		return
@@ -56,15 +53,16 @@ func _attempt_move(dir: Vector2) -> void:
 	_input_time = 0.0
 	_perform_move(dir)
 
-
 func _can_move(dir: Vector2) -> bool:
 	var target := global_position + dir * grid_size
 	var blocked := _get_blocking_event(target)
 	if blocked:
 		_emit_bump_event(blocked)
 		return false
+
 	if _is_world_blocked(dir):
 		return false
+
 	return true
 
 func _perform_move(dir: Vector2):
@@ -96,7 +94,6 @@ func _get_move_duration() -> float:
 		return 0.1
 	return maxf(0.01, grid_size / move_speed)
 
-
 func _get_blocking_event(next_global_pos: Vector2) -> Node:
 	if not collide_with_events or debug_noclip:
 		return null
@@ -113,16 +110,19 @@ func _get_blocking_event(next_global_pos: Vector2) -> Node:
 			return node
 	return null
 
-
-func get_facing_direction() -> Vector2:
-	return Vector2(_last_dir.x, _last_dir.y)
-
 func _is_world_blocked(dir: Vector2) -> bool:
 	if not collide_with_world or debug_noclip:
 		return false
+
+	var target := global_position + dir * grid_size
+
+	if current_map and not current_map.is_position_inside_bounds(target):
+		return true
+
 	var space := get_world_2d().direct_space_state
 	var from := global_position
-	var to := global_position + dir * grid_size
+	var to := target
+
 	var q := PhysicsRayQueryParameters2D.create(from, to)
 	q.collide_with_bodies = true
 	q.collide_with_areas = false
@@ -136,18 +136,13 @@ func _is_world_blocked(dir: Vector2) -> bool:
 
 
 func _stop_tween() -> void:
-
 	if _move_tween and _move_tween.is_running():
 		_move_tween.kill()
-
 	_move_tween = null
 
-
 func _snap_to_grid() -> void:
-
 	if grid_size <= 0:
 		return
-
 	var snapped := GridUtils.snap_world_to_grid(
 		Vector3(global_position.x, 0, global_position.y), grid_size, grid_centered)
 	global_position = Vector2(snapped.x, snapped.z)
