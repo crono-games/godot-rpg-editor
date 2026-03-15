@@ -2,6 +2,7 @@
 
 extends EditorPlugin
 
+const MapEventPersistenceService = preload("res://addons/event_editor/infraestructure/repositories/map_event_persistence_service.gd")
 const EDITOR_SCENE_PATH := "res://addons/event_editor/editor/event_editor.tscn"
 const MAP_2D_SCRIPT_PATH := "res://addons/event_editor/runtime/map_2d.gd"
 const MAP_2D_TEMPLATE_PATH := "res://assets/templates/maps/map2d_base.tscn"
@@ -158,24 +159,17 @@ func _resolve_active_map_id(node: Node) -> String:
 	return scene_path.get_file().get_basename()
 
 func _notify_main_screen_active(active: bool) -> void:
-	var sync := _get_sync_service()
-	if sync != null:
-		sync.set_main_screen_active(active)
+	# Main screen active flag handled directly in EventEditor
+	pass
 
 func _request_sync_refresh(refresh_previewer: bool, force: bool = false) -> void:
-	var sync := _get_sync_service()
-	if sync == null:
+	if _event_editor == null:
 		return
 	var root := get_editor_interface().get_edited_scene_root()
 	if root != null and is_instance_valid(root):
-		sync.queue_refresh(refresh_previewer, force, root)
+		_event_editor.refresh_events_from_root(root)
 	else:
-		sync.queue_refresh(refresh_previewer, force)
-
-func _get_sync_service() -> EventEditorSyncService:
-	if _event_editor == null:
-		return null
-	return _event_editor.get_sync_service()
+		_event_editor.refresh_events()
 
 func _update_create_map_button_visibility() -> void:
 	if _create_map_button == null:
@@ -300,15 +294,17 @@ func _create_map_scene_from_template(save_path: String, map_name: String) -> voi
 	get_editor_interface().open_scene_from_path(save_path)
 
 func _ensure_map_json_exists(map_name: String) -> void:
-	if map_name.strip_edges() == "":
+	var trimmed_name := map_name.strip_edges()
+	if trimmed_name == "":
 		return
-	var persistence := GraphPersistenceService.new()
-	if persistence.has_map(map_name):
+	var persister := MapEventPersistenceService.new()
+	if persister.has_map(trimmed_name):
 		return
-	persistence.save_map(map_name, {
+	var default_data := {
 		"version": 1,
 		"events": {}
-	})
+	}
+	persister.save_map(trimmed_name, default_data)
 
 func _set_owner_recursive(node: Node, owner: Node) -> void:
 	for child in node.get_children():

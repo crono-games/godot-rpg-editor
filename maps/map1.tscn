@@ -1,10 +1,9 @@
-[gd_scene load_steps=7 format=4 uid="uid://b272k4850l4hm"]
+[gd_scene load_steps=6 format=4 uid="uid://b272k4850l4hm"]
 
 [ext_resource type="PackedScene" uid="uid://cje3rr51bpv8x" path="res://assets/templates/events/2d/event_instance_2d.tscn" id="1_rkj35"]
 [ext_resource type="Script" uid="uid://bosefgj03qvaw" path="res://addons/event_editor/runtime/map_2d.gd" id="1_v7uek"]
 [ext_resource type="PackedScene" uid="uid://uqrlhuktbayx" path="res://assets/templates/events/2d/player_instance_grid.tscn" id="4_nxseg"]
 [ext_resource type="Script" uid="uid://d163ta7moafk0" path="res://addons/utils/grid_reference.gd" id="5_17ebq"]
-[ext_resource type="Script" uid="uid://dlqavcwdhiwb7" path="res://assets/templates/events/2d/event_instance_2d.gd" id="5_nxseg"]
 [ext_resource type="TileSet" uid="uid://cp7ecdv0bd158" path="res://assets/data/tilesets/field.tres" id="8_82wqq"]
 
 [node name="Map2D" type="Node2D" unique_id=805670542 node_paths=PackedStringArray("event_container") groups=["Map2D"]]
@@ -55,29 +54,22 @@ position = Vector2(200, 216)
 id = "6050016514044768545"
 
 [node name="PlayerInstanceGrid" parent="EventContainer" unique_id=1599663330 instance=ExtResource("4_nxseg")]
-position = Vector2(200, 128)
+position = Vector2(200, 152)
 id = "1013616042918946739"
 move_speed = 64.0
 anim_cycles_per_tile = 0.25
 
 [node name="Event2" parent="EventContainer" unique_id=1478960495 instance=ExtResource("1_rkj35")]
-position = Vector2(336, 152)
+position = Vector2(328, 152)
 id = "5332173686138629322"
 
 [node name="Event3" parent="EventContainer" unique_id=1946729384 instance=ExtResource("1_rkj35")]
 position = Vector2(392, 216)
 id = "4360376732617874500"
 
-[node name="Event4" type="Node2D" parent="EventContainer" unique_id=801681876 node_paths=PackedStringArray("camera", "animation_player", "sprite", "trigger_area", "hitbox_area") groups=["EventInstance"] instance=ExtResource("1_rkj35")]
+[node name="Event4" parent="EventContainer" unique_id=801681876 instance=ExtResource("1_rkj35")]
 position = Vector2(248, 136)
-script = ExtResource("5_nxseg")
 id = "3883333234513446227"
-trigger_area_size = Vector2(16, 16)
-camera = NodePath("Camera2D")
-animation_player = NodePath("AnimationPlayer")
-sprite = NodePath("Sprite2D")
-trigger_area = NodePath("TriggerArea")
-hitbox_area = NodePath("HitboxArea")
 
 [node name="GridReference" type="Control" parent="." unique_id=1520446466]
 layout_mode = 3

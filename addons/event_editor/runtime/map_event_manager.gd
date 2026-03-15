@@ -40,7 +40,9 @@ var _auto_timer: Timer = null
 var _accum := 0.0
 var _tick_callback: Callable
 
-var _map_loader := MapRepository.new()
+var _map_repo := MapRepository.new()
+var _global_state_repo := GlobalStateRepository.new()
+
 var _teleport := TeleportOrchestrator.new()
 var _npc_movement := EventMovementService.new()
 var _trigger_service := EventTriggerService.new()
@@ -130,7 +132,7 @@ func _on_scene_changed() -> void:
 	_current_map_id = ""
 	_npc_movement.clear()
 	_refresh_map_binding(map_root)
-	_map_data = _map_loader.load_map_data(map_json_path)
+	_map_data = _map_repo.load_map_data(map_json_path)
 	if not _map_data.is_empty():
 		_runner.initialize_event_states(_map_data, scene_root, true)
 
@@ -165,7 +167,7 @@ func _on_scene_changed() -> void:
 func _apply_pending_map_hint() -> void:
 	if _pending_map_id == "":
 		return
-	var pending_path := _map_loader.map_json_path_from_map_id(_pending_map_id)
+	var pending_path := _map_repo.map_json_path_from_map_id(_pending_map_id)
 	if pending_path != "":
 		map_json_path = pending_path
 
@@ -175,20 +177,20 @@ func _refresh_map_binding(scene_root: Node) -> void:
 	## If we have a pending teleport target, honor it over scene-derived ids.
 	if _pending_map_id != "":
 		_current_map_id = _pending_map_id
-		map_json_path = _map_loader.map_json_path_from_map_id(_current_map_id)
+		map_json_path = _map_repo.map_json_path_from_map_id(_current_map_id)
 		return
 	var fallback_map_id := _derive_map_id_from_json_path(map_json_path)
 	if auto_map_from_scene:
-		_current_map_id = _map_loader.resolve_map_id_from_scene(scene_root, fallback_map_id)
+		_current_map_id = _map_repo.resolve_map_id_from_scene(scene_root, fallback_map_id)
 		if _current_map_id != "":
-			map_json_path = _map_loader.map_json_path_from_map_id(_current_map_id)
+			map_json_path = _map_repo.map_json_path_from_map_id(_current_map_id)
 		else:
-			map_json_path = _map_loader.resolve_map_json_path(scene_root, map_json_path)
+			map_json_path = _map_repo.resolve_map_json_path(scene_root, map_json_path)
 			_current_map_id = _derive_map_id_from_json_path(map_json_path)
 	else:
 		_current_map_id = fallback_map_id
 		if _current_map_id != "":
-			map_json_path = _map_loader.map_json_path_from_map_id(_current_map_id)
+			map_json_path = _map_repo.map_json_path_from_map_id(_current_map_id)
 
 func _derive_map_id_from_json_path(path: String) -> String:
 	if path == "":
@@ -204,7 +206,7 @@ func _ensure_map_binding() -> void:
 		return
 	_refresh_map_binding(_resolve_runtime_map_root(scene_root))
 	if map_json_path != "":
-		_map_data = _map_loader.load_map_data(map_json_path)
+		_map_data = _map_repo.load_map_data(map_json_path)
 
 func _resolve_runtime_map_root(scene_root: Node) -> Node:
 	if scene_root == null:
@@ -243,7 +245,7 @@ func _apply_pending_teleport(scene_root: Node) -> void:
 	await _teleport.apply_pending(scene_root)
 
 func _load_global_state() -> void:
-	var gs := _map_loader.load_global_state(global_state_path)
+	var gs = _global_state_repo.load_global_state(global_state_path)
 	if gs != null:
 		_runtime_context.apply_global_state(gs)
 

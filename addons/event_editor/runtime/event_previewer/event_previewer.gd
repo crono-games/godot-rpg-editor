@@ -204,7 +204,7 @@ func get_map_data() -> Dictionary:
 		return map_data_provider.call()
 	if map_id == "":
 		return {}
-	var persistence := GraphPersistenceService.new()
+	var persistence := MapEventPersistenceService.new()
 	return persistence.load_map(map_id)
 
 func get_selected_node_snapshot() -> Dictionary:

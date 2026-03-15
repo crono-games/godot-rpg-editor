@@ -10,7 +10,7 @@ signal state_properties_updated(event_id: String, state_id: String, params: Dict
 var _event_editor_manager: EventEditorManager
 var _graph_model: EventGraphModel
 var _connection_policy: GraphConnectionPolicy
-var _persistence_service: GraphPersistenceService
+var _persistence_service: MapEventPersistenceService
 var _scene_root_provider: Callable
 
 @export var graph: EventGraph
@@ -50,7 +50,7 @@ func _enter_tree():
 		_connection_policy = DefaultGraphConnectionPolicy.new()
 
 	if _persistence_service == null:
-		_persistence_service = GraphPersistenceService.new()
+		_persistence_service = MapEventPersistenceService.new()
 
 	if _synchronizer == null:
 		_synchronizer = GraphSynchronizer.new(_graph_model, graph)
@@ -75,7 +75,8 @@ func set_scene_root_provider(provider: Callable) -> void:
 func set_id_generator(gen: GraphIdGenerator) -> void:
 	_id_generator = gen
 
-func set_persistence_service(ps: GraphPersistenceService) -> void:
+func set_persistence_service(ps: MapEventPersistenceService) -> void:
+	# Set the persistence service for saving/loading graph events
 	_persistence_service = ps
 
 func set_connection_policy(policy: GraphConnectionPolicy) -> void:
@@ -90,6 +91,7 @@ func _rebuild_edit_service() -> void:
 	if _graph_model == null or graph == null or _undo_redo == null or _connection_policy == null:
 		return
 	_edit_service = GraphEditService.new(_graph_model, graph, _undo_redo, _connection_policy)
+	_edit_service.set_graph_controller(self)
 
 # ==================================================
 # API (user intentions)
@@ -103,25 +105,14 @@ func _on_request_create_node(type: String) -> void:
 	_edit_service.create_node(
 		type,
 		pos,
-		_id_generator,
-		Callable(self, "_build_state_params_for_new_node"),
-		_on_node_created,
-		_mark_dirty
+		_id_generator
 	)
 
 func _on_request_delete_nodes(node_ids: Array = []) -> void:
 	var ids := _coerce_node_id_array(node_ids)
 	if ids.is_empty() and graph != null:
 		ids = graph.get_selected_node_ids()
-	_edit_service.delete_nodes(
-		ids,
-		_is_default_state_node,
-		_snapshot_node,
-		_restore_node,
-		_on_node_removed,
-		_on_node_created,
-		_mark_dirty
-	)
+	_edit_service.delete_nodes(ids)
 
 
 func _on_request_duplicate_nodes(node_ids: Array = []) -> void:
@@ -129,21 +120,14 @@ func _on_request_duplicate_nodes(node_ids: Array = []) -> void:
 	if ids.is_empty() and graph != null:
 		ids = graph.get_selected_node_ids()
 	_ensure_id_generator_ready()
-	_edit_service.duplicate_nodes(
-		ids,
-		_on_node_created,
-		_on_node_removed,
-		_mark_dirty
-	)
+	_edit_service.duplicate_nodes(ids)
 
 
 func _on_node_moved(node_id: String, new_pos: Vector2) -> void:
 	_edit_service.move_node(
 		node_id,
 		new_pos,
-		_is_building,
-		_mark_dirty,
-		Callable(self, "_apply_node_view_position")
+		_is_building
 	)
 
 
@@ -155,42 +139,28 @@ func _on_connection_to_empty(from_node: StringName, from_port: int, release_posi
 func _on_request_connect(from_node, from_port, to_node, to_port) -> void:
 	var from_id := _normalize_node_id(from_node)
 	var to_id := _normalize_node_id(to_node)
-	_edit_service.connect_nodes(from_id, from_port, to_id, to_port, _mark_dirty)
+	_edit_service.connect_nodes(from_id, from_port, to_id, to_port)
 
 
 func _on_connection_delete_requested(from_node, from_port, to_node, to_port) -> void:
 	var from_id := _normalize_node_id(from_node)
 	var to_id := _normalize_node_id(to_node)
-	_edit_service.disconnect_nodes(from_id, from_port, to_id, to_port, _mark_dirty)
+	_edit_service.disconnect_nodes(from_id, from_port, to_id, to_port)
 
 
 func _snapshot_node(node_id: String) -> Dictionary:
-	var data := _graph_model.get_node(node_id)
-	if data == null:
-		return {}
-
-	return {
-		"id": data.id,
-		"type": data.type,
-		"position": data.position,
-		"params": data.params.duplicate(true)
-	}
+	return snapshot_node(node_id)
 
 func _restore_node(snapshot: Dictionary) -> void:
-	var node := NodeData.new(
-		snapshot.id,
-		snapshot.type,
-		snapshot.position
-	)
-	node.params = snapshot.params.duplicate(true)
-	_graph_model.add_node(node)
+	restore_node(snapshot)
 
 
 # ==================================================
-# Model -> View synchronization
+# Public API: Used by GraphEditService for operations
 # ==================================================
 
-func _on_node_created(node_id: String) -> void:
+## Called by GraphEditService when a node is created (for view sync).
+func notify_node_created(node_id: String) -> void:
 	if _synchronizer == null or _graph_model == null:
 		return
 	var data := _graph_model.get_node(node_id)
@@ -199,7 +169,87 @@ func _on_node_created(node_id: String) -> void:
 	var graph_node := _synchronizer.on_node_created(node_id)
 	_bind_graph_node_with_data(graph_node, data)
 
+## Called by GraphEditService when a node is removed.
+func notify_node_removed(node_id: String) -> void:
+	if _synchronizer != null:
+		_synchronizer.on_node_removed(node_id)
 
+## Snapshot node state before deletion (for undo).
+func snapshot_node(node_id: String) -> Dictionary:
+	var data := _graph_model.get_node(node_id)
+	if data == null:
+		return {}
+	return {
+		"id": data.id,
+		"type": data.type,
+		"position": data.position,
+		"params": data.params.duplicate(true)
+	}
+
+## Restore node from snapshot (for undo).
+func restore_node(snapshot: Dictionary) -> void:
+	var node := NodeData.new(
+		snapshot.id,
+		snapshot.type,
+		snapshot.position
+	)
+	node.params = snapshot.params.duplicate(true)
+	_graph_model.add_node(node)
+
+## Check if node is the default state (cannot be deleted).
+func is_default_state_node(node_id: String) -> bool:
+	var data := _graph_model.get_node(node_id)
+	return data != null and data.type == "state" and data.params.get("is_default", false)
+
+## Build initial params for a new state node.
+func build_state_params_for_new_node(id: String) -> Dictionary:
+	var number := _extract_state_number(id)
+	var name := "New State %d" % number if number > 0 else "New State"
+	return {
+		"state_id": id,
+		"name": name,
+		"trigger_mode": "action"
+	}
+
+## Apply node view position (sync model ↔ UI).
+func apply_node_view_position(node_id: String, pos: Vector2) -> void:
+	if _synchronizer == null:
+		return
+	var node_view := _synchronizer.get_node_view(node_id)
+	if node_view != null:
+		node_view.position_offset = pos
+
+## Mark graph as dirty (has unsaved changes).
+func mark_dirty() -> void:
+	_dirty = true
+	emit_signal("graph_dirty")
+
+# ==================================================
+# Internal: Old handlers (event bindings, private logic)
+# ==================================================
+
+# Wrappers for compatibility with old handlers
+func _is_default_state_node(node_id: String) -> bool:
+	return is_default_state_node(node_id)
+
+func _on_node_created(node_id: String) -> void:
+	notify_node_created(node_id)
+
+func _on_node_removed(node_id: String) -> void:
+	notify_node_removed(node_id)
+
+func _mark_dirty() -> void:
+	mark_dirty()
+
+func _apply_node_view_position(node_id: String, pos: Vector2) -> void:
+	apply_node_view_position(node_id, pos)
+
+func _normalize_node_id(node_ref) -> String:
+	if _synchronizer != null:
+		return _synchronizer.resolve_node_id(node_ref)
+	return str(node_ref)
+
+# Node param editing (old flow)
 func _on_node_request_apply(ev_command_node: EventCommandNode) -> void:
 	var node_id := ev_command_node.get_node_id()
 	var data := _graph_model.get_node(node_id)
@@ -218,7 +268,6 @@ func _on_node_request_apply(ev_command_node: EventCommandNode) -> void:
 
 	_undo_redo.commit_action()
 
-
 func _apply_node_params(node_id: String, params: Dictionary) -> void:
 	var data := _graph_model.get_node(node_id)
 	data.params = params.duplicate(true)
@@ -232,19 +281,6 @@ func _apply_node_params(node_id: String, params: Dictionary) -> void:
 		emit_signal("state_properties_updated", _event_editor_manager.active_event_id, state_id, data.params.duplicate(true))
 
 	_mark_dirty()
-
-func _normalize_node_id(node_ref) -> String:
-	if _synchronizer != null:
-		return _synchronizer.resolve_node_id(node_ref)
-	return str(node_ref)
-
-func _is_default_state_node(node_id: String) -> bool:
-	var data := _graph_model.get_node(node_id)
-	return data != null and data.type == "state" and data.params.get("is_default", false)
-
-func _on_node_removed(node_id: String) -> void:
-	## Delegate removal to the synchronizer
-	_synchronizer.on_node_removed(node_id)
 
 # ==================================================
 # Build / Rebuild
@@ -369,21 +405,10 @@ func _save_current_graph() -> void:
 func save_current_graph() -> void:
 	_save_current_graph()
 
-func _mark_dirty() -> void:
-	_dirty = true
-	emit_signal("graph_dirty")
-
 func _sync_view_positions_to_model() -> bool:
 	if _synchronizer != null:
 		return _synchronizer.sync_view_positions_to_model()
 	return false
-
-func _apply_node_view_position(node_id: String, pos: Vector2) -> void:
-	if _synchronizer == null:
-		return
-	var node_view := _synchronizer.get_node_view(node_id)
-	if node_view != null:
-		node_view.position_offset = pos
 
 func _load_selected_event_graph(next_event_id: String, map_id: String) -> void:
 	if next_event_id == "":
@@ -572,11 +597,8 @@ func _paste_nodes_from_clipboard() -> void:
 		paste_origin,
 		_id_generator,
 		Callable(self, "_normalize_pasted_node"),
-		Callable(self, "_on_node_created"),
-		Callable(self, "_on_node_removed"),
 		Callable(self, "_clear_node_selection"),
-		Callable(self, "_select_node_view"),
-		Callable(self, "_mark_dirty")
+		Callable(self, "_select_node_view")
 	)
 
 func _clear_node_selection() -> void:

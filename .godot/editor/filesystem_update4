@@ -1,7 +1,4 @@
-res://maps/map1.tscn
+res://addons/event_editor/editor/event_editor.tscn
 res://assets/data/tilesets/field.tres
-res://addons/event_editor/infraestructure/repositories/map_repository.gd
-res://addons/event_editor/infraestructure/ids/event_id_generator.gd
-res://assets/templates/events/2d/player_instance_grid.tscn
-res://addons/event_editor/core/graph/event_graph_controller.gd
-res://addons/event_editor/utilities/popup_panel/context_sub_panel.tscn
+res://addons/event_editor/editor/event_editor.gd
+res://maps/map1.tscn

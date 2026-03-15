@@ -4,12 +4,17 @@ extends RefCounted
 
 var maps_path := "res://maps/"
 var runtime_maps_path := "res://addons/event_editor/data/runtime/maps/"
-var _event_id_generator = null
 var _scene_changed := false
 var _seen_event_ids := {}
 
-func set_event_id_generator(gen) -> void:
-	_event_id_generator = gen
+# ID Generation for events (using ResourceUID)
+func _generate_event_id() -> String:
+	return str(ResourceUID.create_id())
+
+func _ensure_event_id(existing_id: String) -> String:
+	if existing_id == "":
+		return _generate_event_id()
+	return existing_id
 
 func get_maps() -> Array[String]:
 	var result: Array[String] = []
@@ -75,14 +80,6 @@ func load_map_data_by_map_id(map_id: String) -> Dictionary:
 	var path := map_json_path_from_map_id(map_id)
 	return load_map_data(path)
 
-func load_global_state(global_state_json_path: String) -> GlobalState:
-	if global_state_json_path == "":
-		return null
-	if not FileAccess.file_exists(global_state_json_path):
-		return null
-	var gs := GlobalState.new()
-	gs.load_from_file(global_state_json_path)
-	return gs
 
 func get_events_for_map(map_id: String) -> Array:
 	var scene_path := maps_path + map_id + ".tscn"
@@ -91,10 +88,6 @@ func get_events_for_map(map_id: String) -> Array:
 		return []
 	var scene = packed.instantiate()
 	var result: Array = []
-
-	if _event_id_generator == null:
-		var gen_script := preload("res://addons/event_editor/infraestructure/ids/event_id_generator.gd")
-		_event_id_generator = gen_script.new()
 
 	_scene_changed = false
 	_seen_event_ids.clear()
@@ -114,9 +107,6 @@ func get_events_from_root(root: Node) -> Array:
 	if root == null:
 		return []
 	var result: Array = []
-	if _event_id_generator == null:
-		var gen_script := preload("res://addons/event_editor/infraestructure/ids/event_id_generator.gd")
-		_event_id_generator = gen_script.new()
 
 	_scene_changed = false
 	_seen_event_ids.clear()
@@ -163,15 +153,13 @@ func _collect_events(n: Node, out: Array) -> void:
 			needs_new_id = true
 
 		if needs_new_id:
-			eid = _event_id_generator.ensure_id("")
+			eid = _ensure_event_id("")
 			n.set("id", eid)
 			_scene_changed = true
 
 		_seen_event_ids[eid] = true
 		var is_player := _is_player_node(n)
 		var is_follower := false
-		#if n.has_method("get"):
-			#is_follower = n.get("is_follower")
 		if n.is_in_group("follower_actor"):
 			is_follower = true
 		out.append({

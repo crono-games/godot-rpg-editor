@@ -1,5 +1,11 @@
-class_name GraphPersistenceService
+class_name MapEventPersistenceService
 extends RefCounted
+
+## Responsibility: Persist event graphs to/from JSON files.
+## Handles:
+## - load_map / save_map: Full map data I/O
+## - load_event / save_event: Individual event graph serialization
+## - _prune_missing_events: Cleanup of orphaned events
 
 var serializer := EventGraphSerializer.new()
 const BASE_PATH := "res://addons/event_editor/data/runtime/maps/"

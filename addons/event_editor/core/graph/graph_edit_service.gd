@@ -1,10 +1,14 @@
 class_name GraphEditService
 extends RefCounted
 
+## GraphEditService is responsible for graph editing operations with undo/redo.
+## It delegates UI sync and node logic to the provided GraphController through its public methods.
+
 var _model: EventGraphModel
 var _view: EventGraph
 var _undo_redo: UndoRedo
 var _connection_policy: GraphConnectionPolicy
+var _graph_controller: GraphController
 
 func _init(model: EventGraphModel, view: EventGraph, undo_redo: UndoRedo, connection_policy: GraphConnectionPolicy) -> void:
 	_model = model
@@ -12,46 +16,42 @@ func _init(model: EventGraphModel, view: EventGraph, undo_redo: UndoRedo, connec
 	_undo_redo = undo_redo
 	_connection_policy = connection_policy
 
+## IMPORTANT: Must be called before using the service. Provides access to controller operations.
+func set_graph_controller(controller: GraphController) -> void:
+	_graph_controller = controller
+
 func create_node(
 	type: String,
 	position: Vector2,
-	id_generator: GraphIdGenerator,
-	build_state_params: Callable,
-	on_node_created: Callable,
-	mark_dirty: Callable
+	id_generator: GraphIdGenerator
 ) -> void:
 	var id := id_generator.next_unique_node_id(type, _model)
 	var node := NodeData.new(id, type, position)
-	if type == "state":
-		node.params = build_state_params.call(id)
+	if type == "state" and _graph_controller != null:
+		node.params = _graph_controller.build_state_params_for_new_node(id)
 
 	_undo_redo.create_action("Create Node")
 	_undo_redo.add_do_method(func():
 		_model.add_node(node)
-		on_node_created.call(node.id)
-		mark_dirty.call()
+		if _graph_controller != null:
+			_graph_controller.notify_node_created(node.id)
+		_graph_controller.mark_dirty()
 	)
 	_undo_redo.add_undo_method(func():
 		for e in _model.get_edges_for_node(id):
 			_model.remove_edge(e.from_node, e.from_port, e.to_node, e.to_port)
 			_view.disconnect_node(e.from_node, e.from_port, e.to_node, e.to_port)
 		_model.remove_node(id)
-		mark_dirty.call()
+		_graph_controller.mark_dirty()
 	)
 	_undo_redo.commit_action()
 
 func delete_nodes(
-	node_ids: Array,
-	is_default_state_node: Callable,
-	snapshot_node: Callable,
-	restore_node: Callable,
-	on_node_removed: Callable,
-	on_node_created: Callable,
-	mark_dirty: Callable
+	node_ids: Array
 ) -> void:
 	var deletable_ids := []
 	for id in node_ids:
-		if is_default_state_node.call(id):
+		if _graph_controller != null and _graph_controller.is_default_state_node(id):
 			continue
 		deletable_ids.append(id)
 	if deletable_ids.is_empty():
@@ -59,8 +59,8 @@ func delete_nodes(
 
 	var snapshots := []
 	for id in deletable_ids:
-		if _model.has_node(id):
-			var snap = snapshot_node.call(id)
+		if _model.has_node(id) and _graph_controller != null:
+			var snap = _graph_controller.snapshot_node(id)
 			if not snap.is_empty():
 				snapshots.append(snap)
 	var edge_snapshots := _snapshot_edges_for_nodes(deletable_ids)
@@ -69,13 +69,15 @@ func delete_nodes(
 	for id in deletable_ids:
 		_undo_redo.add_do_method(func():
 			_model.remove_node(id)
-			on_node_removed.call(id)
+			if _graph_controller != null:
+				_graph_controller.notify_node_removed(id)
 		)
 
 	for snap in snapshots:
 		_undo_redo.add_undo_method(func():
-			restore_node.call(snap)
-			on_node_created.call(snap.id)
+			if _graph_controller != null:
+				_graph_controller.restore_node(snap)
+				_graph_controller.notify_node_created(snap.id)
 		)
 	for e in edge_snapshots:
 		_undo_redo.add_undo_method(func():
@@ -85,15 +87,18 @@ func delete_nodes(
 			_view.connect_node(e.from_node, e.from_port, e.to_node, e.to_port)
 		)
 
-	_undo_redo.add_do_method(mark_dirty)
-	_undo_redo.add_undo_method(mark_dirty)
+	_undo_redo.add_do_method(func():
+		if _graph_controller != null:
+			_graph_controller.mark_dirty()
+	)
+	_undo_redo.add_undo_method(func():
+		if _graph_controller != null:
+			_graph_controller.mark_dirty()
+	)
 	_undo_redo.commit_action()
 
 func duplicate_nodes(
-	node_ids: Array,
-	on_node_created: Callable,
-	on_node_removed: Callable,
-	mark_dirty: Callable
+	node_ids: Array
 ) -> void:
 	_undo_redo.create_action("Duplicate nodes")
 	for id in node_ids:
@@ -103,22 +108,28 @@ func duplicate_nodes(
 		_undo_redo.add_do_method(func():
 			created_id = _model.duplicate_node(id, Vector2(40, 40))
 			_normalize_duplicated_node(created_id)
-			on_node_created.call(created_id)
+			if _graph_controller != null:
+				_graph_controller.notify_node_created(created_id)
 		)
 		_undo_redo.add_undo_method(func():
-			on_node_removed.call(created_id)
+			if _graph_controller != null:
+				_graph_controller.notify_node_removed(created_id)
 			_model.remove_node(created_id)
 		)
-	_undo_redo.add_do_method(mark_dirty)
-	_undo_redo.add_undo_method(mark_dirty)
+	_undo_redo.add_do_method(func():
+		if _graph_controller != null:
+			_graph_controller.mark_dirty()
+	)
+	_undo_redo.add_undo_method(func():
+		if _graph_controller != null:
+			_graph_controller.mark_dirty()
+	)
 	_undo_redo.commit_action()
 
 func move_node(
 	node_id: String,
 	new_pos: Vector2,
-	is_building: bool,
-	mark_dirty: Callable,
-	apply_view_position: Callable
+	is_building: bool
 ) -> void:
 	if is_building:
 		return
@@ -133,24 +144,29 @@ func move_node(
 	_undo_redo.create_action("Move node", UndoRedo.MERGE_ENDS)
 	_undo_redo.add_do_method(func():
 		_model.move_node(node_id, after)
-		if apply_view_position != null:
-			apply_view_position.call(node_id, after)
+		if _graph_controller != null:
+			_graph_controller.apply_node_view_position(node_id, after)
 	)
 	_undo_redo.add_undo_method(func():
 		_model.move_node(node_id, before)
-		if apply_view_position != null:
-			apply_view_position.call(node_id, before)
+		if _graph_controller != null:
+			_graph_controller.apply_node_view_position(node_id, before)
 	)
-	_undo_redo.add_do_method(mark_dirty)
-	_undo_redo.add_undo_method(mark_dirty)
+	_undo_redo.add_do_method(func():
+		if _graph_controller != null:
+			_graph_controller.mark_dirty()
+	)
+	_undo_redo.add_undo_method(func():
+		if _graph_controller != null:
+			_graph_controller.mark_dirty()
+	)
 	_undo_redo.commit_action()
 
 func connect_nodes(
 	from_id: String,
 	from_port: int,
 	to_id: String,
-	to_port: int,
-	mark_dirty: Callable
+	to_port: int
 ) -> void:
 	if not _connection_policy.can_connect(_model, from_id, from_port, to_id, to_port):
 		return
@@ -162,22 +178,28 @@ func connect_nodes(
 		_view.disconnect_node(incoming.from_node, incoming.from_port, incoming.to_node, incoming.to_port)
 	_model.add_edge(from_id, from_port, to_id, to_port)
 	_view.connect_node(from_id, from_port, to_id, to_port)
-	mark_dirty.call()
+	if _graph_controller != null:
+		_graph_controller.mark_dirty()
 
 func disconnect_nodes(
 	from_id: String,
 	from_port: int,
 	to_id: String,
-	to_port: int,
-	mark_dirty: Callable
+	to_port: int
 ) -> void:
 	_undo_redo.create_action("Delete connection")
 	_undo_redo.add_do_method(_model.remove_edge.bind(from_id, from_port, to_id, to_port))
 	_undo_redo.add_do_method(_view.disconnect_node.bind(from_id, from_port, to_id, to_port))
 	_undo_redo.add_undo_method(_model.add_edge.bind(from_id, from_port, to_id, to_port))
 	_undo_redo.add_undo_method(_view.connect_node.bind(from_id, from_port, to_id, to_port))
-	_undo_redo.add_do_method(mark_dirty)
-	_undo_redo.add_undo_method(mark_dirty)
+	_undo_redo.add_do_method(func():
+		if _graph_controller != null:
+			_graph_controller.mark_dirty()
+	)
+	_undo_redo.add_undo_method(func():
+		if _graph_controller != null:
+			_graph_controller.mark_dirty()
+	)
 	_undo_redo.commit_action()
 
 func _snapshot_edges_for_nodes(node_ids: Array) -> Array:
@@ -224,12 +246,9 @@ func paste_nodes(
 	clipboard_edges: Array,
 	paste_origin: Vector2,
 	id_generator: GraphIdGenerator,
-	normalize_pasted_node: Callable,
-	on_node_created: Callable,
-	on_node_removed: Callable,
-	clear_selection: Callable,
-	select_node: Callable,
-	mark_dirty: Callable
+	normalize_pasted_node: Callable = Callable(),
+	clear_selection_callback: Callable = Callable(),
+	select_node_callback: Callable = Callable()
 ) -> void:
 	if clipboard_nodes.is_empty():
 		return
@@ -240,8 +259,8 @@ func paste_nodes(
 	var id_map: Dictionary = {}
 	_undo_redo.create_action("Paste nodes")
 	_undo_redo.add_do_method(func():
-		if clear_selection != null:
-			clear_selection.call()
+		if clear_selection_callback.is_valid():
+			clear_selection_callback.call()
 		created_ids.clear()
 		id_map.clear()
 
@@ -257,12 +276,13 @@ func paste_nodes(
 			var node := NodeData.new(new_id, node_type, paste_origin + offset)
 			var params_value = row.get("params", {})
 			node.params = params_value.duplicate(true) if typeof(params_value) == TYPE_DICTIONARY else {}
-			if normalize_pasted_node != null:
+			if normalize_pasted_node.is_valid():
 				normalize_pasted_node.call(node)
 			_model.add_node(node)
 			id_map[str(row.get("source_id", ""))] = new_id
 			created_ids.append(new_id)
-			on_node_created.call(new_id)
+			if _graph_controller != null:
+				_graph_controller.notify_node_created(new_id)
 
 		for e in clipboard_edges:
 			if typeof(e) != TYPE_DICTIONARY:
@@ -277,16 +297,19 @@ func paste_nodes(
 			_model.add_edge(from_id, from_port, to_id, to_port)
 			_view.connect_node(from_id, from_port, to_id, to_port)
 
-		if select_node != null:
+		if select_node_callback.is_valid():
 			for new_id in created_ids:
-				select_node.call(new_id)
+				select_node_callback.call(new_id)
 
-		mark_dirty.call()
+		if _graph_controller != null:
+			_graph_controller.mark_dirty()
 	)
 	_undo_redo.add_undo_method(func():
 		for new_id in created_ids:
-			on_node_removed.call(new_id)
+			if _graph_controller != null:
+				_graph_controller.notify_node_removed(new_id)
 			_model.remove_node(new_id)
-		mark_dirty.call()
+		if _graph_controller != null:
+			_graph_controller.mark_dirty()
 	)
 	_undo_redo.commit_action()

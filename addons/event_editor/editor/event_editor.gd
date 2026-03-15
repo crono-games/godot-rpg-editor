@@ -14,12 +14,18 @@ var _map_repo: MapRepository
 var _global_state: GlobalState
 var _event_runner: EventGraphRunner
 var _autosave_timer: Timer
-var _sync_service: EventEditorSyncService
+var _refresh_timer: Timer
+var _refresh_root: Node = null
+var _pending_refresh := false
+var _pending_refresh_previewer := false
+var _is_main_screen_active := false
 
 func _ready():
+	if not Engine.is_editor_hint():
+		return
 	_setup_event_manager()
 	_setup_dependencies()
-	_setup_sync_service()
+	_setup_refresh_debounce()
 	_setup_event_previewer()
 	_setup_context_and_graph()
 	_setup_map_selector()
@@ -39,15 +45,26 @@ func _setup_event_manager() -> void:
 		_event_editor_manager = EventEditorManager
 		_map_repo = EventEditorManager.get_map_repository()
 
-func _setup_sync_service() -> void:
-	if _sync_service == null:
-		_sync_service = EventEditorSyncService.new()
-		add_child(_sync_service)
-	_sync_service.set_event_manager(_event_editor_manager)
-	_sync_service.set_map_repo(_map_repo)
-	_sync_service.set_event_previewer(event_previewer)
-	_sync_service.set_scene_root_provider(Callable(self, "_get_editor_scene_root"))
-	_sync_service.set_preview_root_provider(Callable(self, "_instantiate_preview_root"))
+func _setup_refresh_debounce() -> void:
+	if not Engine.is_editor_hint():
+		return
+	_refresh_timer = Timer.new()
+	_refresh_timer.one_shot = true
+	_refresh_timer.wait_time = 0.05
+	_refresh_timer.autostart = false
+	add_child(_refresh_timer)
+	_refresh_timer.timeout.connect(_on_refresh_timeout)
+	
+	# Connect to tree signals for event node monitoring
+	var tree := get_tree()
+	if tree == null:
+		return
+	if not tree.node_added.is_connected(_on_scene_node_added):
+		tree.node_added.connect(_on_scene_node_added)
+	if not tree.node_removed.is_connected(_on_scene_node_removed):
+		tree.node_removed.connect(_on_scene_node_removed)
+	if tree.has_signal("node_renamed") and not tree.node_renamed.is_connected(_on_scene_node_renamed):
+		tree.node_renamed.connect(_on_scene_node_renamed)
 
 func _setup_context_and_graph() -> void:
 	if _event_editor_manager == null:
@@ -74,7 +91,7 @@ func _setup_event_previewer() -> void:
 	event_previewer.set_map_id(_event_editor_manager.active_map_id)
 	event_previewer.set_map_data_provider(
 		func():
-			var persistence := GraphPersistenceService.new()
+			var persistence := MapEventPersistenceService.new()
 			return persistence.load_map(_event_editor_manager.active_map_id)
 	)
 	event_previewer.set_scene_root_provider(
@@ -87,8 +104,6 @@ func _setup_event_previewer() -> void:
 	)
 	if not event_previewer.play_requested.is_connected(_on_preview_play_requested):
 		event_previewer.play_requested.connect(_on_preview_play_requested)
-	if _sync_service != null:
-		_sync_service.set_event_previewer(event_previewer)
 
 func _setup_game_state() -> void:
 	_global_state = GlobalStateManager.get_global_state()
@@ -105,6 +120,7 @@ func _setup_graph_autosave() -> void:
 	_autosave_timer = Timer.new()
 	_autosave_timer.one_shot = true
 	_autosave_timer.wait_time = autosave_delay
+	_autosave_timer.autostart = false
 	add_child(_autosave_timer)
 	_autosave_timer.timeout.connect(_on_graph_autosave_timeout)
 	if not graph_controller.graph_dirty.is_connected(_on_graph_dirty):
@@ -127,16 +143,13 @@ func _sync_initial_selection_state() -> void:
 		_on_active_event_changed(_event_editor_manager.active_event_id)
 
 func refresh_events() -> void:
-	if _sync_service != null:
-		_sync_service.refresh_now(_get_editor_scene_root(), false)
+	_queue_refresh(false, true, _get_editor_scene_root())
 
 func refresh_events_from_root(root: Node) -> void:
-	if _sync_service != null:
-		_sync_service.refresh_now(root, false)
+	_queue_refresh(false, true, root)
 
 func refresh_previewer_from_active_map() -> void:
-	if _sync_service != null:
-		_sync_service.refresh_now(null, true)
+	_queue_refresh(true, true, null)
 
 
 ##Signals
@@ -146,15 +159,69 @@ func _on_map_event_selected(event_id: String) -> void:
 	_on_active_event_changed(event_id)
 
 func _on_active_map_changed(map_id: String) -> void:
-	if _sync_service != null:
-		_sync_service.handle_active_map_changed(map_id)
+	if event_previewer != null:
+		event_previewer.set_map_id(map_id)
+	_queue_refresh(true, true)
 
 func _on_active_event_changed(event_id: String) -> void:
-	if _sync_service != null:
-		_sync_service.handle_active_event_changed(event_id)
+	_queue_refresh(true, true)
 
-func get_sync_service() -> EventEditorSyncService:
-	return _sync_service
+# Refresh coordination methods (consolidated from EventEditorSyncService)
+func _queue_refresh(refresh_previewer: bool = false, force: bool = false, root: Node = null) -> void:
+	if not force and _is_main_screen_active:
+		return
+	_pending_refresh = true
+	_pending_refresh_previewer = _pending_refresh_previewer or refresh_previewer
+	if root != null:
+		_refresh_root = root
+	# Only queue refresh if timer exists (i.e., we're in editor context)
+	if _refresh_timer != null:
+		_refresh_timer.call_deferred("start")
+
+func _on_refresh_timeout() -> void:
+	if not _pending_refresh:
+		return
+	var root := _refresh_root
+	if root == null:
+		root = _get_editor_scene_root()
+	_refresh_root = null
+	var refresh_previewer := _pending_refresh_previewer
+	_pending_refresh = false
+	_pending_refresh_previewer = false
+	_refresh_events_from_root(root)
+	if refresh_previewer:
+		_refresh_previewer_from_active_map()
+
+func _refresh_events_from_root(root: Node) -> void:
+	if _event_editor_manager == null:
+		return
+	_event_editor_manager.refresh_events_for_active_map()
+
+func _refresh_previewer_from_active_map() -> void:
+	if event_previewer == null or not is_instance_valid(event_previewer):
+		return
+	if _event_editor_manager == null:
+		return
+	var map_id := _event_editor_manager.active_map_id
+	if map_id == "":
+		return
+	var preview_root := _instantiate_preview_root()
+	if preview_root == null:
+		return
+	var event_id := _event_editor_manager.active_event_id
+	event_previewer.refresh_from_scene_root(preview_root, event_id)
+
+func _on_scene_node_added(node: Node) -> void:
+	if _is_editor_event_node(node):
+		_queue_refresh(false, false)
+
+func _on_scene_node_removed(node: Node) -> void:
+	if _is_editor_event_node(node):
+		_queue_refresh(false, false)
+
+func _on_scene_node_renamed(node: Node) -> void:
+	if _is_editor_event_node(node):
+		_queue_refresh(false, false)
 
 func _on_preview_play_requested(_map_id: String, _event_id: String, _scene_root: Node) -> void:
 	_save_graph_now()

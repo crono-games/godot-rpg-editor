@@ -1,8 +1,6 @@
 class_name EventGraphRunner
 extends RefCounted
 
-const DEBUG_EVENT_RUNNER := false
-
 var _context := EventRuntimeContext.new()
 var _executors := {}
 var _max_steps := 1000

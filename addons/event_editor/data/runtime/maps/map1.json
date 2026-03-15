@@ -104,21 +104,21 @@
 				"edges": [
 					{
 						"from": "state_1",
-						"from_port": 0.0,
+						"from_port": 0,
 						"to": "show_dialogue_1",
-						"to_port": 0.0
+						"to_port": 0
 					},
 					{
 						"from": "show_dialogue_1",
-						"from_port": 0.0,
+						"from_port": 0,
 						"to": "set_local_flag_1",
-						"to_port": 0.0
+						"to_port": 0
 					},
 					{
 						"from": "state_2",
-						"from_port": 0.0,
+						"from_port": 0,
 						"to": "show_dialogue_2",
-						"to_port": 0.0
+						"to_port": 0
 					}
 				],
 				"nodes": {
@@ -129,8 +129,8 @@
 							"state": true
 						},
 						"position": [
-							380.120574951172,
-							73.4848556518555
+							400.0,
+							0.0
 						],
 						"type": "set_local_flag"
 					},
@@ -145,8 +145,8 @@
 							]
 						},
 						"position": [
-							181.020568847656,
-							29.4848556518555
+							176.0,
+							-16.0
 						],
 						"type": "show_dialogue"
 					},
@@ -161,8 +161,8 @@
 							]
 						},
 						"position": [
-							193.120574951172,
-							194.48486328125
+							192.0,
+							144.0
 						],
 						"type": "show_dialogue"
 					},
@@ -360,9 +360,9 @@
 				"edges": [
 					{
 						"from": "state_1",
-						"from_port": 0,
+						"from_port": 0.0,
 						"to": "teleport_player_1",
-						"to_port": 0
+						"to_port": 0.0
 					}
 				],
 				"nodes": {
@@ -389,12 +389,12 @@
 						"params": {
 							"auto_fade": true,
 							"facing_dir": "right",
-							"fade_frames": 30,
+							"fade_frames": 30.0,
 							"map_id": "map2",
 							"target_position": {
-								"x": 8,
-								"y": 184,
-								"z": 184
+								"x": 8.0,
+								"y": 184.0,
+								"z": 184.0
 							}
 						},
 						"position": [
