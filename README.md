@@ -1,6 +1,6 @@
 # Godot RPG Editor
 
-> ⚠️ This project is still under active development and parts of the internal architecture may change.
+> ⚠️ This project is still under active development and parts of the internal architecture may change and there will inevitably be some regressions.
 
 **Godot RPG Editor** is a framework designed to build **event-driven gameplay systems** using a **node-based visual scripting interface**.
 
