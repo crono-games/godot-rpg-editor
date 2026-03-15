@@ -5,7 +5,7 @@ class_name SetVariableNode
 @export var variable_selector: OptionButton
 @export var spinbox: SpinBox
 
-var available_variables: Array[String] = []
+var available_variables: Array = []
 var selected_variable: String = ""
 var value := 0
 var _global_state: GlobalState

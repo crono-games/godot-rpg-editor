@@ -1,5 +1,5 @@
 res://maps/map1.tscn
 res://assets/data/tilesets/field.tres
-res://assets/templates/events/2d/player_actor_2d_base.gd
-res://assets/templates/events/2d/player_instance_grid.gd
-res://addons/event_editor/runtime/map_2d.gd
+res://addons/event_editor/editor/nodes/variable_operation/variable_operation_node.gd
+res://addons/event_editor/editor/nodes/variable_condition/variable_condition_node.tscn
+res://addons/event_editor/editor/nodes/variable_operation/variable_operation_node.tscn

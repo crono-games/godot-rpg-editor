@@ -296,7 +296,7 @@ func _is_follower_candidate(event_id: String) -> bool:
 	var stack: Array[Node] = [root]
 	while not stack.is_empty():
 		var node = stack.pop_back()
-		if node.is_in_group("event_instance") and str(node.get("id")) == event_id:
+		if node.is_in_group("EventInstance") and str(node.get("id")) == event_id:
 			return node.has_method("follow_to_world")
 		for child in node.get_children():
 			if child is Node:

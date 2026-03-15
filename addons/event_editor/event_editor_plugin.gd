@@ -129,7 +129,7 @@ func _get_selected_event_instance() -> Node:
 	var node := nodes[0] as Node
 	if node == null:
 		return null
-	if node.is_in_group("event_instance") and str(node.get("id")) != "":
+	if node.is_in_group("EventInstance") and str(node.get("id")) != "":
 		return node
 	return null
 

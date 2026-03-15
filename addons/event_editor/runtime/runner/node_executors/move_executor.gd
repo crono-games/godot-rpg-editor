@@ -225,7 +225,7 @@ func _is_move_blocked_2d(target: Node, next_pos3: Vector3, scene_root: Node) -> 
 
 	if scene_root == null or not scene_root.is_inside_tree():
 		return false
-	var all_nodes := scene_root.get_tree().get_nodes_in_group("event_instance")
+	var all_nodes := scene_root.get_tree().get_nodes_in_group("EventInstance")
 	for n in all_nodes:
 		if not (n is Node2D):
 			continue
@@ -237,7 +237,7 @@ func _is_move_blocked_2d(target: Node, next_pos3: Vector3, scene_root: Node) -> 
 		if ncell == target_cell:
 			return true
 
-	for p in scene_root.get_tree().get_nodes_in_group("player"):
+	for p in scene_root.get_tree().get_nodes_in_group("PlayerInstance"):
 		if not (p is Node2D):
 			continue
 		if p == target:
@@ -279,9 +279,6 @@ func _sync_anim_speed_to_step(target: Node, step_time: float) -> void:
 	if not (ap is AnimationPlayer):
 		return
 	var player := ap as AnimationPlayer
-	var cycles_per_step := maxf(0.0, float(target.get("max_anim_cycles_per_step")))
-	if cycles_per_step <= 0.0:
-		cycles_per_step = 1.0
 	var anim_name := StringName(player.current_animation)
 	if anim_name == StringName(""):
 		return
@@ -289,7 +286,7 @@ func _sync_anim_speed_to_step(target: Node, step_time: float) -> void:
 	if anim == null:
 		return
 	var len := maxf(0.001, anim.length)
-	player.speed_scale = (len * cycles_per_step) / step_time
+	player.speed_scale = len / step_time
 
 func _reset_anim_speed(target: Node) -> void:
 	if target == null:

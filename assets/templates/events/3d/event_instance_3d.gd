@@ -36,7 +36,7 @@ var collision_shape_3D: CollisionShape3D
 var _last_dir := Vector3.DOWN
 
 func _enter_tree():
-	add_to_group("event_instance")
+	add_to_group("EventInstance")
 
 func _ready() -> void:
 	_apply_trigger_area_shape()

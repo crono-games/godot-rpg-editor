@@ -301,7 +301,7 @@ func _pick_approach_direction(event: Node, ctx: EventRuntimeContext) -> Vector3:
 	if env == null:
 		return Vector3.ZERO
 	
-	var player := env.get_player("player")
+	var player := env.get_player("PlayerInstance")
 	if player == null:
 		return Vector3.ZERO
 	
@@ -344,7 +344,7 @@ func _is_event_cell_occupied(ctx: EventRuntimeContext, moving_event_id: String, 
 		scene_root = env.call("get_root")
 	if scene_root == null:
 		return false
-	for node in scene_root.get_tree().get_nodes_in_group("event_instance"):
+	for node in scene_root.get_tree().get_nodes_in_group("EventInstance"):
 		if not (node is Node2D or node is Node3D):
 			continue
 		var nid := ""

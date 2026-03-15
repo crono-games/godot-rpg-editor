@@ -172,7 +172,7 @@ func _collect_events(n: Node, out: Array) -> void:
 		_collect_events(child, out)
 
 func _is_event_node(n: Node) -> bool:
-	if n.is_in_group("event_instance"):
+	if n.is_in_group("EventInstance"):
 		return true
 	# 2D/3D event nodes share exported `id` property.
 	for prop in n.get_property_list():
@@ -183,7 +183,7 @@ func _is_event_node(n: Node) -> bool:
 func _is_player_node(n: Node) -> bool:
 	if n == null:
 		return false
-	if n.is_in_group("player"):
+	if n.is_in_group("PlayerInstance"):
 		return true
 	# In repository scans nodes are instantiated but often not inside SceneTree yet,
 	# so group membership added in _enter_tree/_ready might not be present.

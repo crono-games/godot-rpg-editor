@@ -240,7 +240,7 @@ func _find_player(scene_root: Node, target: Node) -> Node:
 	var stack: Array[Node] = [scene_root]
 	while not stack.is_empty():
 		var node = stack.pop_back()
-		if node != target and node.is_in_group("player") and (node is Node2D or node is Node3D):
+		if node != target and node.is_in_group("PlayerInstance") and (node is Node2D or node is Node3D):
 			return node
 		for child in node.get_children():
 			if child is Node:

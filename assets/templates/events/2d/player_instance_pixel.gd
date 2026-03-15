@@ -175,7 +175,7 @@ func _resolve_blocking_event_actor(collider: Variant) -> Node:
 	while n != null:
 		if n == self or self.is_ancestor_of(n) or n.is_ancestor_of(self):
 			return null
-		if n.is_in_group("event_instance"):
+		if n.is_in_group("EventInstance"):
 			return n
 		n = n.get_parent()
 	return null

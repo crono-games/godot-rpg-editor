@@ -1,5 +1,93 @@
 {
 	"events": {
+		"3883333234513446227": {
+			"flow": {
+				"edges": [
+					{
+						"from": "state_1",
+						"from_port": 0,
+						"to": "variable_condition_1",
+						"to_port": 0
+					},
+					{
+						"from": "variable_condition_1",
+						"from_port": 1,
+						"to": "variable_operation_1",
+						"to_port": 0
+					},
+					{
+						"from": "variable_condition_1",
+						"from_port": 0,
+						"to": "show_dialogue_1",
+						"to_port": 0
+					}
+				],
+				"nodes": {
+					"show_dialogue_1": {
+						"params": {
+							"dialogues": [
+								{
+									"id": "dlg_1",
+									"portrait": "",
+									"text": "Timer Reached."
+								}
+							]
+						},
+						"position": [
+							448.0,
+							-64.0
+						],
+						"type": "show_dialogue"
+					},
+					"state_1": {
+						"params": {
+							"conditions": {
+
+							},
+							"is_default": true,
+							"name": "Default",
+							"properties": {
+
+							},
+							"state_id": "default",
+							"trigger_mode": "parallel"
+						},
+						"position": [
+							0.0,
+							0.0
+						],
+						"type": "state"
+					},
+					"variable_condition_1": {
+						"params": {
+							"condition_param": {
+								"operator": "==",
+								"value": 100
+							},
+							"var_name": "Timer"
+						},
+						"position": [
+							192.0,
+							-32.0
+						],
+						"type": "variable_condition"
+					},
+					"variable_operation_1": {
+						"params": {
+							"mode": "ticks",
+							"operator": "+",
+							"value": 1,
+							"variable_name": "Timer"
+						},
+						"position": [
+							448.0,
+							32.0
+						],
+						"type": "variable_operation"
+					}
+				}
+			}
+		},
 		"4360376732617874500": {
 			"flow": {
 				"edges": [
@@ -104,21 +192,21 @@
 				"edges": [
 					{
 						"from": "state_1",
-						"from_port": 0,
+						"from_port": 0.0,
 						"to": "show_dialogue_1",
-						"to_port": 0
+						"to_port": 0.0
 					},
 					{
 						"from": "show_dialogue_1",
-						"from_port": 0,
+						"from_port": 0.0,
 						"to": "set_local_flag_1",
-						"to_port": 0
+						"to_port": 0.0
 					},
 					{
 						"from": "state_2",
-						"from_port": 0,
+						"from_port": 0.0,
 						"to": "show_dialogue_2",
-						"to_port": 0
+						"to_port": 0.0
 					}
 				],
 				"nodes": {

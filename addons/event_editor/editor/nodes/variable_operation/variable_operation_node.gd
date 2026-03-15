@@ -24,7 +24,7 @@ func _ready() -> void:
 	spinbox.connect("value_changed", Callable(self, "_on_value_changed"))
 	mode_selector.connect("item_selected", Callable(self, "_on_mode_selected"))
 
-func _on_view_model_changed() -> void:
+func _on_changed() -> void:
 	variable_selector.clear()
 	var vars := get_variable_options()
 	for i in vars.size():
@@ -34,7 +34,6 @@ func _on_view_model_changed() -> void:
 	if vidx >= 0 and vidx < variable_selector.get_item_count():
 		variable_selector.select(vidx)
 
-	# operator_selector is assumed to have items prefilled in the scene
 	var op := operator
 	var op_idx := -1
 	for i in operation_selector.item_count:

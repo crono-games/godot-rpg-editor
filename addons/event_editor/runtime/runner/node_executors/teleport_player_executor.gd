@@ -45,7 +45,7 @@ func run(node_id: String, node: Dictionary, graph: EventGraphRuntime, ctx: Event
 func _resolve_player(scene_root: Node, map_manager, ctx: EventRuntimeContext) -> Node:
 	var env := ctx.get_scene_event_environment()
 	if env != null:
-		var env_player := env.get_player("player")
+		var env_player := env.get_player("PlayerInstance")
 		if env_player != null and is_instance_valid(env_player):
 			return env_player
 	if map_manager != null and map_manager.has_method("get_player"):
@@ -60,7 +60,7 @@ func _find_player(root: Node) -> Node:
 	var stack: Array[Node] = [root]
 	while not stack.is_empty():
 		var node = stack.pop_back()
-		if node.is_in_group("player") and (node is Node2D or node is Node3D):
+		if node.is_in_group("PlayerInstance") and (node is Node2D or node is Node3D):
 			return node
 		for child in node.get_children():
 			if child is Node:

@@ -36,7 +36,7 @@ var _collision_shape: CollisionShape2D
 var _last_dir := Vector2.DOWN
 
 func _enter_tree():
-	add_to_group("event_instance")
+	add_to_group("EventInstance")
 
 func _ready() -> void:
 	_resolve_runtime_links()

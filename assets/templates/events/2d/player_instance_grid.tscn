@@ -174,7 +174,7 @@ _data = {
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0cllw"]
 size = Vector2(15, 15)
 
-[node name="PlayerInstanceGrid" type="Node2D" unique_id=1599663330 node_paths=PackedStringArray("camera", "animation_player", "sprite", "area") groups=["Event", "PlayerInstance"]]
+[node name="PlayerInstanceGrid" type="Node2D" unique_id=1599663330 node_paths=PackedStringArray("camera", "animation_player", "sprite", "area") groups=["PlayerInstance"]]
 script = ExtResource("1_la3st")
 camera = NodePath("Camera2D")
 animation_player = NodePath("AnimationPlayer")

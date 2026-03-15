@@ -271,7 +271,7 @@ func _on_graph_autosave_timeout() -> void:
 func _is_editor_event_node(node: Node) -> bool:
 	if node == null:
 		return false
-	if node.is_in_group("event_instance"):
+	if node.is_in_group("EventInstance"):
 		return true
 	return node.get("id") != null
 
@@ -342,7 +342,7 @@ func _find_event_instance_by_id(root: Node, event_id: String) -> Node:
 	var tree := root.get_tree()
 	if tree == null:
 		return null
-	for node in tree.get_nodes_in_group("event_instance"):
+	for node in tree.get_nodes_in_group("EventInstance"):
 		if not (node is Node):
 			continue
 		var node_id := str(node.get("id"))

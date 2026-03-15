@@ -45,7 +45,7 @@ func _on_add_event_instance(nodes, _scene):
 	else:
 		scene.add_child(inst)
 	inst.owner = scene
-	if inst.is_in_group("player"):
+	if inst.is_in_group("PlayerInstance"):
 		inst.name = _make_unique_name(scene, "Player")
 	else:
 		_assign_event_defaults(inst, scene)

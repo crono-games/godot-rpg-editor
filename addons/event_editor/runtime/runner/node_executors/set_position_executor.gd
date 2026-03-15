@@ -74,7 +74,7 @@ func _to_2d_position(pos: Vector3) -> Vector2:
 func _resync_followers_if_player_target(scene_root: Node, target: Node) -> void:
 	if scene_root == null or target == null:
 		return
-	if not target.is_in_group("player"):
+	if not target.is_in_group("PlayerInstance"):
 		return
 	var tree := scene_root.get_tree()
 	if tree == null:
@@ -94,7 +94,7 @@ func _resolve_target_fallback(scene_root: Node, target_id: String, target_name: 
 	var stack: Array[Node] = [scene_root]
 	while not stack.is_empty():
 		var node = stack.pop_back()
-		if node.is_in_group("event_instance") or node.is_in_group("player"):
+		if node.is_in_group("EventInstance") or node.is_in_group("PlayerInstance"):
 			var node_id := ""
 			if node.has_method("get"):
 				node_id = str(node.get("id"))

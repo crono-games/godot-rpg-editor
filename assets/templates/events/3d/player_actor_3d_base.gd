@@ -2,7 +2,6 @@
 extends Node3D
 class_name PlayerActor3DBase
 
-signal player_ready(player: Node)
 signal move_finished(player: Node)
 signal event_bumped(event_id: String, event_node: Node)
 
@@ -42,7 +41,7 @@ var state := 0
 
 func _common_ready(mode: String, snap_grid_on_ready: bool) -> void:
 	_resolve_runtime_actor_links()
-	add_to_group("player")
+	add_to_group("PlayerInstance")
 	movement_mode = mode
 	trigger_resolution_mode = mode
 	if camera != null:
@@ -54,7 +53,6 @@ func _common_ready(mode: String, snap_grid_on_ready: bool) -> void:
 		push_warning("%s without id (editor/repository should assign one)" % [name])
 	if snap_grid_on_ready:
 		snap_to_grid()
-	player_ready.emit(self)
 
 func _resolve_runtime_actor_links() -> void:
 	if animation_player == null or not is_instance_valid(animation_player):
@@ -108,7 +106,7 @@ func _get_input_direction() -> Vector3:
 func _get_blocking_event(next_global_pos: Vector3, radius: float) -> Node:
 	if not collide_with_events:
 		return null
-	for node in get_tree().get_nodes_in_group("event_instance"):
+	for node in get_tree().get_nodes_in_group("EventInstance"):
 		if node == self:
 			continue
 		if not (node is Node3D):

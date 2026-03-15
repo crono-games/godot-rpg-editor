@@ -2,7 +2,6 @@
 extends Node2D
 class_name PlayerActor2DBase
 
-signal player_ready(player: Node)
 signal move_finished(player: Node)
 signal event_bumped(event_id: String, event_node: Node)
 
@@ -36,23 +35,16 @@ var current_map : Node2D
 
 func _common_ready(mode: String, snap_grid_on_ready: bool) -> void:
 	_resolve_runtime_actor_links()
-	add_to_group("player")
-
-	if camera:
-		camera.enabled = true
-		_fit_camera_limits()
-
+	if not Engine.is_editor_hint():
+		if camera:
+			camera.enabled = true
+			_fit_camera_limits()
 	if sprite:
 		_sprite_base_local = sprite.position
-
 	if id == "":
 		push_warning("%s without id (editor/repository should assign one)" % [name])
-
 	if snap_grid_on_ready:
 		snap_to_grid()
-
-	player_ready.emit(self)
-
 
 func _resolve_runtime_actor_links() -> void:
 	if animation_player == null:
@@ -77,7 +69,6 @@ func _resolve_runtime_actor_links() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-
 	if debug_noclip_action == "":
 		return
 
@@ -105,7 +96,6 @@ func is_moving() -> bool:
 
 func snap_to_grid() -> void:
 	pass
-
 
 func blocks_player_movement() -> bool:
 	return false
@@ -211,7 +201,6 @@ func _is_dialog_input_locked() -> bool:
 ## MapRoot applies camera limits from Tilemaps Bounding Boxes.
 
 func _fit_camera_limits() -> void:
-
 	if camera == null:
 		return
 

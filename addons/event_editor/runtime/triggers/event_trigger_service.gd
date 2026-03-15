@@ -124,7 +124,7 @@ func find_event_instance_by_id(
 ) -> Node:
 	if scene_root == null or event_id == "":
 		return null
-	for node in scene_tree.get_nodes_in_group("event_instance"):
+	for node in scene_tree.get_nodes_in_group("EventInstance"):
 		if not (node is Node):
 			continue
 		if is_node_in_scene.is_valid() and not bool(is_node_in_scene.call(node, scene_root)):

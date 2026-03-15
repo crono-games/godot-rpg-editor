@@ -199,7 +199,7 @@ static func is_player_node(node: Node, player_group: String, player_ref: Node) -
 	if node.is_in_group(player_group):
 		return true
 	var name_l := String(node.name).to_lower()
-	if name_l.contains("player"):
+	if name_l.contains("PlayerInstance"):
 		return true
 	if node.has_method("get"):
 		var node_id := str(node.get("id"))

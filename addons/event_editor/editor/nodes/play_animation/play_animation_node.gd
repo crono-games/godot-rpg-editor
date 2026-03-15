@@ -227,7 +227,7 @@ func _resolve_target_node_for_editor() -> Node:
 	var event_id := target_id
 	if event_id == "":
 		return null
-	for node in scene_root.get_tree().get_nodes_in_group("event_instance"):
+	for node in scene_root.get_tree().get_nodes_in_group("EventInstance"):
 		if str(node.get("id")) == event_id:
 			return node
 	return null

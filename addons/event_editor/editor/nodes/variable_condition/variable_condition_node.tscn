@@ -6,8 +6,8 @@
 bg_color = Color(0, 0, 0, 0.039215688)
 
 [node name="VariableConditionNode" type="GraphNode" unique_id=1135125552 node_paths=PackedStringArray("variable_selector", "operator_selector", "spinbox")]
-offset_right = 250.0
-offset_bottom = 125.0
+offset_right = 245.0
+offset_bottom = 136.0
 title = "Variable Condition"
 slot/0/left_enabled = true
 slot/0/left_type = 0
@@ -45,11 +45,10 @@ spinbox = NodePath("HBoxContainer/SpinBox")
 layout_mode = 2
 
 [node name="VariableSelector" type="OptionButton" parent="HBoxContainer" unique_id=1809989370]
+custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-selected = 0
+clip_text = true
 fit_to_longest_item = false
-item_count = 1
-popup/item_0/id = 0
 
 [node name="OperatorSelector" type="OptionButton" parent="HBoxContainer" unique_id=1781290861]
 layout_mode = 2

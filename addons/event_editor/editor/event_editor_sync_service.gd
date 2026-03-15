@@ -149,6 +149,6 @@ func _on_node_renamed(node: Node) -> void:
 func _is_event_node(node: Node) -> bool:
 	if node == null:
 		return false
-	if node.is_in_group("event_instance"):
+	if node.is_in_group("EventInstance"):
 		return true
 	return node.get("id") != null

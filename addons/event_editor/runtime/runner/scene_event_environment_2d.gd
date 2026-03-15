@@ -35,7 +35,7 @@ func reindex() -> void:
 	var stack: Array[Node] = [_root]
 	while not stack.is_empty():
 		var node = stack.pop_back()
-		if node.is_in_group("event_instance"):
+		if node.is_in_group("EventInstance"):
 			var event_id := str(node.get("id"))
 			if event_id != "":
 				_events_by_id[event_id] = node

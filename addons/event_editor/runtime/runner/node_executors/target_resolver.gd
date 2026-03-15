@@ -50,7 +50,7 @@ static func resolve_target(
 static func _resolve_player(ctx: EventRuntimeContext, scene_root: Node) -> Node:
 	var env := ctx.get_scene_event_environment()
 	if env != null:
-		var env_player := env.get_player("player")
+		var env_player := env.get_player("PlayerInstance")
 		if env_player != null and is_instance_valid(env_player):
 			return env_player
 	return _find_player(scene_root)
@@ -61,7 +61,7 @@ static func _find_player(root: Node) -> Node:
 	var stack: Array[Node] = [root]
 	while not stack.is_empty():
 		var n = stack.pop_back()
-		if n.is_in_group("player") and (n is Node2D or n is Node3D):
+		if n.is_in_group("PlayerInstance") and (n is Node2D or n is Node3D):
 			return n
 		for c in n.get_children():
 			if c is Node:

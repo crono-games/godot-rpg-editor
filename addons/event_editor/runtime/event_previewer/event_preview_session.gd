@@ -277,7 +277,7 @@ func _stop_event_motion_loops() -> void:
 				ev.call("update_animation", Vector2.ZERO)
 
 func _is_event_node(node: Node) -> bool:
-	if node.is_in_group("event_instance"):
+	if node.is_in_group("EventInstance"):
 		return true
 	if node is EventInstance2D:
 		return true

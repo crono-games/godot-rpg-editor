@@ -67,7 +67,7 @@ func _get_blocking_event_grid(next_global_pos: Vector3) -> Node:
 	if not collide_with_events or debug_noclip:
 		return null
 	var radius := maxf(2.0, grid_size * 0.45)
-	for node in get_tree().get_nodes_in_group("event_instance"):
+	for node in get_tree().get_nodes_in_group("EventInstance"):
 		if node == self:
 			continue
 		if not (node is Node3D):
